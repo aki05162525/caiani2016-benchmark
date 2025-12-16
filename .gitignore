@@ -1,0 +1,75 @@
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# Maven (legacy build artifacts)
+target/
+pom.xml.versionsBackup
+
+# Java & Package Files
+*.class
+*.log
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# --- Important: JAR Handling ---
+# 基本的にJARは無視する
+*.jar
+
+# ただし、救出したlibsフォルダの中身は許可する（最重要！）
+!libs/*.jar
+
+# Gradle Wrapperも許可する（これがないと他の人が動かせない）
+!gradle/wrapper/*.jar
+# -------------------------------
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Simulation output (Recursive)
+# どの階層にあるdataフォルダの中身も無視する
+**/data/*.csv
+**/data/*.txt
+# ただし、フォルダ自体をGitに残すための.gitkeepは許可する
+!**/data/.gitkeep
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+.*.swp
+
+# Log files
+logs/
+*.log
+
+# Virtual machine crash logs
+hs_err_pid*
+replay_pid*

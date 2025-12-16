@@ -1,0 +1,12 @@
+rootProject.name = 'modern-caiani-benchmark'
+
+include 'jabm'
+include 'jmab'
+include 'benchmark'
+
+// フォルダ構成の補正（ここが重要！）
+// 調査結果に基づき、ソースコードがある階層をプロジェクトルートとして認識させます
+project(':jabm').projectDir = file('jabm/jabm')
+project(':benchmark').projectDir = file('benchmark/benchmark')
+// jmabは直下のようなのでそのままでOK
+project(':jmab').projectDir = file('jmab')

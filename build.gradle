@@ -1,0 +1,149 @@
+// 全プロジェクト共通設定
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea' // IntelliJ用
+
+    // Java 8 互換
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    // 文字コード設定（文字化け防止）
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenCentral() // メインのリポジトリ
+
+        // ローカルのlibsフォルダをリポジトリとして追加
+        flatDir {
+            dirs "${rootProject.projectDir}/libs"
+        }
+    }
+
+    dependencies {
+        // 全体で使う共通ライブラリ
+        implementation 'log4j:log4j:1.2.16'
+        testImplementation 'junit:junit:4.13.2'
+    }
+}
+
+// --- JABM (基盤フレームワーク) ---
+project(':jabm') {
+    dependencies {
+        // Maven Centralから自動取得
+        implementation 'org.springframework:spring-context:3.2.3.RELEASE'
+        implementation 'org.springframework:spring-beans:3.2.3.RELEASE'
+        implementation 'org.springframework:spring-core:3.2.3.RELEASE'
+        implementation 'org.apache.commons:commons-math3:3.2'
+        implementation 'commons-collections:commons-collections:3.2.1'
+        implementation 'commons-logging:commons-logging:1.1.1'
+        implementation 'net.sourceforge.collections:collections-generic:4.01'
+        implementation 'net.sf.jung:jung-api:2.0.1'
+        implementation 'net.sf.jung:jung-algorithms:2.0.1'
+        implementation 'colt:colt:1.2.0'
+
+        // ★修正1: ここにJFreeChartを追加（Maven Central版を使用）
+        // ローカルにjarをコピーする必要はありません
+        implementation 'jfree:jfreechart:1.0.13'
+        implementation 'jfree:jcommon:1.0.16'
+
+        // 【救出ファイル】libsフォルダから参照（これら5つだけlibsにあればOK）
+        implementation name: 'pf-joi-3.0'
+        implementation name: 'pf-core-5.5.0'
+        implementation name: 'pf-base-5.5.0'
+        implementation name: 'idw-1.6.1'
+        implementation name: 'bsh-2.0b4'
+    }
+
+    // ソースフォルダの指定
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java']
+            }
+            resources {
+                srcDirs = ['src/main/resources']
+            }
+        }
+    }
+}
+
+// --- JMAB (マクロ経済拡張) ---
+project(':jmab') {
+    dependencies {
+        implementation project(':jabm') // jabmを使う
+
+        implementation 'colt:colt:1.2.0'
+        implementation 'jfree:jfreechart:1.0.13'
+        implementation 'jfree:jcommon:1.0.16'
+        implementation 'org.springframework:spring-context:3.2.3.RELEASE'
+    }
+
+    // Eclipse/Legacy構成への対応
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src']
+            }
+            resources {
+                srcDirs = ['src']
+            }
+        }
+    }
+}
+
+// --- Benchmark (モデル本体) ---
+project(':benchmark') {
+    apply plugin: 'application' // 実行可能にする
+
+    mainClassName = 'benchmark.Main'
+
+    dependencies {
+        implementation project(':jmab')
+        implementation project(':jabm')
+
+        implementation 'colt:colt:1.2.0'
+        implementation 'jfree:jfreechart:1.0.13'
+        implementation 'jfree:jcommon:1.0.16'
+
+        // ★修正2: Spring Frameworkをここでも明示（推移的依存のエラー回避）
+        implementation 'org.springframework:spring-context:3.2.3.RELEASE'
+        implementation 'org.springframework:spring-beans:3.2.3.RELEASE'
+        implementation 'org.springframework:spring-core:3.2.3.RELEASE'
+    }
+
+    // Eclipse/Legacy構成への対応
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src']
+            }
+            resources {
+                srcDirs = ['src']
+            }
+        }
+    }
+
+    // 実行タスク: Light設定
+    task runLight(type: JavaExec) {
+        group = 'application'
+        description = 'Runs benchmark model (Light)'
+        classpath = sourceSets.main.runtimeClasspath
+        main = mainClassName
+        // システムプロパティで設定ファイルを指定
+        systemProperty 'jabm.config', 'Model/mainBenchmark_light.xml'
+        // 作業ディレクトリをbenchmarkプロジェクト直下に固定
+        workingDir = file('.')
+    }
+
+    // 実行タスク: Full設定
+    task runFull(type: JavaExec) {
+        group = 'application'
+        description = 'Runs benchmark model (Full)'
+        classpath = sourceSets.main.runtimeClasspath
+        main = mainClassName
+        systemProperty 'jabm.config', 'Model/mainBenchmark_full.xml'
+        workingDir = file('.')
+    }
+}
