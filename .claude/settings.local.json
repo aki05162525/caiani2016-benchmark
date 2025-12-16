@@ -12,7 +12,8 @@
       "Bash(echo $PATH)",
       "Bash(where gradle)",
       "Bash(/c/Gradle/gradle-*/bin/gradle)",
-      "Bash(./gradlew runLight)"
+      "Bash(./gradlew runLight)",
+      "Bash(git add -A)"
     ],
     "deny": [],
     "ask": []
