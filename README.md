@@ -22,31 +22,38 @@
 ## 🚀 クイックスタート
 
 ### 前提条件
+- **Java JDK 8以上** (JDK 11, 17 でも動作確認済み)
 - **Java JDK 8以上**
-- **IntelliJ IDEA** (Community Edition でOK)
+   - ※ **事前インストールは不要です。** IntelliJ IDEA の機能を使って、セットアップ中に自動ダウンロードできます。
 
 ### 実行方法
 
-#### 方法1: IntelliJで開く（推奨・最も簡単）
+#### 方法1: IntelliJ IDEA で開く（推奨・最も簡単）
+
+コマンド操作やJavaの環境構築は一切不要です。
 
 1. **プロジェクトを開く**
-   - IntelliJ IDEA を起動
-   - `File` → `Open` を選択
-   - このフォルダ（`caiani2016-benchmark`）を選択して開く
+   - IntelliJ IDEA を起動します。
+   - `File` → `Open` を選択します。
+   - クローンしたフォルダ（`caiani2016-benchmark`）を選択して開きます。
 
-2. **Gradleの同期を待つ**
-   - IntelliJが自動的にGradleプロジェクトとして認識します
-   - 右下にプログレスバーが表示されるので完了まで待つ（初回は数分）
+2. **Gradleの同期 (JDKの設定)**
+   - IntelliJが自動的に Gradle プロジェクトとして認識します。
+   - **もしJDK（Java）が設定されていない場合:**
+      - 画面上部にバーが出たら `Load Gradle Project` をクリックします。
+      - または、設定画面 (`Settings` → `Build, Execution, Deployment` → `Build Tools` → `Gradle`) を開きます。
+      - `Gradle JVM` の欄で、**`Download JDK...`** を選択し、バージョン `17` などを選んでダウンロードしてください。
+   - 同期完了まで待ちます（初回は数分かかります）。
 
 3. **シミュレーションを実行**
-   - 右側の `Gradle` タブを開く
-   - `modern-caiani-benchmark` → `benchmark` → `Tasks` → `application` を展開
-   - **`runLight`** をダブルクリック（10ラウンドの高速テスト）
-   - または **`runFull`** をダブルクリック（1000ラウンドの完全版）
+   - 右側のサイドバーにある **`Gradle`** タブを開きます。
+   - `caiani2016-benchmark` → `benchmark` → `Tasks` → `application` を展開します。
+   - **`runLight`** をダブルクリック（10ラウンドの高速テスト用）。
+   - または **`runFull`** をダブルクリック（1000ラウンドの完全シミュレーション用）。
 
 4. **結果を確認**
-   - 実行が完了すると、`benchmark/benchmark/data/` フォルダにCSVファイルが生成されます
-   - GDP、失業率、投資などのマクロ指標が時系列データとして出力されます
+   - 実行が完了すると、以下のフォルダにCSVファイルが生成されます。
+   - `benchmark/benchmark/data/`
 
 #### 方法2: コマンドラインから実行
 
@@ -99,4 +106,3 @@ caiani2016-benchmark/
 - 政府支出
 - 企業の投資行動パラメータ
 
-詳細は `CLAUDE.md` の「Parameter Modification」セクションを参照してください。
