@@ -101,7 +101,7 @@
 
 ---
 
-# Phase B: 企業・政府の「雇用調整」経路をタイプ別に通す
+# Phase B: 企業・政府の「雇用調整」経路（computeLaborDemand + payWages）をタイプ別に通す
 
 ## B1. 期待賃金（Expectations）を2系列化する設計を確定
 
@@ -116,41 +116,126 @@
 
 ---
 
-## B2. computeLaborDemand() のタイプ別化（7クラス全対応）
+## B2. computeLaborDemand() + payWages のタイプ別化（7クラス全対応）
 
 **対象（Task1で特定済み）**
 
-* ConsumptionFirm / CapitalFirm
-* ConsumptionFirmWagesEnd / CapitalFirmWagesEnd
-* Government / GovernmentAntiCyclical / Government2WagesEnd
+* 企業: ConsumptionFirm / CapitalFirm / ConsumptionFirmWagesEnd / CapitalFirmWagesEnd
+* 政府: Government / GovernmentAntiCyclical / Government2WagesEnd
 
 **共通タスク（各クラスに対して）**
 
 * [ ] turnover（分離）をタイプ別に
-
   * `turnoverLabor` → `turnoverLaborR`, `turnoverLaborN`（= ϑ_R, ϑ_N）
 * [ ] layoff（解雇）をタイプ別に
-
-  * **仕様上は η_R, η_N を入れる**が、現状コードは「必要人数に合わせて全員解雇」なので、
-    `Fire = η * excess` の部分解雇に差し替える（離散化は丸め方を明示）
+  * 現状の「全員解雇」から `Fire = η * excess` の部分解雇に差し替え（詳細はB2.3）
 * [ ] vacancy（求人）をタイプ別に
-
   * `laborDemand` → `laborDemandR/N`
   * active market も `MKT_LABOR_R/N`
 * [ ] 賃金支払いが computeLaborDemand 内にあるクラスは、payWages 経路の整合を確認
-
   * 可能なら「賃金支払いは AbstractFirm.payWages に集約」する（ただし最小改変方針なら無理に統一しない）
 
-### B2.1 Government 系の特殊性を明示して実装方針を固定
+---
 
-* Government（標準版）：turnoverなし、固定労働需要、payWagesがオーバーライド
+## B2.1 Government系の概要と方針決定
 
-  * [ ] Governmentの雇用をR/Nどちらに割り当てるか決める（推奨：**全員R固定**＝保守的）
-* AntiCyclical / 2WagesEnd：turnoverあり
+**背景**
+Government系3クラスは企業と異なる特性を持つ：
+* Government（標準版）：turnoverなし、fixedLaborDemand、payWagesオーバーライド（支払不能チェックなし）
+* GovernmentAntiCyclical / Government2WagesEnd：turnoverあり、一般企業に近い
 
-  * [ ] Governmentの求人・採用もR/N市場分離に整合させる
+**方針タスク**
 
-**Done**：7クラスすべてで「分離→解雇→求人→市場参加」が R/N で一貫。
+* [ ] Government（標準版）の雇用をR/Nどちらに割り当てるか決定（推奨：**全員R固定**＝保守的）
+* [ ] GovernmentAntiCyclical / Government2WagesEndの求人・採用もR/N市場分離に整合させる
+
+---
+
+## B2.2 Government.java（標準政府版）の具体的実装
+
+**背景（Task1より）**
+Government.java は turnover なし・fixedLaborDemand・payWagesオーバーライド（支払不能チェックなし）で、一般企業と違う。
+
+### B2.2.1 政府雇用のR/N割当方針を固定（推奨：政府雇用=全員R）
+
+* [ ] **方針**：「政府雇用は全て R 労働者を雇う」と定義する（Nは雇わない）
+  * 目的：最小改変で混線を防ぎ、政府部門をモデル安定装置として扱う
+  * 代替案（後回し）：`fixedLaborDemand` を R/N 比率で按分（例：share_R）して雇う
+
+### B2.2.2 実装タスク（Government.computeLaborDemand / payWages）
+
+* [ ] `Government.computeLaborDemand()` で、求人を **MKT_LABOR_R のみ**に出す
+  * `laborDemandR = max(0, fixedLaborDemand - currentWorkersR)`
+  * `laborDemandN = 0`
+  * `setActive(true, StaticValues.MKT_LABOR_R)` のみ呼ぶ
+* [ ] `Government.payWages()`（オーバーライド）で、賃金支払い対象を **R労働者に限定**する（=雇用自体がRのみなら自動的に満たされる）
+* [ ] `currentWorkersR` の定義を決める
+  * employees を1本のままなら「type=Rだけカウント」
+  * employeesR/Nに分けるなら employeesR.size()
+
+**Done**：政府はR市場からのみ採用し、N市場に干渉しない（混線なし）。
+
+---
+
+## B2.3 η_R, η_N（部分解雇）仕様の確定
+
+**背景**
+現行は excess 全員解雇＝`currentWorkers - nbWorkers` を全て fire。ここを「硬直性（部分解雇）」に変えると、**(1)何人解雇するか (2)誰を解雇するか (3)丸め**が必須仕様になる。
+
+### B2.3.1 何人解雇するか（式・丸め）
+
+* [ ] 各タイプ ℓ∈{R,N} で excess を定義：
+  `excess_ℓ = max(0, tildeN_ℓ - N^{D,ℓ})`
+* [ ] 解雇人数：
+  `fire_ℓ = floor(η_ℓ * excess_ℓ + ξ)`（推奨）
+  * `ξ` は 0 でもよいが、偏りを避けるなら確率丸めを採用（後述）
+* [ ] **推奨丸め仕様（再現性と偏り低減）**：確率丸め
+  * `x = η_ℓ * excess_ℓ`
+  * `fire = floor(x) + Bernoulli(frac(x))`（乱数は既存PRNGを使用）
+  * これで期待値がちょうど x になり、長期のバイアスが減る
+
+### B2.3.2 誰を解雇するか（選択規則）
+
+* [ ] 解雇対象の選択規則を固定する（推奨：ランダム）
+  * **推奨**：employees(type=ℓ) を PRNG で shuffle → 先頭から fire_ℓ 人を解雇
+  * 代替：LIFO/FIFO（ただし経済的含意が入りやすいので、まずランダムが無難）
+* [ ] 現行コードが `emplPop.get(i)` を順に fire しているなら、これは実質「リスト順依存」なので、必ず明示的にシャッフルする
+
+### B2.3.3 どこに実装するか（適用箇所）
+
+* [ ] 以下 **全ての computeLaborDemand()** で、layoff部分を上記仕様に差し替える（Task1で列挙した7クラス）
+  * ConsumptionFirm
+  * CapitalFirm
+  * ConsumptionFirmWagesEnd
+  * CapitalFirmWagesEnd
+  * GovernmentAntiCyclical
+  * Government2WagesEnd
+  * Government（ただし政府は固定需要・turnoverなしなので excess 計算の前提を確認）
+
+**Done**：η_R<η_N により、ショック時に「Rは解雇が遅く、Nが調整弁になる」挙動が実装として保証される。
+
+---
+
+## B2.4 WagesEnd系の payWages タイプ別化
+
+**背景**
+WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B2の「computeLaborDemandを直す」だけでは賃金側が取り残される可能性がある。
+
+### B2.4.1 賃金支払い箇所の所在を確定
+
+* [ ] ConsumptionFirmWagesEnd / CapitalFirmWagesEnd の「賃金支払いが実行されるメソッド」を特定する
+  * もし基底 `AbstractFirm.payWages()` を呼んでいるなら、A4.3 の改修が効く
+  * もし独自 payWages を持つなら、そのメソッドもタイプ別ロジックに追随させる
+
+### B2.4.2 タスク化（分岐）
+
+* [ ] **Case A（AbstractFirm.payWages() を使用）**
+  * WagesEnd系は追加修正不要（ただし「どのTICで呼ばれるか」だけ確認）
+* [ ] **Case B（独自 payWages 実装）**
+  * [ ] 支払不能時の再求人を `laborDemandR/N += 1` に置換
+  * [ ] 賃金支払い対象の employee を type 別に処理できるようにする（少なくとも再求人が同タイプに戻ること）
+
+**Done**：WagesEnd系でも「支払不能→解雇→再求人」が type 整合を保つ。
 
 ---
 
