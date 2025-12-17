@@ -120,7 +120,7 @@ project(':benchmark') {
                 srcDirs = ['src']
             }
             resources {
-                srcDirs = ['src']
+                srcDirs = ['src', 'resources']
             }
         }
     }
