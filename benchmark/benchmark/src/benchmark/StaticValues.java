@@ -215,7 +215,11 @@ public interface StaticValues {
 	// Dual labor market IDs (Phase A1: R=Regular, N=Non-regular)
 	public static int MKT_LABOR_R=7; // Regular labor market
 	public static int MKT_LABOR_N=8; // Non-regular labor market
-	
+
+	// Labor type constants (Phase A2)
+	public static int LABOR_TYPE_R=0; // Regular labor type
+	public static int LABOR_TYPE_N=1; // Non-regular labor type
+
 	public static int STRATEGY_BUYING=0;
 	public static int STRATEGY_BORROWING=1;
 	public static int STRATEGY_FINANCE=2;

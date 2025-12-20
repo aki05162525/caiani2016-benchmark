@@ -1417,6 +1417,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 <property name="ksOCF" value="189.2146501"/>
 <property name="csOCF" value="2340.255574"/>
 <property name="gr" value="0.0075"/>
+<property name="laborTypeRatioR" value="0.65"/><!-- Phase A2: 65% Regular, 35% Non-regular -->
 	</bean>
 	
 	

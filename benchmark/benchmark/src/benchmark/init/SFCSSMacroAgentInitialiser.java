@@ -107,6 +107,9 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 	private double uniformDistr;
 	private double gr;
 
+	//Phase A2: Dual labor market
+	private double laborTypeRatioR; // Ratio of Regular workers (0.0-1.0)
+
 	/* (non-Javadoc)
 	 * @see jmab.init.MacroAgentInitialiser#initialise(jmab.population.MacroPopulation)
 	 */
@@ -141,6 +144,14 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 		for(int i = 0; i<hhSize; i++){
 			Households hh = (Households) households.getAgentList().get(i);
 			hh.setDividendsReceived(this.dividendsReceived/hhSize);
+
+			//Phase A2: Set labor type based on ratio
+			Uniform distr = new Uniform(0.0, 1.0, prng);
+			if(distr.nextDouble() < this.laborTypeRatioR) {
+				hh.setLaborType(StaticValues.LABOR_TYPE_R);
+			} else {
+				hh.setLaborType(StaticValues.LABOR_TYPE_N);
+			}
 
 			//Cash Holdings
 			Cash cash = new Cash(hhCash,(SimpleAbstractAgent)hh,(SimpleAbstractAgent)cb);
@@ -1072,7 +1083,21 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 		this.csLoans0 = csLoans0;
 	}
 
+	/**
+	 * @return the laborTypeRatioR
+	 */
+	public double getLaborTypeRatioR() {
+		return laborTypeRatioR;
+	}
 
+	/**
+	 * @param laborTypeRatioR the laborTypeRatioR to set (0.0-1.0)
+	 */
+	public void setLaborTypeRatioR(double laborTypeRatioR) {
+		this.laborTypeRatioR = laborTypeRatioR;
+	}
+
+}
 
 
 

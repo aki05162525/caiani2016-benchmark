@@ -62,6 +62,7 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 	protected double shareDeposits;
 	protected double interestsReceived;
 	protected double dividendsReceived;
+	private int laborType; // Phase A2: 0=Regular (R), 1=Non-regular (N)
 	
 
 	/* (non-Javadoc)
@@ -151,6 +152,9 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 		switch(idMarket){
 		case StaticValues.MKT_LABOR:
 			return this.getItemStockMatrix(true, StaticValues.SM_DEP);
+		case StaticValues.MKT_LABOR_R: // Phase A2
+		case StaticValues.MKT_LABOR_N: // Phase A2
+			return this.getItemStockMatrix(true, StaticValues.SM_DEP);
 		}
 		return null;
 	}
@@ -205,7 +209,10 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 		WageStrategy strategy= (WageStrategy)this.getStrategy(StaticValues.STRATEGY_WAGE);
 		this.wage=strategy.computeWage();
 		if(this.employer==null){
-			this.setActive(true, StaticValues.MKT_LABOR);
+			// Phase A2: participate in type-specific labor market
+			int marketId = (this.laborType == StaticValues.LABOR_TYPE_R) ?
+					StaticValues.MKT_LABOR_R : StaticValues.MKT_LABOR_N;
+			this.setActive(true, marketId);
 		}
 	}
 
@@ -420,6 +427,20 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 		this.employmentWageLag = employmentWageLag;
 	}
 
+	/**
+	 * @return the laborType
+	 */
+	public int getLaborType() {
+		return laborType;
+	}
+
+	/**
+	 * @param laborType the laborType to set (0=Regular, 1=Non-regular)
+	 */
+	public void setLaborType(int laborType) {
+		this.laborType = laborType;
+	}
+
 	/* (non-Javadoc)
 	 * @see jmab.agents.WageSetterWithTargets#getMacroReferenceVariableForWage()
 	 */
@@ -481,6 +502,7 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 		shareDeposits = buf.getDouble();
 		dividendsReceived = buf.getDouble();
 		employmentWageLag = buf.getInt();
+		laborType = buf.getInt(); // Phase A2
 		int matSize = buf.getInt();
 		if(matSize>0){
 			byte[] smBytes = new byte[matSize];
@@ -520,13 +542,14 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 			byte[] charBytes = super.getAgentCharacteristicsBytes();
 			out.write(ByteBuffer.allocate(4).putInt(charBytes.length).array());
 			out.write(charBytes);
-			ByteBuffer buf = ByteBuffer.allocate(44);
+			ByteBuffer buf = ByteBuffer.allocate(48); // Phase A2: 44 + 4 (laborType)
 			buf.putDouble(demand);
 			buf.putDouble(cashAmount);
 			buf.putDouble(depositAmount);
 			buf.putDouble(shareDeposits);
 			buf.putDouble(dividendsReceived);
 			buf.putInt(employmentWageLag);
+			buf.putInt(laborType); // Phase A2
 			out.write(buf.array());
 			byte[] smBytes = super.getStockMatrixBytes();
 			out.write(ByteBuffer.allocate(4).putInt(smBytes.length).array());
@@ -594,8 +617,10 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 
 	@Override
 	public void setLaborActive(boolean active) {
-		this.setActive(active,StaticValues.MKT_LABOR);
-		
+		// Phase A2: participate in type-specific labor market
+		int marketId = (this.laborType == StaticValues.LABOR_TYPE_R) ?
+				StaticValues.MKT_LABOR_R : StaticValues.MKT_LABOR_N;
+		this.setActive(active, marketId);
 	}
 
 }
