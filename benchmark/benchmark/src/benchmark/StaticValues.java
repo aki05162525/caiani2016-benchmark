@@ -208,9 +208,13 @@ public interface StaticValues {
 	public static int MKT_CONSGOOD=1;
 	public static int MKT_CREDIT=2;
 	public static int MKT_DEPOSIT=3;
-	public static int MKT_LABOR=4;
+	public static int MKT_LABOR=4; // Legacy: will be gradually replaced by MKT_LABOR_R and MKT_LABOR_N
 	public static int MKT_BONDS=5;
 	public static int MKT_ADVANCES=6;
+
+	// Dual labor market IDs (Phase A1: R=Regular, N=Non-regular)
+	public static int MKT_LABOR_R=7; // Regular labor market
+	public static int MKT_LABOR_N=8; // Non-regular labor market
 	
 	public static int STRATEGY_BUYING=0;
 	public static int STRATEGY_BORROWING=1;
