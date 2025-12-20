@@ -304,7 +304,7 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 	 * fires the last it had hired, otherwise it hires new workers. 
 	 */
 	protected void computeLaborDemand() {
-		
+
 		int currentWorkers = this.employees.size();
 		AgentList emplPop = new AgentList();
 		for(MacroAgent ag : this.employees)
@@ -315,13 +315,40 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		}
 		cleanEmployeeList();
 		currentWorkers = this.employees.size();
-		
-		int nbWorkers= this.getRequiredWorkers();	
+
+		int nbWorkers= this.getRequiredWorkers();
+
+		// Phase B2: Decompose total demand into R/N using simple ratio
+		// TODO Phase C: Replace with CES decomposition
+		double ratioR = 0.65; // TODO: get from parameters (use laborTypeRatioR)
+		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
+		int nbWorkersN = nbWorkers - nbWorkersR;
+
+		// Count current workers by type
+		int currentWorkersR = 0;
+		int currentWorkersN = 0;
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == 0) { // LABOR_TYPE_R
+				currentWorkersR++;
+			} else {
+				currentWorkersN++;
+			}
+		}
+
 		if(nbWorkers>currentWorkers){
-			this.laborDemand=nbWorkers-currentWorkers;
+			// Hiring: calculate type-specific demands
+			this.laborDemandR = Math.max(0, nbWorkersR - currentWorkersR);
+			this.laborDemandN = Math.max(0, nbWorkersN - currentWorkersN);
+			this.laborDemand = nbWorkers - currentWorkers; // Legacy
 		}else{
-			this.laborDemand=0;
+			// Firing: Phase B2 Step 1 keeps full firing, will implement partial firing later
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
+			this.laborDemand = 0;
 			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.setActive(false, StaticValues.MKT_LABOR_N);
 			emplPop = new AgentList();
 			for(MacroAgent ag : this.employees)
 				emplPop.add(ag);
@@ -330,7 +357,16 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 				fireAgent((MacroAgent)emplPop.get(i));
 			}
 		}
-		if (laborDemand>0){
+
+		// Phase B2: Activate type-specific labor markets
+		if (laborDemandR > 0){
+			this.setActive(true, StaticValues.MKT_LABOR_R);
+		}
+		if (laborDemandN > 0){
+			this.setActive(true, StaticValues.MKT_LABOR_N);
+		}
+		// Legacy market activation (for backward compatibility)
+		if (laborDemand > 0){
 			this.setActive(true, StaticValues.MKT_LABOR);
 		}
 		if(employees.size()>0){

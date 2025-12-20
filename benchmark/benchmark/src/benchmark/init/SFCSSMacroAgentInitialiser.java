@@ -228,6 +228,10 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 				hWorkerCounter++;
 			}
 
+			//Phase B2: Initialize type-specific labor demand to zero
+			k.setLaborDemandR(0);
+			k.setLaborDemandN(0);
+
 			//Deposit Holdings
 			int bankId = (int) i/kFirmPerBank;
 			MacroAgent bank = (MacroAgent) banks.getAgentList().get(bankId);
@@ -353,6 +357,10 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 				c.addEmployee(hh);
 				hWorkerCounter++;
 			}
+
+			//Phase B2: Initialize type-specific labor demand to zero
+			c.setLaborDemandR(0);
+			c.setLaborDemandN(0);
 
 			//Deposit Holdings
 			int bankId = (int)i/cFirmPerBank;

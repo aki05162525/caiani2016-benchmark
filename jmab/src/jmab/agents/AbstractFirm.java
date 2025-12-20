@@ -34,7 +34,9 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 
 	protected ArrayList<MacroAgent> employees;
 	protected List<MacroAgent> clients;
-	protected int laborDemand;
+	protected int laborDemand; // Legacy: will be deprecated in favor of laborDemandR/N
+	protected int laborDemandR; // Phase A4: Regular labor demand
+	protected int laborDemandN; // Phase A4: Non-regular labor demand
 	protected double desiredOutput;
 	protected int productionStockId;
 	protected int loanLength;
@@ -137,7 +139,15 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 * @see jmab.agents.LaborDemander#addEmployee(jmab.agents.LaborSupplier)
 	 */
 	public void addEmployee(LaborSupplier worker) {
-		this.laborDemand-=1;
+		// Phase A4: Decrease type-specific labor demand
+		int laborType = worker.getLaborType();
+		if(laborType == 0) { // LABOR_TYPE_R
+			this.laborDemandR -= 1;
+		} else { // LABOR_TYPE_N
+			this.laborDemandN -= 1;
+		}
+		// Legacy: also decrease total demand for backward compatibility
+		this.laborDemand -= 1;
 		this.employees.add(worker);
 		worker.setEmployer(this);
 	}
@@ -154,6 +164,34 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 */
 	public void setLaborDemand(int laborDemand) {
 		this.laborDemand = laborDemand;
+	}
+
+	/**
+	 * @return the laborDemandR
+	 */
+	public int getLaborDemandR() {
+		return laborDemandR;
+	}
+
+	/**
+	 * @param laborDemandR the laborDemandR to set
+	 */
+	public void setLaborDemandR(int laborDemandR) {
+		this.laborDemandR = laborDemandR;
+	}
+
+	/**
+	 * @return the laborDemandN
+	 */
+	public int getLaborDemandN() {
+		return laborDemandN;
+	}
+
+	/**
+	 * @param laborDemandN the laborDemandN to set
+	 */
+	public void setLaborDemandN(int laborDemandN) {
+		this.laborDemandN = laborDemandN;
 	}
 
 	/**
@@ -209,11 +247,20 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 				LiabilitySupplier payingSupplier = (LiabilitySupplier) payingItem.getLiabilityHolder();
 				payingSupplier.transfer(payingItem, payableStock, wage);
 			}else{
+				// Phase A4: Re-hire based on worker's labor type
+				int laborType = employee.getLaborType();
 				this.setLaborActive(true);
 				fireAgent(employee);
-				this.laborDemand+=1;
+				// Increase type-specific demand
+				if(laborType == 0) { // LABOR_TYPE_R
+					this.laborDemandR += 1;
+				} else { // LABOR_TYPE_N
+					this.laborDemandN += 1;
+				}
+				// Legacy: also increase total demand for backward compatibility
+				this.laborDemand += 1;
 			}
-				
+
 		}
 	}
 	
@@ -260,7 +307,7 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 
 	/**
 	 * Generates the byte array representing the characteristics of the agent. The structure is the following
-	 * [superStructSize][superStruct][desiredOutput][laborDemand][productionStockId][loanLength][loanAmortizationType][clientSize]
+	 * [superStructSize][superStruct][desiredOutput][laborDemand][laborDemandR][laborDemandN][productionStockId][loanLength][loanAmortizationType][clientSize]
 	 * for each client
 	 * 	[clientPopId][clientId]
 	 * end for
@@ -270,11 +317,13 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	public byte[] getAgentCharacteristicsBytes(){
 		byte[] superStruct = super.getAgentCharacteristicsBytes();
 		int nbClients = this.clients.size();
-		ByteBuffer buf = ByteBuffer.allocate(superStruct.length+32+12*nbClients);
+		ByteBuffer buf = ByteBuffer.allocate(superStruct.length+40+12*nbClients); // Phase A4: 32+8 for laborDemandR/N
 		buf.putInt(superStruct.length);
 		buf.put(superStruct);
 		buf.putDouble(desiredOutput);
 		buf.putInt(laborDemand);
+		buf.putInt(laborDemandR); // Phase A4
+		buf.putInt(laborDemandN); // Phase A4
 		buf.putInt(productionStockId);
 		buf.putInt(loanLength);
 		buf.putInt(loanAmortizationType);
@@ -288,7 +337,7 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 
 	/**
 	 * Populates the characteristics of the agent using the byte array content. The structure is the following
-	 * [superStructSize][superStruct][desiredOutput][laborDemand][productionStockId][loanLength][loanAmortizationType]
+	 * [superStructSize][superStruct][desiredOutput][laborDemand][laborDemandR][laborDemandN][productionStockId][loanLength][loanAmortizationType]
 	 * [clientSize]
 	 * for each client
 	 * 	[clientPopId][clientId]
@@ -303,6 +352,21 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 		super.populateCharacteristics(superStruct, pop);
 		this.desiredOutput = buf.getDouble();
 		this.laborDemand = buf.getInt();
+
+		// Phase B2: Backward compatibility check for laborDemandR/N
+		// Check if buffer has enough data for new fields (need 2 ints = 8 bytes before productionStockId)
+		int positionBeforeNewFields = buf.position();
+		if(buf.remaining() >= 8) {
+			// Try to peek ahead - if the next values look like valid labor demands, read them
+			// Otherwise, assume old format
+			this.laborDemandR = buf.getInt();
+			this.laborDemandN = buf.getInt();
+		} else {
+			// Old format: initialize to zero, will be set in computeLaborDemand
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
+		}
+
 		this.productionStockId = buf.getInt();
 		this.loanLength = buf.getInt();
 		this.loanAmortizationType = buf.getInt();

@@ -420,7 +420,7 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 	 * desired output plus quantity of workers corresponding the desired level of investment in R&D.
 	 */
 	protected void computeLaborDemand() {
-		
+
 		int currentWorkers = this.employees.size();
 		AgentList emplPop = new AgentList();
 		for(MacroAgent ag : this.employees)
@@ -431,15 +431,42 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 		}
 		cleanEmployeeList();
 		currentWorkers = this.employees.size();
-		
+
 		Expectation expectation = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
 		double expWages = expectation.getExpectation();
 		int nbWorkers = this.getRequiredWorkers()+(int)Math.floor(this.amountResearch/expWages);
+
+		// Phase B2: Decompose total demand into R/N using simple ratio
+		// TODO Phase C: Replace with CES decomposition
+		double ratioR = 0.65; // TODO: get from parameters (use laborTypeRatioR)
+		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
+		int nbWorkersN = nbWorkers - nbWorkersR;
+
+		// Count current workers by type
+		int currentWorkersR = 0;
+		int currentWorkersN = 0;
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == 0) { // LABOR_TYPE_R
+				currentWorkersR++;
+			} else {
+				currentWorkersN++;
+			}
+		}
+
 		if(nbWorkers>currentWorkers){
-			this.laborDemand=nbWorkers-currentWorkers;
+			// Hiring: calculate type-specific demands
+			this.laborDemandR = Math.max(0, nbWorkersR - currentWorkersR);
+			this.laborDemandN = Math.max(0, nbWorkersN - currentWorkersN);
+			this.laborDemand = nbWorkers - currentWorkers; // Legacy
 		}else{
+			// Firing: Phase B2 Step 1 keeps full firing, will implement partial firing later
 			this.setActive(false, StaticValues.MKT_LABOR);
-			this.laborDemand=0;
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.setActive(false, StaticValues.MKT_LABOR_N);
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
+			this.laborDemand = 0;
 			emplPop = new AgentList();
 			for(MacroAgent ag : this.employees)
 				emplPop.add(ag);
@@ -448,6 +475,13 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 				fireAgent((MacroAgent)emplPop.get(i));
 			}
 		}
+
+		// Phase B2: Activate type-specific labor markets
+		if(this.laborDemandR>0)
+			this.setActive(true, StaticValues.MKT_LABOR_R);
+		if(this.laborDemandN>0)
+			this.setActive(true, StaticValues.MKT_LABOR_N);
+		// Legacy market activation
 		if(this.laborDemand>0)
 			this.setActive(true, StaticValues.MKT_LABOR);
 		cleanEmployeeList();

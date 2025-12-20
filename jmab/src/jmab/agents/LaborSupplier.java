@@ -39,13 +39,15 @@ public interface LaborSupplier extends MacroAgent {
 	void setEmployer(LaborDemander employer);
 	
 	public boolean isEmployed();
-	
+
 	public MacroAgent getEmployer();
 
 	public void setLaborActive(boolean active);
-	
-	
 
-
+	/**
+	 * @return the labor type (0=Regular, 1=Non-regular, etc.)
+	 * Phase A4: Dual labor market support
+	 */
+	public int getLaborType();
 
 }
