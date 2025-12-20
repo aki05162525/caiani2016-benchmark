@@ -252,29 +252,37 @@ public static int MKT_LABOR_N=8; // Non-regular labor market
 - [x] 家計側の労働供給ロジック完了（常に自分のタイプ市場に参加）
 - [x] 追加調整不要（家計側は完全実装済み）
 
-**Phase A3 Note**: 解雇時の再求職については、企業・政府側の対応（Phase A4/B2）で以下を修正予定：
+**Phase A3 Note**: 解雇時の再求職については、企業・政府側の対応（Phase A4/B2）で以下を修正済み：
 - Government.java:324 の `employee.setActive(true, MKT_LABOR)` を `emp.setLaborActive(true)` に変更
-- 同様の箇所が他のクラスにもある可能性（Phase A4で対応）
+- 同様の箇所は Phase A4 で対応済み
 
 ### Phase A4（次のステップ）
-- [ ] AbstractFirm（または各企業）の laborDemand をタイプ別に
-- [ ] addEmployee で worker の labor_type を確認
-- [ ] payWages の支払不能時再求人をタイプ別に
-- [ ] fireAgent メソッドを setLaborActive 使用に修正
+- [x] AbstractFirm（または各企業）の laborDemand をタイプ別に
+- [x] addEmployee で worker の labor_type を確認
+- [x] payWages の支払不能時再求人をタイプ別に
+- [x] fireAgent メソッドを setLaborActive 使用に修正
 
 ### Phase B2
-- [ ] ConsumptionFirm.computeLaborDemand をタイプ別化（6箇所）
-- [ ] CapitalFirm.computeLaborDemand をタイプ別化（6箇所）
-- [ ] Government.computeLaborDemand を R 固定化（6箇所）
-- [ ] 残り4クラス（WagesEnd系、GovernmentAntiCyclical）を対応
+- [x] ConsumptionFirm.computeLaborDemand をタイプ別化（6箇所）
+- [x] CapitalFirm.computeLaborDemand をタイプ別化（6箇所）
+- [x] Government.computeLaborDemand を R 固定化（6箇所）
+- [x] 残り4クラス（WagesEnd系、Government2WagesEnd、GovernmentAntiCyclical）を対応
+
+### Phase B2.3（type-specific turnover & partial layoff）✓
+- [x] ConsumptionFirmWagesEnd: turnoverLaborR/N追加、computeLaborDemand完全書き換え
+- [x] CapitalFirmWagesEnd: turnoverLaborR/N追加、computeLaborDemand完全書き換え
+- [x] Government2WagesEnd: turnoverLaborR実装（R-only雇用）
+- [x] GovernmentAntiCyclical: turnoverLaborR/N追加、シリアライゼーション更新
+- [x] 全クラスでprobabilisticRound()による確率的丸め実装
+- [x] 全クラスでAgentList.shuffle(prng)によるランダム解雇実装
 
 ### Phase C
 - [ ] CES実効労働・価格・賃金の統合
 - [ ] 失業給付の加重平均化
 
 ### XML更新
-- [ ] modelBenchmark_full.xml
-- [ ] modelBenchmark_light.xml
+- [x] modelBenchmark_full.xml
+- [x] modelBenchmark_light.xml
 - [ ] その他実験用XMLファイル
 
 ---

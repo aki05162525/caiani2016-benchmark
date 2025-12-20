@@ -30,6 +30,9 @@ import net.sourceforge.jabm.agent.AgentList;
 @SuppressWarnings("serial")
 public class Government2WagesEnd extends Government implements LaborDemander, BondSupplier{
 
+	protected double turnoverLaborR;
+	protected double turnoverLaborN;
+
 
 	/* (non-Javadoc)
 	 * @see jmab.agents.SimpleAbstractAgent#onTicArrived(AgentTicEvent)
@@ -61,20 +64,23 @@ public class Government2WagesEnd extends Government implements LaborDemander, Bo
 
 	/**
 	 * Sets the labor demand equal to the fixed labor demand.
-	 * Phase B2: Government only hires Regular (R) workers.
+	 * Phase B2.3: Government only hires Regular (R) workers, with type-specific turnover.
 	 */
 	@Override
 	protected void computeLaborDemand() {
-		int currentWorkers = this.employees.size();
+		// Type-specific turnover (Government hires R-only, so only R workers are employed)
+		// All employees are R-type, so we only apply turnoverLaborR
 		AgentList emplPop = new AgentList();
 		for(MacroAgent ag : this.employees)
 			emplPop.add(ag);
 		emplPop.shuffle(prng);
-		for(int i=0;i<this.turnoverLabor*currentWorkers;i++){
+		int turnoverFire = (int) Math.floor(this.turnoverLaborR * emplPop.size());
+		for(int i = 0; i < turnoverFire; i++){
 			fireAgent((MacroAgent)emplPop.get(i));
 		}
 		cleanEmployeeList();
-		currentWorkers = this.employees.size();
+
+		int currentWorkers = this.employees.size();
 		int nbWorkers = this.fixedLaborDemand;
 		if(nbWorkers>currentWorkers){
 			// Phase B2: Government only hires Regular workers
@@ -106,6 +112,33 @@ public class Government2WagesEnd extends Government implements LaborDemander, Bo
 			Deposit deposit = (Deposit) this.getItemStockMatrix(true, StaticValues.SM_RESERVES);
 			payWages(deposit,StaticValues.MKT_LABOR);
 		}
+	}
 
-	}	
+	/**
+	 * @return the turnoverLaborR
+	 */
+	public double getTurnoverLaborR() {
+		return turnoverLaborR;
+	}
+
+	/**
+	 * @param turnoverLaborR the turnoverLaborR to set
+	 */
+	public void setTurnoverLaborR(double turnoverLaborR) {
+		this.turnoverLaborR = turnoverLaborR;
+	}
+
+	/**
+	 * @return the turnoverLaborN
+	 */
+	public double getTurnoverLaborN() {
+		return turnoverLaborN;
+	}
+
+	/**
+	 * @param turnoverLaborN the turnoverLaborN to set
+	 */
+	public void setTurnoverLaborN(double turnoverLaborN) {
+		this.turnoverLaborN = turnoverLaborN;
+	}
 }

@@ -55,6 +55,8 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 
 	private double minWageDiscount;
 	private double shareOfExpIncomeAsDeposit;
+	protected double turnoverLaborR;
+	protected double turnoverLaborN;
 
 	/* (non-Javadoc)
 	 * @see jmab.agents.SimpleAbstractAgent#onTicArrived(AgentTicEvent)
@@ -178,16 +180,29 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 	protected void computeLaborDemand() {
 		Expectation expectation = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
 
-		int currentWorkers = this.employees.size();
-		AgentList emplPop = new AgentList();
-		for(MacroAgent ag : this.employees)
-			emplPop.add(ag);
-		emplPop.shuffle(prng);
-		for(int i=0;i<this.turnoverLabor*currentWorkers;i++){
-			fireAgent((MacroAgent)emplPop.get(i));
+		// 1. Type-specific turnover
+		AgentList workersR = new AgentList();
+		AgentList workersN = new AgentList();
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+				workersR.add(emp);
+			} else {
+				workersN.add(emp);
+			}
+		}
+		workersR.shuffle(prng);
+		workersN.shuffle(prng);
+		int turnoverFireR = (int) Math.floor(this.turnoverLaborR * workersR.size());
+		int turnoverFireN = (int) Math.floor(this.turnoverLaborN * workersN.size());
+		for(int i = 0; i < turnoverFireR; i++) {
+			fireAgent((MacroAgent)workersR.get(i));
+		}
+		for(int i = 0; i < turnoverFireN; i++) {
+			fireAgent((MacroAgent)workersN.get(i));
 		}
 		cleanEmployeeList();
-		currentWorkers = this.employees.size();
+
 		double expWages = expectation.getExpectation();
 		int nbWorkers = this.getRequiredWorkers()+(int)Math.round(this.amountResearch/expWages);
 
@@ -197,7 +212,7 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
 		int nbWorkersN = nbWorkers - nbWorkersR;
 
-		// Count current workers by type
+		// 2. Count current workers by type
 		int currentWorkersR = 0;
 		int currentWorkersN = 0;
 		for(MacroAgent emp : this.employees) {
@@ -209,35 +224,57 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 			}
 		}
 
-		if(nbWorkers>currentWorkers){
-			// Calculate type-specific demands
-			this.laborDemandR = Math.max(0, nbWorkersR - currentWorkersR);
-			this.laborDemandN = Math.max(0, nbWorkersN - currentWorkersN);
-			this.laborDemand=nbWorkers-currentWorkers;
-		}else{
-			this.setActive(false, StaticValues.MKT_LABOR);
-			this.setActive(false, StaticValues.MKT_LABOR_R);
-			this.setActive(false, StaticValues.MKT_LABOR_N);
-			this.laborDemandR = 0;
-			this.laborDemandN = 0;
-			this.laborDemand=0;
-			emplPop = new AgentList();
-			for(MacroAgent ag : this.employees)
-				emplPop.add(ag);
-			emplPop.shuffle(prng);
-			for(int i=0;i<currentWorkers-nbWorkers;i++){
-				fireAgent((MacroAgent)emplPop.get(i));
-			}
-		}
-		cleanEmployeeList();
+		// 3. Partial layoff (firing時)
+		int excessR = Math.max(0, currentWorkersR - nbWorkersR);
+		int excessN = Math.max(0, currentWorkersN - nbWorkersN);
+		int fireR = probabilisticRound(this.layoffRateR * excessR);
+		int fireN = probabilisticRound(this.layoffRateN * excessN);
 
-		// Activate type-specific markets based on demands
-		if(this.laborDemandR > 0)
+		// 4. Fire by type
+		if(fireR > 0 || fireN > 0) {
+			AgentList emplPopR = new AgentList();
+			AgentList emplPopN = new AgentList();
+			for(MacroAgent emp : this.employees) {
+				LaborSupplier worker = (LaborSupplier) emp;
+				if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+					emplPopR.add(emp);
+				} else {
+					emplPopN.add(emp);
+				}
+			}
+			emplPopR.shuffle(prng);
+			emplPopN.shuffle(prng);
+			for(int i = 0; i < fireR; i++) {
+				fireAgent((MacroAgent)emplPopR.get(i));
+			}
+			for(int i = 0; i < fireN; i++) {
+				fireAgent((MacroAgent)emplPopN.get(i));
+			}
+			cleanEmployeeList();
+
+			// Update current workers after firing
+			currentWorkersR -= fireR;
+			currentWorkersN -= fireN;
+		}
+
+		// 5. Set labor demand and market participation
+		this.laborDemandR = Math.max(0, nbWorkersR - currentWorkersR);
+		this.laborDemandN = Math.max(0, nbWorkersN - currentWorkersN);
+		this.laborDemand = this.laborDemandR + this.laborDemandN;
+
+		this.setActive(false, StaticValues.MKT_LABOR);
+		this.setActive(false, StaticValues.MKT_LABOR_R);
+		this.setActive(false, StaticValues.MKT_LABOR_N);
+
+		if (laborDemandR > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR_R);
-		if(this.laborDemandN > 0)
+		}
+		if (laborDemandN > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR_N);
-		if(this.laborDemand>0)
+		}
+		if (laborDemand > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR);
+		}
 	}
 
 	/**
@@ -300,6 +337,34 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 	public void setShareOfExpIncomeAsDeposit(double shareOfExpIncomeAsDeposit) {
 		this.shareOfExpIncomeAsDeposit = shareOfExpIncomeAsDeposit;
 	}
+
+	/**
+	 * @return the turnoverLaborR
+	 */
+	public double getTurnoverLaborR() {
+		return turnoverLaborR;
+	}
+
+	/**
+	 * @param turnoverLaborR the turnoverLaborR to set
+	 */
+	public void setTurnoverLaborR(double turnoverLaborR) {
+		this.turnoverLaborR = turnoverLaborR;
+	}
+
+	/**
+	 * @return the turnoverLaborN
+	 */
+	public double getTurnoverLaborN() {
+		return turnoverLaborN;
+	}
+
+	/**
+	 * @param turnoverLaborN the turnoverLaborN to set
+	 */
+	public void setTurnoverLaborN(double turnoverLaborN) {
+		this.turnoverLaborN = turnoverLaborN;
+	}
 	
 	/**
 	 * Populates the agent characteristics using the byte array content. The structure is as follows:
@@ -323,6 +388,14 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 		debtInterests = buf.getDouble();
 		interestReceived = buf.getDouble();
 		turnoverLabor = buf.getDouble();
+		// Backward compatibility
+		if(buf.remaining() >= 32) { // 16 for turnoverLaborR/N + 16 for minWageDiscount/shareOfExpIncomeAsDeposit
+			turnoverLaborR = buf.getDouble();
+			turnoverLaborN = buf.getDouble();
+		} else {
+			turnoverLaborR = turnoverLabor;
+			turnoverLaborN = turnoverLabor;
+		}
 		minWageDiscount = buf.getDouble();
 		shareOfExpIncomeAsDeposit = buf.getDouble();
 		int lengthDebtPayments = buf.getInt();
@@ -365,7 +438,7 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 	/**
 	 * Generates the byte array containing all relevant informations regarding the capital firm agent. The structure is as follows:
 	 * [sizeMacroAgentStructure][MacroAgentStructure][targetStock][amountResearch][creditdDemanded][capitalProductivity][capitalLaborRatio]
-	 * [debtBurden][debtInterests][interestReceived][turnoverLabor][minWageDiscount][shareOfExpIncomeAsDeposit]
+	 * [debtBurden][debtInterests][interestReceived][turnoverLabor][turnoverLaborR][turnoverLaborN][minWageDiscount][shareOfExpIncomeAsDeposit]
 	 * [sizeDebtPayments][debtPayments][payableStockId][laborProductvity][capitalDuration][capitalAmortization]
 	 * [matrixSize][stockMatrixStructure][expSize][ExpectationStructure][passedValSize][PassedValStructure][stratsSize][StrategiesStructure]
 	 */
@@ -376,7 +449,7 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 			byte[] charBytes = super.getAgentCharacteristicsBytes();
 			out.write(ByteBuffer.allocate(4).putInt(charBytes.length).array());
 			out.write(charBytes);
-			ByteBuffer buf = ByteBuffer.allocate((9+3*debtPayments.length)*8+16);
+			ByteBuffer buf = ByteBuffer.allocate((11+3*debtPayments.length)*8+16); // +2 for turnoverLaborR/N
 			buf.putDouble(targetStock);
 			buf.putDouble(amountResearch);
 			buf.putDouble(creditDemanded);
@@ -385,7 +458,9 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 			buf.putDouble(debtBurden);
 			buf.putDouble(debtInterests);
 			buf.putDouble(interestReceived);
-			buf.putDouble(turnoverLabor);	
+			buf.putDouble(turnoverLabor);
+			buf.putDouble(turnoverLaborR);
+			buf.putDouble(turnoverLaborN);
 			buf.putDouble(minWageDiscount);
 			buf.putDouble(shareOfExpIncomeAsDeposit);			
 			buf.putInt(debtPayments.length);

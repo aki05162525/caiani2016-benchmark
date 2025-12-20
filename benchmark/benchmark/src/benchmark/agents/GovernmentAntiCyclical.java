@@ -45,10 +45,12 @@ import net.sourceforge.jabm.agent.AgentList;
  */
 @SuppressWarnings("serial")
 public class GovernmentAntiCyclical extends Government implements LaborDemander, BondSupplier{
-	
+
 	protected double unemploymentBenefit;
 	protected double doleExpenditure;
 	protected double profitsFromCB;
+	protected double turnoverLaborR;
+	protected double turnoverLaborN;
 	
 
 	/**
@@ -140,20 +142,23 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 
 	/**
 	 * Sets the labor demand equal to the fixed labor demand.
-	 * Phase B2: Government only hires Regular (R) workers.
+	 * Phase B2.3: Government only hires Regular (R) workers, with type-specific turnover.
 	 */
 	@Override
 	protected void computeLaborDemand() {
-		int currentWorkers = this.employees.size();
+		// Type-specific turnover (Government hires R-only, so only R workers are employed)
+		// All employees are R-type, so we only apply turnoverLaborR
 		AgentList emplPop = new AgentList();
 		for(MacroAgent ag : this.employees)
 			emplPop.add(ag);
 		emplPop.shuffle(prng);
-		for(int i=0;i<this.turnoverLabor*currentWorkers;i++){
+		int turnoverFire = (int) Math.floor(this.turnoverLaborR * emplPop.size());
+		for(int i = 0; i < turnoverFire; i++){
 			fireAgent((MacroAgent)emplPop.get(i));
 		}
 		cleanEmployeeList();
-		currentWorkers = this.employees.size();
+
+		int currentWorkers = this.employees.size();
 		int nbWorkers = this.fixedLaborDemand;
 		if(nbWorkers>currentWorkers){
 			// Phase B2: Government only hires Regular workers
@@ -214,13 +219,41 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	 */
 	public void setProfitsFromCB(double profitsFromCB) {
 		this.profitsFromCB = profitsFromCB;
+	}
+
+	/**
+	 * @return the turnoverLaborR
+	 */
+	public double getTurnoverLaborR() {
+		return turnoverLaborR;
+	}
+
+	/**
+	 * @param turnoverLaborR the turnoverLaborR to set
+	 */
+	public void setTurnoverLaborR(double turnoverLaborR) {
+		this.turnoverLaborR = turnoverLaborR;
+	}
+
+	/**
+	 * @return the turnoverLaborN
+	 */
+	public double getTurnoverLaborN() {
+		return turnoverLaborN;
+	}
+
+	/**
+	 * @param turnoverLaborN the turnoverLaborN to set
+	 */
+	public void setTurnoverLaborN(double turnoverLaborN) {
+		this.turnoverLaborN = turnoverLaborN;
 	}	
 
 	
 	
 	/**
 	 * Populates the agent characteristics using the byte array content. The structure is as follows:
-	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][unemploymentBenefit][laborDemand]
+	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][turnoverLaborR][turnoverLaborN][unemploymentBenefit][laborDemand]
 	 * [laborDemandR][laborDemandN][fixedLaborDemand][bondMaturity][sizeTaxedPop][taxedPopulations][matrixSize][stockMatrixStructure][expSize][ExpectationStructure]
 	 * [passedValSize][PassedValStructure][stratsSize][StrategiesStructure]
 	 */
@@ -233,6 +266,14 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 		bondPrice = buf.getDouble();
 		bondInterestRate = buf.getDouble();
 		turnoverLabor = buf.getDouble();
+		// Backward compatibility for turnoverLaborR/N
+		if(buf.remaining() >= 40) { // 16 for turnoverLaborR/N + 8 for unemploymentBenefit + 4 for laborDemand + 8 for laborDemandR/N + 8 for fixedLaborDemand/bondMaturity
+			turnoverLaborR = buf.getDouble();
+			turnoverLaborN = buf.getDouble();
+		} else {
+			turnoverLaborR = turnoverLabor;
+			turnoverLaborN = turnoverLabor;
+		}
 		unemploymentBenefit = buf.getDouble();
 		laborDemand = buf.getInt();
 
@@ -283,7 +324,7 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	 * protected ArrayList<MacroAgent> employees;
 	protected UnemploymentRateComputer uComputer;
 	 * Generates the byte array containing all relevant informations regarding the household agent. The structure is as follows:
-	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][unemploymentBenefit][laborDemand]
+	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][turnoverLaborR][turnoverLaborN][unemploymentBenefit][laborDemand]
 	 * [laborDemandR][laborDemandN][fixedLaborDemand][bondMaturity][sizeTaxedPop][taxedPopulations][matrixSize][stockMatrixStructure][expSize][ExpectationStructure]
 	 * [passedValSize][PassedValStructure][stratsSize][StrategiesStructure]
 	 */
@@ -294,10 +335,12 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 			byte[] charBytes = super.getAgentCharacteristicsBytes();
 			out.write(ByteBuffer.allocate(4).putInt(charBytes.length).array());
 			out.write(charBytes);
-			ByteBuffer buf = ByteBuffer.allocate(56+4*taxedPopulations.length); // Phase B2: +8 bytes for laborDemandR/N
+			ByteBuffer buf = ByteBuffer.allocate(72+4*taxedPopulations.length); // Phase B2.3: +16 bytes for turnoverLaborR/N
 			buf.putDouble(bondPrice);
 			buf.putDouble(bondInterestRate);
 			buf.putDouble(turnoverLabor);
+			buf.putDouble(turnoverLaborR);
+			buf.putDouble(turnoverLaborN);
 			buf.putDouble(unemploymentBenefit);
 			buf.putInt(laborDemand);
 			buf.putInt(laborDemandR); // Phase B2
