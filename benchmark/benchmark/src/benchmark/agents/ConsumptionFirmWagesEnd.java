@@ -181,7 +181,7 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 	 */
 	@Override
 	protected void computeLaborDemand() {
-		
+
 		int currentWorkers = this.employees.size();
 		AgentList emplPop = new AgentList();
 		for(MacroAgent ag : this.employees)
@@ -192,22 +192,53 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		}
 		cleanEmployeeList();
 		currentWorkers = this.employees.size();
-		
-		int nbWorkers= this.getRequiredWorkers();	
+
+		int nbWorkers= this.getRequiredWorkers();
+
+		// Phase B2: Decompose total demand into R/N using simple ratio
+		double ratioR = 0.65;
+		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
+		int nbWorkersN = nbWorkers - nbWorkersR;
+
+		// Count current workers by type
+		int currentWorkersR = 0;
+		int currentWorkersN = 0;
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == 0) {
+				currentWorkersR++;
+			} else {
+				currentWorkersN++;
+			}
+		}
+
 		if(nbWorkers>currentWorkers){
-			this.laborDemand=nbWorkers-currentWorkers;
+			this.laborDemandR = Math.max(0, nbWorkersR - currentWorkersR);
+			this.laborDemandN = Math.max(0, nbWorkersN - currentWorkersN);
+			this.laborDemand = nbWorkers - currentWorkers;
 		}else{
-			this.laborDemand=0;
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
+			this.laborDemand = 0;
 			emplPop = new AgentList();
 			for(MacroAgent ag : this.employees)
 				emplPop.add(ag);
 			emplPop.shuffle(prng);
 			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.setActive(false, StaticValues.MKT_LABOR_N);
 			for(int i=0;i<currentWorkers-nbWorkers;i++){
 				fireAgent((MacroAgent)emplPop.get(i));
 			}
 		}
-		if (laborDemand>0){
+
+		if (laborDemandR > 0){
+			this.setActive(true, StaticValues.MKT_LABOR_R);
+		}
+		if (laborDemandN > 0){
+			this.setActive(true, StaticValues.MKT_LABOR_N);
+		}
+		if (laborDemand > 0){
 			this.setActive(true, StaticValues.MKT_LABOR);
 		}
 		cleanEmployeeList();

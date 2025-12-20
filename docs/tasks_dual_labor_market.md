@@ -72,7 +72,7 @@
 
 ### A4.1 laborDemand の二重化
 
-* [ ] `laborDemand` を `laborDemandR`, `laborDemandN` に置換（または map/struct で保持）
+* [x] `laborDemand` を `laborDemandR`, `laborDemandN` に置換（または map/struct で保持）
 * [ ] 既存 `setActive(true, StaticValues.MKT_LABOR)` の設計を見直し：
 
   * Rの求人があるなら `MKT_LABOR_R`
@@ -81,7 +81,7 @@
 
 ### A4.2 addEmployee のタイプ認識
 
-* [ ] `addEmployee(LaborSupplier worker)` で worker の `labor_type` を取得し、対応する `laborDemand{R/N}` を減らす
+* [x] `addEmployee(LaborSupplier worker)` で worker の `labor_type` を取得し、対応する `laborDemand{R/N}` を減らす
 * [ ] employees 管理方針を決める
 
   * **推奨（最小改変）**：employeesは1本のまま、必要箇所で type フィルタ
@@ -91,7 +91,7 @@
 
 **Task1で判明した最重要副作用**：支払不能 → 解雇 → `laborDemand += 1` で即再求人
 
-* [ ] 支払不能時に「解雇した worker の type」に応じて
+* [x] 支払不能時に「解雇した worker の type」に応じて
 
   * `laborDemandR += 1` もしくは `laborDemandN += 1`
   * 企業の市場参加も同じタイプ市場へ再参加させる

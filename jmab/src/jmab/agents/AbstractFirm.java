@@ -44,6 +44,9 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	protected double dividends;
 	protected double bailoutCost;
 	protected RandomEngine prng;
+	// Phase B2.3: Partial layoff rates (η_R, η_N)
+	protected double layoffRateR; // Layoff rate for Regular workers (0 < η_R < 1)
+	protected double layoffRateN; // Layoff rate for Non-regular workers (η_R < η_N ≤ 1)
 	
 	/**
 	 * 
@@ -195,6 +198,47 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	}
 
 	/**
+	 * @return the layoffRateR
+	 */
+	public double getLayoffRateR() {
+		return layoffRateR;
+	}
+
+	/**
+	 * @param layoffRateR the layoffRateR to set
+	 */
+	public void setLayoffRateR(double layoffRateR) {
+		this.layoffRateR = layoffRateR;
+	}
+
+	/**
+	 * @return the layoffRateN
+	 */
+	public double getLayoffRateN() {
+		return layoffRateN;
+	}
+
+	/**
+	 * @param layoffRateN the layoffRateN to set
+	 */
+	public void setLayoffRateN(double layoffRateN) {
+		this.layoffRateN = layoffRateN;
+	}
+
+	/**
+	 * Probabilistic rounding for partial layoff calculation.
+	 * Phase B2.3: fire = floor(x) + Bernoulli(frac(x))
+	 * @param value the continuous value to round (e.g., η * excess)
+	 * @return rounded integer with probabilistic bias reduction
+	 */
+	protected int probabilisticRound(double value) {
+		int floor = (int) Math.floor(value);
+		double frac = value - floor;
+		// Bernoulli trial: returns 1 with probability frac, 0 otherwise
+		return floor + (prng.nextDouble() < frac ? 1 : 0);
+	}
+
+	/**
 	 * @return the productionStockId
 	 */
 	public int getProductionStockId() {
@@ -307,7 +351,7 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 
 	/**
 	 * Generates the byte array representing the characteristics of the agent. The structure is the following
-	 * [superStructSize][superStruct][desiredOutput][laborDemand][laborDemandR][laborDemandN][productionStockId][loanLength][loanAmortizationType][clientSize]
+	 * [superStructSize][superStruct][desiredOutput][laborDemand][laborDemandR][laborDemandN][layoffRateR][layoffRateN][productionStockId][loanLength][loanAmortizationType][clientSize]
 	 * for each client
 	 * 	[clientPopId][clientId]
 	 * end for
@@ -317,13 +361,15 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	public byte[] getAgentCharacteristicsBytes(){
 		byte[] superStruct = super.getAgentCharacteristicsBytes();
 		int nbClients = this.clients.size();
-		ByteBuffer buf = ByteBuffer.allocate(superStruct.length+40+12*nbClients); // Phase A4: 32+8 for laborDemandR/N
+		ByteBuffer buf = ByteBuffer.allocate(superStruct.length+56+12*nbClients); // Phase B2.3: +16 for layoffRateR/N
 		buf.putInt(superStruct.length);
 		buf.put(superStruct);
 		buf.putDouble(desiredOutput);
 		buf.putInt(laborDemand);
 		buf.putInt(laborDemandR); // Phase A4
 		buf.putInt(laborDemandN); // Phase A4
+		buf.putDouble(layoffRateR); // Phase B2.3
+		buf.putDouble(layoffRateN); // Phase B2.3
 		buf.putInt(productionStockId);
 		buf.putInt(loanLength);
 		buf.putInt(loanAmortizationType);
@@ -337,7 +383,7 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 
 	/**
 	 * Populates the characteristics of the agent using the byte array content. The structure is the following
-	 * [superStructSize][superStruct][desiredOutput][laborDemand][laborDemandR][laborDemandN][productionStockId][loanLength][loanAmortizationType]
+	 * [superStructSize][superStruct][desiredOutput][laborDemand][laborDemandR][laborDemandN][layoffRateR][layoffRateN][productionStockId][loanLength][loanAmortizationType]
 	 * [clientSize]
 	 * for each client
 	 * 	[clientPopId][clientId]
@@ -365,6 +411,16 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 			// Old format: initialize to zero, will be set in computeLaborDemand
 			this.laborDemandR = 0;
 			this.laborDemandN = 0;
+		}
+
+		// Phase B2.3: Backward compatibility check for layoffRateR/N
+		if(buf.remaining() >= 16) {
+			this.layoffRateR = buf.getDouble();
+			this.layoffRateN = buf.getDouble();
+		} else {
+			// Old format: initialize to default values (1.0 = full layoff)
+			this.layoffRateR = 1.0;
+			this.layoffRateN = 1.0;
 		}
 
 		this.productionStockId = buf.getInt();

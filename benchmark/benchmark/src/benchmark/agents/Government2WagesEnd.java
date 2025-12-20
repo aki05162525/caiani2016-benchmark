@@ -60,7 +60,8 @@ public class Government2WagesEnd extends Government implements LaborDemander, Bo
 	}
 
 	/**
-	 * Sets the labor demand equal to the fixed labor demand
+	 * Sets the labor demand equal to the fixed labor demand.
+	 * Phase B2: Government only hires Regular (R) workers.
 	 */
 	@Override
 	protected void computeLaborDemand() {
@@ -76,10 +77,18 @@ public class Government2WagesEnd extends Government implements LaborDemander, Bo
 		currentWorkers = this.employees.size();
 		int nbWorkers = this.fixedLaborDemand;
 		if(nbWorkers>currentWorkers){
-			this.setActive(true, StaticValues.MKT_LABOR);
+			// Phase B2: Government only hires Regular workers
+			this.laborDemandR = nbWorkers - currentWorkers;
+			this.laborDemandN = 0;
 			this.laborDemand=nbWorkers-currentWorkers;
+			// Activate type-specific market
+			this.setActive(true, StaticValues.MKT_LABOR_R);
+			this.setActive(true, StaticValues.MKT_LABOR); // Legacy
 		}else{
 			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
 			this.laborDemand=0;
 			emplPop = new AgentList();
 			for(MacroAgent ag : this.employees)
@@ -89,7 +98,7 @@ public class Government2WagesEnd extends Government implements LaborDemander, Bo
 				fireAgent((MacroAgent)emplPop.get(i));
 			}
 		}
-		cleanEmployeeList();	
+		cleanEmployeeList();
 	}
 
 	protected void payWages(){

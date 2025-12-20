@@ -139,7 +139,8 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	}
 
 	/**
-	 * Sets the labor demand equal to the fixed labor demand
+	 * Sets the labor demand equal to the fixed labor demand.
+	 * Phase B2: Government only hires Regular (R) workers.
 	 */
 	@Override
 	protected void computeLaborDemand() {
@@ -155,10 +156,18 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 		currentWorkers = this.employees.size();
 		int nbWorkers = this.fixedLaborDemand;
 		if(nbWorkers>currentWorkers){
-			this.setActive(true, StaticValues.MKT_LABOR);
+			// Phase B2: Government only hires Regular workers
+			this.laborDemandR = nbWorkers - currentWorkers;
+			this.laborDemandN = 0;
 			this.laborDemand=nbWorkers-currentWorkers;
+			// Activate type-specific market
+			this.setActive(true, StaticValues.MKT_LABOR_R);
+			this.setActive(true, StaticValues.MKT_LABOR); // Legacy
 		}else{
 			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
 			this.laborDemand=0;
 			emplPop = new AgentList();
 			for(MacroAgent ag : this.employees)
@@ -168,7 +177,7 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 				fireAgent((MacroAgent)emplPop.get(i));
 			}
 		}
-		cleanEmployeeList();	
+		cleanEmployeeList();
 	}
 
 	protected void payWages(){
@@ -212,7 +221,7 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	/**
 	 * Populates the agent characteristics using the byte array content. The structure is as follows:
 	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][unemploymentBenefit][laborDemand]
-	 * [fixedLaborDemand][bondMaturity][sizeTaxedPop][taxedPopulations][matrixSize][stockMatrixStructure][expSize][ExpectationStructure]
+	 * [laborDemandR][laborDemandN][fixedLaborDemand][bondMaturity][sizeTaxedPop][taxedPopulations][matrixSize][stockMatrixStructure][expSize][ExpectationStructure]
 	 * [passedValSize][PassedValStructure][stratsSize][StrategiesStructure]
 	 */
 	@Override
@@ -226,6 +235,17 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 		turnoverLabor = buf.getDouble();
 		unemploymentBenefit = buf.getDouble();
 		laborDemand = buf.getInt();
+
+		// Phase B2: Backward compatibility check for laborDemandR/N
+		if(buf.remaining() >= 8) {
+			this.laborDemandR = buf.getInt();
+			this.laborDemandN = buf.getInt();
+		} else {
+			// Old format: initialize to zero
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
+		}
+
 		fixedLaborDemand = buf.getInt();
 		bondMaturity = buf.getInt();
 		int lengthTaxedPopulatiobns = buf.getInt();
@@ -261,10 +281,10 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	
 	/**
 	 * protected ArrayList<MacroAgent> employees;
-	protected UnemploymentRateComputer uComputer; 
+	protected UnemploymentRateComputer uComputer;
 	 * Generates the byte array containing all relevant informations regarding the household agent. The structure is as follows:
 	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][unemploymentBenefit][laborDemand]
-	 * [fixedLaborDemand][bondMaturity][sizeTaxedPop][taxedPopulations][matrixSize][stockMatrixStructure][expSize][ExpectationStructure]
+	 * [laborDemandR][laborDemandN][fixedLaborDemand][bondMaturity][sizeTaxedPop][taxedPopulations][matrixSize][stockMatrixStructure][expSize][ExpectationStructure]
 	 * [passedValSize][PassedValStructure][stratsSize][StrategiesStructure]
 	 */
 	@Override
@@ -274,12 +294,14 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 			byte[] charBytes = super.getAgentCharacteristicsBytes();
 			out.write(ByteBuffer.allocate(4).putInt(charBytes.length).array());
 			out.write(charBytes);
-			ByteBuffer buf = ByteBuffer.allocate(48+4*taxedPopulations.length);
+			ByteBuffer buf = ByteBuffer.allocate(56+4*taxedPopulations.length); // Phase B2: +8 bytes for laborDemandR/N
 			buf.putDouble(bondPrice);
 			buf.putDouble(bondInterestRate);
 			buf.putDouble(turnoverLabor);
 			buf.putDouble(unemploymentBenefit);
 			buf.putInt(laborDemand);
+			buf.putInt(laborDemandR); // Phase B2
+			buf.putInt(laborDemandN); // Phase B2
 			buf.putInt(fixedLaborDemand);
 			buf.putInt(bondMaturity);
 			buf.putInt(taxedPopulations.length);

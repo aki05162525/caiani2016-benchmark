@@ -172,11 +172,12 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 	/**
 	 * Computes labor demand. In this case, labor demand is equal to the quantity of workers needed to produced
 	 * desired output plus quantity of workers corresponding the desired level of investment in R&D.
+	 * Phase B2: Decomposes total demand into Regular (R) and Non-regular (N) labor types.
 	 */
 	@Override
 	protected void computeLaborDemand() {
 		Expectation expectation = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
-		
+
 		int currentWorkers = this.employees.size();
 		AgentList emplPop = new AgentList();
 		for(MacroAgent ag : this.employees)
@@ -189,11 +190,36 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 		currentWorkers = this.employees.size();
 		double expWages = expectation.getExpectation();
 		int nbWorkers = this.getRequiredWorkers()+(int)Math.round(this.amountResearch/expWages);
-		
+
+		// Phase B2: Decompose total demand into R/N using simple ratio
+		// TODO: Phase C will replace this with CES decomposition
+		double ratioR = 0.65; // TODO: get from parameters
+		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
+		int nbWorkersN = nbWorkers - nbWorkersR;
+
+		// Count current workers by type
+		int currentWorkersR = 0;
+		int currentWorkersN = 0;
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+				currentWorkersR++;
+			} else {
+				currentWorkersN++;
+			}
+		}
+
 		if(nbWorkers>currentWorkers){
+			// Calculate type-specific demands
+			this.laborDemandR = Math.max(0, nbWorkersR - currentWorkersR);
+			this.laborDemandN = Math.max(0, nbWorkersN - currentWorkersN);
 			this.laborDemand=nbWorkers-currentWorkers;
 		}else{
 			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.setActive(false, StaticValues.MKT_LABOR_N);
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
 			this.laborDemand=0;
 			emplPop = new AgentList();
 			for(MacroAgent ag : this.employees)
@@ -204,6 +230,12 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 			}
 		}
 		cleanEmployeeList();
+
+		// Activate type-specific markets based on demands
+		if(this.laborDemandR > 0)
+			this.setActive(true, StaticValues.MKT_LABOR_R);
+		if(this.laborDemandN > 0)
+			this.setActive(true, StaticValues.MKT_LABOR_N);
 		if(this.laborDemand>0)
 			this.setActive(true, StaticValues.MKT_LABOR);
 	}

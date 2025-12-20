@@ -56,6 +56,8 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 
 	protected ArrayList<MacroAgent> employees;
 	protected int laborDemand;
+	protected int laborDemandR; // Phase B2: Regular labor demand (Government hires R-only)
+	protected int laborDemandN; // Phase B2: Non-regular labor demand (always 0 for Government)
 	protected double turnoverLabor;
 	protected int fixedLaborDemand;
 	protected int[] taxedPopulations;
@@ -110,6 +112,8 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	 */
 	@Override
 	public void addEmployee(LaborSupplier worker) {
+		// Phase B2: Government only hires Regular workers
+		this.laborDemandR -= 1;
 		this.laborDemand-=1;
 		this.employees.add(worker);
 		worker.setEmployer(this);
@@ -165,6 +169,12 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 			SelectWorkerStrategy strategy = (SelectWorkerStrategy) this.getStrategy(StaticValues.STRATEGY_LABOR);
 			List<MacroAgent> workers= (List<MacroAgent>)strategy.selectWorkers(event.getObjects(),this.laborDemand);
 			for(MacroAgent worker:workers)
+				macroSim.getActiveMarket().commit(this, worker,marketID);
+			break;
+		case StaticValues.MKT_LABOR_R: // Phase B2: Regular labor market
+			SelectWorkerStrategy strategyR = (SelectWorkerStrategy) this.getStrategy(StaticValues.STRATEGY_LABOR);
+			List<MacroAgent> workersR = (List<MacroAgent>)strategyR.selectWorkers(event.getObjects(),this.laborDemandR);
+			for(MacroAgent worker:workersR)
 				macroSim.getActiveMarket().commit(this, worker,marketID);
 			break;
 		}
@@ -257,16 +267,25 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	}
 
 	/**
-	 * Sets the labor demand equal to the fixed labor demand
+	 * Sets the labor demand equal to the fixed labor demand.
+	 * Phase B2: Government only hires Regular (R) workers.
 	 */
 	protected void computeLaborDemand() {
 		int currentWorkers = this.employees.size();
 		int nbWorkers = this.fixedLaborDemand;
 		if(nbWorkers>currentWorkers){
-			this.setActive(true, StaticValues.MKT_LABOR);
+			// Phase B2: Government only hires Regular workers
+			this.laborDemandR = nbWorkers - currentWorkers;
+			this.laborDemandN = 0;
 			this.laborDemand=nbWorkers-currentWorkers;
+			// Activate type-specific market
+			this.setActive(true, StaticValues.MKT_LABOR_R);
+			this.setActive(true, StaticValues.MKT_LABOR); // Legacy
 		}else{
 			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
 			this.laborDemand=0;
 			AgentList emplPop = new AgentList();
 			for(MacroAgent ag : this.employees)
@@ -281,7 +300,7 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 			Deposit deposit = (Deposit) this.getItemStockMatrix(true, StaticValues.SM_RESERVES);
 			payWages(deposit,StaticValues.MKT_LABOR);
 		}
-		
+
 		cleanEmployeeList();
 	}
 
@@ -321,7 +340,8 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	protected void fireAgent(MacroAgent employee){
 		LaborSupplier emp = (LaborSupplier) employee;
 		emp.setEmployer(null);
-		employee.setActive(true, StaticValues.MKT_LABOR);//the fired workers is reactivated in the labor market
+		// Phase A3/B2: Use setLaborActive to activate type-specific market
+		emp.setLaborActive(true);
 	}
 	
 	/**
@@ -350,6 +370,34 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	 */
 	public void setLaborDemand(int laborDemand) {
 		this.laborDemand = laborDemand;
+	}
+
+	/**
+	 * @return the laborDemandR
+	 */
+	public int getLaborDemandR() {
+		return laborDemandR;
+	}
+
+	/**
+	 * @param laborDemandR the laborDemandR to set
+	 */
+	public void setLaborDemandR(int laborDemandR) {
+		this.laborDemandR = laborDemandR;
+	}
+
+	/**
+	 * @return the laborDemandN
+	 */
+	public int getLaborDemandN() {
+		return laborDemandN;
+	}
+
+	/**
+	 * @param laborDemandN the laborDemandN to set
+	 */
+	public void setLaborDemandN(int laborDemandN) {
+		this.laborDemandN = laborDemandN;
 	}
 
 	/**
@@ -500,7 +548,7 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 
 	/**
 	 * Populates the agent characteristics using the byte array content. The structure is as follows:
-	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][laborDemand][fixedLaborDemand][bondMaturity]
+	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][laborDemand][laborDemandR][laborDemandN][fixedLaborDemand][bondMaturity]
 	 * [sizeTaxedPop][taxedPopulations][matrixSize][stockMatrixStructure][expSize][ExpectationStructure][passedValSize][PassedValStructure]
 	 * [stratsSize][StrategiesStructure]
 	 */
@@ -514,6 +562,17 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 		bondInterestRate = buf.getDouble();
 		turnoverLabor = buf.getDouble();
 		laborDemand = buf.getInt();
+
+		// Phase B2: Backward compatibility check for laborDemandR/N
+		if(buf.remaining() >= 8) {
+			this.laborDemandR = buf.getInt();
+			this.laborDemandN = buf.getInt();
+		} else {
+			// Old format: initialize to zero
+			this.laborDemandR = 0;
+			this.laborDemandN = 0;
+		}
+
 		fixedLaborDemand = buf.getInt();
 		bondMaturity = buf.getInt();
 		int lengthTaxedPopulatiobns = buf.getInt();
@@ -549,9 +608,9 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	
 	/**
 	 * protected ArrayList<MacroAgent> employees;
-	protected UnemploymentRateComputer uComputer; 
+	protected UnemploymentRateComputer uComputer;
 	 * Generates the byte array containing all relevant informations regarding the household agent. The structure is as follows:
-	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][laborDemand][fixedLaborDemand][bondMaturity]
+	 * [sizeMacroAgentStructure][MacroAgentStructure][bondPrice][bondInterestRate][turnoverLabor][laborDemand][laborDemandR][laborDemandN][fixedLaborDemand][bondMaturity]
 	 * [sizeTaxedPop][taxedPopulations][sizeEmployees][employeePopId+employeeId][matrixSize][stockMatrixStructure]
 	 * [expSize][ExpectationStructure][passedValSize][PassedValStructure][stratsSize][StrategiesStructure]
 	 */
@@ -562,11 +621,13 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 			byte[] charBytes = super.getAgentCharacteristicsBytes();
 			out.write(ByteBuffer.allocate(4).putInt(charBytes.length).array());
 			out.write(charBytes);
-			ByteBuffer buf = ByteBuffer.allocate(40+4*taxedPopulations.length);
+			ByteBuffer buf = ByteBuffer.allocate(48+4*taxedPopulations.length); // Phase B2: +8 bytes for laborDemandR/N
 			buf.putDouble(bondPrice);
 			buf.putDouble(bondInterestRate);
 			buf.putDouble(turnoverLabor);
 			buf.putInt(laborDemand);
+			buf.putInt(laborDemandR); // Phase B2
+			buf.putInt(laborDemandN); // Phase B2
 			buf.putInt(fixedLaborDemand);
 			buf.putInt(bondMaturity);
 			buf.putInt(taxedPopulations.length);

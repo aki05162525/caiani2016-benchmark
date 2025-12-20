@@ -81,7 +81,9 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 	protected double debtBurden;
 	protected double debtInterests;
 	protected double interestReceived;
-	protected double turnoverLabor;
+	protected double turnoverLabor; // Legacy: will be deprecated
+	protected double turnoverLaborR; // Phase B2.3: Regular worker turnover rate (ϑ_R)
+	protected double turnoverLaborN; // Phase B2.3: Non-regular worker turnover rate (ϑ_N)
 	protected double expectedVariableCosts;
 
 //TODO check whether targetStock and its getters/setters are really used.
@@ -300,23 +302,52 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 
 	/**
 	 * Compute the labor demand by the firm. First it determine the total amount of workers required to produce
-	 * the desiredOutput through the method getRequiredWorkers: if smaller than the number of current employees the firm 
-	 * fires the last it had hired, otherwise it hires new workers. 
+	 * the desiredOutput through the method getRequiredWorkers: if smaller than the number of current employees the firm
+	 * fires the last it had hired, otherwise it hires new workers.
+	 * Phase B2.3: Implements type-specific turnover (ϑ_R, ϑ_N) and partial layoff (η_R, η_N).
 	 */
 	protected void computeLaborDemand() {
 
-		int currentWorkers = this.employees.size();
-		AgentList emplPop = new AgentList();
-		for(MacroAgent ag : this.employees)
-			emplPop.add(ag);
-		emplPop.shuffle(prng);
-		for(int i=0;i<this.turnoverLabor*currentWorkers;i++){
-			fireAgent((MacroAgent)emplPop.get(i));
+		// Phase B2.3: Type-specific turnover
+		// Separate workers by type
+		AgentList workersR = new AgentList();
+		AgentList workersN = new AgentList();
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+				workersR.add(emp);
+			} else {
+				workersN.add(emp);
+			}
+		}
+
+		// Turnover firing by type
+		workersR.shuffle(prng);
+		workersN.shuffle(prng);
+		int turnoverFireR = (int) Math.floor(this.turnoverLaborR * workersR.size());
+		int turnoverFireN = (int) Math.floor(this.turnoverLaborN * workersN.size());
+		for(int i = 0; i < turnoverFireR; i++) {
+			fireAgent((MacroAgent)workersR.get(i));
+		}
+		for(int i = 0; i < turnoverFireN; i++) {
+			fireAgent((MacroAgent)workersN.get(i));
 		}
 		cleanEmployeeList();
-		currentWorkers = this.employees.size();
 
-		int nbWorkers= this.getRequiredWorkers();
+		// Count current workers by type (after turnover)
+		int currentWorkersR = 0;
+		int currentWorkersN = 0;
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+				currentWorkersR++;
+			} else {
+				currentWorkersN++;
+			}
+		}
+		int currentWorkers = this.employees.size();
+
+		int nbWorkers = this.getRequiredWorkers();
 
 		// Phase B2: Decompose total demand into R/N using simple ratio
 		// TODO Phase C: Replace with CES decomposition
@@ -324,49 +355,56 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
 		int nbWorkersN = nbWorkers - nbWorkersR;
 
-		// Count current workers by type
-		int currentWorkersR = 0;
-		int currentWorkersN = 0;
-		for(MacroAgent emp : this.employees) {
-			LaborSupplier worker = (LaborSupplier) emp;
-			if(worker.getLaborType() == 0) { // LABOR_TYPE_R
-				currentWorkersR++;
-			} else {
-				currentWorkersN++;
-			}
-		}
-
-		if(nbWorkers>currentWorkers){
+		// Phase B2.3: Partial layoff with probabilistic rounding
+		if(nbWorkers > currentWorkers) {
 			// Hiring: calculate type-specific demands
 			this.laborDemandR = Math.max(0, nbWorkersR - currentWorkersR);
 			this.laborDemandN = Math.max(0, nbWorkersN - currentWorkersN);
 			this.laborDemand = nbWorkers - currentWorkers; // Legacy
-		}else{
-			// Firing: Phase B2 Step 1 keeps full firing, will implement partial firing later
+		} else {
+			// Layoff: partial firing by type
+			int excessR = Math.max(0, currentWorkersR - nbWorkersR);
+			int excessN = Math.max(0, currentWorkersN - nbWorkersN);
+			int fireR = probabilisticRound(this.layoffRateR * excessR);
+			int fireN = probabilisticRound(this.layoffRateN * excessN);
+
+			// Fire workers by type
+			AgentList emplPopR = new AgentList();
+			AgentList emplPopN = new AgentList();
+			for(MacroAgent emp : this.employees) {
+				LaborSupplier worker = (LaborSupplier) emp;
+				if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+					emplPopR.add(emp);
+				} else {
+					emplPopN.add(emp);
+				}
+			}
+			emplPopR.shuffle(prng);
+			emplPopN.shuffle(prng);
+			for(int i = 0; i < fireR; i++) {
+				fireAgent((MacroAgent)emplPopR.get(i));
+			}
+			for(int i = 0; i < fireN; i++) {
+				fireAgent((MacroAgent)emplPopN.get(i));
+			}
+
 			this.laborDemandR = 0;
 			this.laborDemandN = 0;
 			this.laborDemand = 0;
 			this.setActive(false, StaticValues.MKT_LABOR);
 			this.setActive(false, StaticValues.MKT_LABOR_R);
 			this.setActive(false, StaticValues.MKT_LABOR_N);
-			emplPop = new AgentList();
-			for(MacroAgent ag : this.employees)
-				emplPop.add(ag);
-			emplPop.shuffle(prng);
-			for(int i=0;i<currentWorkers-nbWorkers;i++){
-				fireAgent((MacroAgent)emplPop.get(i));
-			}
 		}
 
 		// Phase B2: Activate type-specific labor markets
-		if (laborDemandR > 0){
+		if (laborDemandR > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR_R);
 		}
-		if (laborDemandN > 0){
+		if (laborDemandN > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR_N);
 		}
 		// Legacy market activation (for backward compatibility)
-		if (laborDemand > 0){
+		if (laborDemand > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR);
 		}
 		if(employees.size()>0){
@@ -1011,7 +1049,35 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 	public void setTurnoverLabor(double turnoverLabor) {
 		this.turnoverLabor = turnoverLabor;
 	}
-	
+
+	/**
+	 * @return the turnoverLaborR
+	 */
+	public double getTurnoverLaborR() {
+		return turnoverLaborR;
+	}
+
+	/**
+	 * @param turnoverLaborR the turnoverLaborR to set
+	 */
+	public void setTurnoverLaborR(double turnoverLaborR) {
+		this.turnoverLaborR = turnoverLaborR;
+	}
+
+	/**
+	 * @return the turnoverLaborN
+	 */
+	public double getTurnoverLaborN() {
+		return turnoverLaborN;
+	}
+
+	/**
+	 * @param turnoverLaborN the turnoverLaborN to set
+	 */
+	public void setTurnoverLaborN(double turnoverLaborN) {
+		this.turnoverLaborN = turnoverLaborN;
+	}
+
 	protected void payDividends(){
 		if (!this.defaulted){
 		DividendsStrategy strategy=(DividendsStrategy)this.getStrategy(StaticValues.STRATEGY_DIVIDENDS);
@@ -1056,6 +1122,17 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		debtInterests = buf.getDouble();
 		interestReceived = buf.getDouble();
 		turnoverLabor = buf.getDouble();
+
+		// Phase B2.3: Backward compatibility for turnoverLaborR/N
+		if(buf.remaining() >= 16) {
+			turnoverLaborR = buf.getDouble();
+			turnoverLaborN = buf.getDouble();
+		} else {
+			// Old format: use legacy turnoverLabor for both types
+			turnoverLaborR = turnoverLabor;
+			turnoverLaborN = turnoverLabor;
+		}
+
 		int lengthDebtPayments = buf.getInt();
 		debtPayments = new double[lengthDebtPayments][3];
 		for(int i = 0 ; i < debtPayments.length ; i++){
@@ -1104,7 +1181,7 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 	/**
 	 * Generates the byte array containing all relevant informations regarding the consumption firm agent. The structure is as follows:
 	 * [sizeMacroAgentStructure][MacroAgentStructure][targetStock][creditdDemanded][desiredCapacityGrowth][desiredRealCapitalDemand]
-	 * [debtBurden][debtInterests][interestReceived][turnoverLabor][sizeDebtPayments][debtPayments]
+	 * [debtBurden][debtInterests][interestReceived][turnoverLabor][turnoverLaborR][turnoverLaborN][sizeDebtPayments][debtPayments]
 	 * [sizeSuppliers][suppliersPopId and suppliersId][matrixSize][stockMatrixStructure][expSize][ExpectationStructure]
 	 * [passedValSize][PassedValStructure][stratsSize][StrategiesStructure]
 	 */
@@ -1115,7 +1192,7 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 			byte[] charBytes = super.getAgentCharacteristicsBytes();
 			out.write(ByteBuffer.allocate(4).putInt(charBytes.length).array());
 			out.write(charBytes);
-			ByteBuffer buf = ByteBuffer.allocate(72+3*debtPayments.length*8+this.selectedCapitalGoodSuppliers.size()*12);
+			ByteBuffer buf = ByteBuffer.allocate(88+3*debtPayments.length*8+this.selectedCapitalGoodSuppliers.size()*12); // Phase B2.3: +16 for turnoverLaborR/N
 			buf.putDouble(targetStock);
 			buf.putDouble(creditDemanded);
 			buf.putDouble(desiredCapacityGrowth);
@@ -1123,7 +1200,9 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 			buf.putDouble(debtBurden);
 			buf.putDouble(debtInterests);
 			buf.putDouble(interestReceived);
-			buf.putDouble(turnoverLabor);			
+			buf.putDouble(turnoverLabor);
+			buf.putDouble(turnoverLaborR); // Phase B2.3
+			buf.putDouble(turnoverLaborN); // Phase B2.3
 			buf.putInt(debtPayments.length);
 			for(int i = 0 ; i < debtPayments.length ; i++){
 				buf.putDouble(debtPayments[i][0]);
