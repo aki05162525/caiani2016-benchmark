@@ -237,11 +237,30 @@ public static int MKT_LABOR_N=8; // Non-regular labor market
 - [x] 参照箇所を全て洗い出し
 - [x] 移行戦略を文書化
 
-### Phase A2-A4（次のステップ）
-- [ ] Households に labor_type 属性を追加
-- [ ] Households の労働市場参加をタイプ別に（3箇所）
+### Phase A2 ✓
+- [x] Households に labor_type 属性を追加（int型、LABOR_TYPE_R=0 / LABOR_TYPE_N=1）
+- [x] getter/setter、シリアライゼーション対応完了
+- [x] Households の労働市場参加をタイプ別に（3箇所）
+  - computeWage() (行210-212)
+  - setLaborActive() (行618-620)
+  - getPayableStock() (行155-157)
+- [x] SFCSSMacroAgentInitialiser で初期化ロジック実装
+- [x] XML設定ファイルに laborTypeRatioR パラメータ追加（デフォルト0.65）
+
+### Phase A3 ✓
+- [x] TIC_LABORSUPPLY イベントフローを確認（computeWage経由で正しく動作）
+- [x] 家計側の労働供給ロジック完了（常に自分のタイプ市場に参加）
+- [x] 追加調整不要（家計側は完全実装済み）
+
+**Phase A3 Note**: 解雇時の再求職については、企業・政府側の対応（Phase A4/B2）で以下を修正予定：
+- Government.java:324 の `employee.setActive(true, MKT_LABOR)` を `emp.setLaborActive(true)` に変更
+- 同様の箇所が他のクラスにもある可能性（Phase A4で対応）
+
+### Phase A4（次のステップ）
 - [ ] AbstractFirm（または各企業）の laborDemand をタイプ別に
+- [ ] addEmployee で worker の labor_type を確認
 - [ ] payWages の支払不能時再求人をタイプ別に
+- [ ] fireAgent メソッドを setLaborActive 使用に修正
 
 ### Phase B2
 - [ ] ConsumptionFirm.computeLaborDemand をタイプ別化（6箇所）
