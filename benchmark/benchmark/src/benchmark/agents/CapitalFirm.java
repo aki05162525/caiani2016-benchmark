@@ -947,8 +947,22 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 	 */
 	@Override
 	public double getPriceLowerBound() {
-		double expectedAverageVarCosts=this.getExpectation(StaticValues.EXPECTATIONS_WAGES).getExpectation()/this.getLaborProductivity();
-		expectedVariableCosts=expectedAverageVarCosts;
+		Expectation expWageRExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
+		Expectation expWageNExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
+		Expectation expWageLegacyExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
+		double expWageLegacy = expWageLegacyExp.getExpectation();
+		double expWageR = expWageRExp != null ? expWageRExp.getExpectation() : expWageLegacy;
+		double expWageN = expWageNExp != null ? expWageNExp.getExpectation() : expWageLegacy;
+		int requiredWorkers = this.getRequiredWorkers();
+		if (requiredWorkers <= 0) {
+			expectedVariableCosts = 0;
+			return 0;
+		}
+		double ratio = computeLaborRatio(expWageR, expWageN);
+		double[] split = computeLaborSplit(requiredWorkers, ratio);
+		double expectedVariableCostsLocal = expWageR * split[0] + expWageN * split[1];
+		double expectedAverageVarCosts = expectedVariableCostsLocal / Math.max(requiredWorkers, this.getCesEpsilon());
+		expectedVariableCosts = expectedAverageVarCosts;
 		return expectedAverageVarCosts;
 	}
 

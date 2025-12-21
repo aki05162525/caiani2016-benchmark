@@ -979,11 +979,17 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 			}			
 			double expectedAverageCosts=(amortisationCosts+expectedVariableCosts)/this.getDesiredOutput();
 			//*/
-			double expectedVariableCosts=this.getExpectation(StaticValues.EXPECTATIONS_WAGES).getExpectation()*this.getRequiredWorkers();
-		    if (Double.isNaN(expectedVariableCosts)){
-		    	System.out.println("Error");
-		    }
-			expectedAverageCosts=(expectedVariableCosts)/this.getDesiredOutput();
+			Expectation expWageRExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
+			Expectation expWageNExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
+			Expectation expWageLegacyExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
+			double expWageLegacy = expWageLegacyExp.getExpectation();
+			double expWageR = expWageRExp != null ? expWageRExp.getExpectation() : expWageLegacy;
+			double expWageN = expWageNExp != null ? expWageNExp.getExpectation() : expWageLegacy;
+			int requiredWorkers = this.getRequiredWorkers();
+			double ratio = computeLaborRatio(expWageR, expWageN);
+			double[] split = computeLaborSplit(requiredWorkers, ratio);
+			double expectedVariableCosts = expWageR * split[0] + expWageN * split[1];
+			expectedAverageCosts=expectedVariableCosts/Math.max(this.getDesiredOutput(), this.getCesEpsilon());
 			
 		
 		}else{
@@ -1029,13 +1035,18 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 					}
 				}
 			}
-			double expectedVariableCosts=this.getExpectation(StaticValues.EXPECTATIONS_WAGES).getExpectation()*requiredWorkers;
-			//if (Double.isNaN(expectedVariableCosts)){
-				//System.out.println("Error");
-			//}
-			expectedAverageCosts=(expectedVariableCosts)/inventoriesLeft.getQuantity();
-		}
-		}
+			Expectation expWageRExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
+			Expectation expWageNExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
+			Expectation expWageLegacyExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
+			double expWageLegacy = expWageLegacyExp.getExpectation();
+			double expWageR = expWageRExp != null ? expWageRExp.getExpectation() : expWageLegacy;
+			double expWageN = expWageNExp != null ? expWageNExp.getExpectation() : expWageLegacy;
+			double ratio = computeLaborRatio(expWageR, expWageN);
+			double[] split = computeLaborSplit(requiredWorkers, ratio);
+			double expectedVariableCosts = expWageR * split[0] + expWageN * split[1];
+			expectedAverageCosts=expectedVariableCosts/Math.max(inventoriesLeft.getQuantity(), this.getCesEpsilon());
+			}
+			}
 		expectedVariableCosts=expectedAverageCosts;
 		
 		return expectedAverageCosts;
