@@ -113,16 +113,29 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	private void payUnemploymentBenefits(SimulationController simulationController) {
 		MacroPopulation macroPop = (MacroPopulation) simulationController.getPopulation();
 		Population households= (Population) macroPop.getPopulation(StaticValues.HOUSEHOLDS_ID);
-		double averageWage=0;
-		double employed=0;
+		double wagebillR = 0;
+		double wagebillN = 0;
+		int employedR = 0;
+		int employedN = 0;
 		for(Agent agent:households.getAgents()){
 			Households worker= (Households) agent;
 			if (worker.getEmployer()!=null){
-				averageWage+=worker.getWage();
-				employed+=1;
+				if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+					wagebillR += worker.getWage();
+					employedR += 1;
+				} else {
+					wagebillN += worker.getWage();
+					employedN += 1;
+				}
 			}
 		}
-		averageWage=averageWage/employed;
+		double totalEmployed = employedR + employedN;
+		double averageWage = 0;
+		if (totalEmployed > 0) {
+			double avgWageR = employedR > 0 ? wagebillR / employedR : 0;
+			double avgWageN = employedN > 0 ? wagebillN / employedN : 0;
+			averageWage = (avgWageR * employedR + avgWageN * employedN) / totalEmployed;
+		}
 		double unemploymentBenefit=averageWage*this.unemploymentBenefit;
 		double doleAmount=0;
 		for(Agent agent:households.getAgents()){

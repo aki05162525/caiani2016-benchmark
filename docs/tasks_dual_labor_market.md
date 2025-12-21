@@ -368,9 +368,9 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 **対象**：GovernmentAntiCyclical.payUnemploymentBenefits（Task1: 行111-139）
 
-* [ ] type 別平均賃金 `W_R, W_N` と雇用者数 `N_R_total, N_N_total` を集計
-* [ ] `bar_w = (W_R*N_R_total + W_N*N_N_total) / (N_R_total + N_N_total)`
-* [ ] `dole = ω * bar_w` に置換（既存の unemploymentBenefit との関係はパラメータ設計で整理）
+* [x] type 別平均賃金 `W_R, W_N` と雇用者数 `N_R_total, N_N_total` を集計
+* [x] `bar_w = (W_R*N_R_total + W_N*N_N_total) / (N_R_total + N_N_total)`
+* [x] `dole = ω * bar_w` に置換（既存の unemploymentBenefit との関係はパラメータ設計で整理）
 
 **Done**：労働市場構造（R/N比率）に応じて給付が自然に変動。
 
