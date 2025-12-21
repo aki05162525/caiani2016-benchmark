@@ -408,6 +408,33 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	}
 
 	/**
+	 * Computes the closed-form CES split of total labor demand.
+	 * Returns [nR, nN] with guards for numerical stability.
+	 */
+	protected double[] computeLaborSplit(double nTotal, double ratio) {
+		if (nTotal <= cesEpsilon) {
+			return new double[] {0.0, 0.0};
+		}
+		if (cesDelta <= 0.0 || cesDelta >= 1.0) {
+			throw new IllegalArgumentException("cesDelta must be in (0,1)");
+		}
+		if (Math.abs(cesRho) < 1e-12) {
+			throw new IllegalArgumentException("cesRho must be non-zero");
+		}
+		if (cesAR <= 0.0 || cesAN <= 0.0 || cesEpsilon <= 0.0) {
+			throw new IllegalArgumentException("cesAR, cesAN, cesEpsilon must be > 0");
+		}
+		double adjRatio = Math.max(ratio, cesEpsilon);
+		double term = cesDelta * Math.pow(cesAR * adjRatio, cesRho)
+				+ (1.0 - cesDelta) * Math.pow(cesAN, cesRho);
+		double denom = Math.pow(Math.max(term, cesEpsilon), 1.0 / cesRho);
+		denom = Math.max(denom, cesEpsilon);
+		double nN = nTotal / denom;
+		double nR = adjRatio * nN;
+		return new double[] {nR, nN};
+	}
+
+	/**
 	 * @return the productionStockId
 	 */
 	public int getProductionStockId() {

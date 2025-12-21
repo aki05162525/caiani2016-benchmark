@@ -206,11 +206,15 @@ public class CapitalFirmWagesEnd extends CapitalFirm implements GoodSupplier,
 		double expWages = expectation.getExpectation();
 		int nbWorkers = this.getRequiredWorkers()+(int)Math.round(this.amountResearch/expWages);
 
-		// Phase B2: Decompose total demand into R/N using simple ratio
-		// TODO: Phase C will replace this with CES decomposition
-		double ratioR = 0.65; // TODO: get from parameters
-		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
-		int nbWorkersN = nbWorkers - nbWorkersR;
+		// Phase C3: CES closed-form decomposition of total demand
+		Expectation expWageRExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
+		Expectation expWageNExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
+		double expWageR = expWageRExp != null ? expWageRExp.getExpectation() : expWages;
+		double expWageN = expWageNExp != null ? expWageNExp.getExpectation() : expWages;
+		double ratio = computeLaborRatio(expWageR, expWageN);
+		double[] split = computeLaborSplit(nbWorkers, ratio);
+		int nbWorkersR = Math.min(nbWorkers, Math.max(0, (int) Math.round(split[0])));
+		int nbWorkersN = Math.max(0, nbWorkers - nbWorkersR);
 
 		// 2. Count current workers by type
 		int currentWorkersR = 0;

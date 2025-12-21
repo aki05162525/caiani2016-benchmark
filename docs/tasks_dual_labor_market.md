@@ -283,13 +283,13 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 ## C3. `(N^{D,R}, N^{D,N})` の閉形式計算（あなたの4.3を採用）
 
-* [ ] **前提**：ratio は clip 後の値を所与として配分（安定性優先）
-* [ ] `Denom = [ δ * (A_R * ratio)^ρ + (1-δ) * (A_N)^ρ ]^(1/ρ)`
+* [x] **前提**：ratio は clip 後の値を所与として配分（安定性優先）
+* [x] `Denom = [ δ * (A_R * ratio)^ρ + (1-δ) * (A_N)^ρ ]^(1/ρ)`
 
   * `Denom = max(Denom, ε)`
-* [ ] `N^{D,N} = N^D / Denom`
-* [ ] `N^{D,R} = ratio * N^{D,N}`
-* [ ] `N^D < ε` は早期リターンで 0
+* [x] `N^{D,N} = N^D / Denom`
+* [x] `N^{D,R} = ratio * N^{D,N}`
+* [x] `N^D < ε` は早期リターンで 0
 
 **Done**：`N_eff(N^{D,R}, N^{D,N}) ≈ N^D`（相対誤差 < tol）を検算で満たす。
 
@@ -303,9 +303,9 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 * CapitalFirm.getRequiredWorkers()
 
-* [ ] 既存 `getRequiredWorkers()` は **N^D（実効労働需要）**として残す（戻り値は従来通り int でもよい）
+* [x] 既存 `getRequiredWorkers()` は **N^D（実効労働需要）**として残す（戻り値は従来通り int でもよい）
 
-* [ ] computeLaborDemand() 内で `N^D → (N^{D,R}, N^{D,N})` を導入し、以後の調整・求人をタイプ別に行う
+* [x] computeLaborDemand() 内で `N^D → (N^{D,R}, N^{D,N})` を導入し、以後の調整・求人をタイプ別に行う
 
 **Done**：既存の生産・価格・会計の前提を壊さずに「需要分解」を注入できる。
 
@@ -315,10 +315,10 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 **対象**：ConsumptionFirm.produce（Task1: 行446-511）／CapitalFirm 側も同様
 
-* [ ] `employees.size()` ベースの労働投入を `N_eff(N_R, N_N)` に差し替える
+* [x] `employees.size()` ベースの労働投入を `N_eff(N_R, N_N)` に差し替える
 
   * employees 1本運用の場合：`N_R, N_N` を employees から type でカウント
-* [ ] unit cost 計算等が `outputQty` 依存なので、ゼロ割回避（ε）を入れる
+* [x] unit cost 計算等が `outputQty` 依存なので、ゼロ割回避（ε）を入れる
 
 **Done**：R/N構成が生産能力に反映され、労働不足時に矛盾が出ない。
 

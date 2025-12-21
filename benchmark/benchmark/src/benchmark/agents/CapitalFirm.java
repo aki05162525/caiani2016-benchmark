@@ -406,15 +406,26 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 	 */
 	protected void produce() {
 		double outputQty=0;
-		if(this.employees.size()>0){
+		int countR = 0;
+		int countN = 0;
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+				countR++;
+			} else {
+				countN++;
+			}
+		}
+		double effectiveLabor = computeEffectiveLabor(countR, countN);
+		if(effectiveLabor > 0){
 			int outputLaborDemand=this.getRequiredWorkers();
 			if(this.laborDemand>0){//Constrained case
 				Expectation expectation = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
 				double expWages = expectation.getExpectation();
 				int researchDemandLabor=(int)Math.floor(this.amountResearch/expWages);
 				int totalDemandLabor=outputLaborDemand+researchDemandLabor;
-				int ActualLabor=this.employees.size();
-				int ActualOutputLabor=Math.round(outputLaborDemand/totalDemandLabor*ActualLabor);//labor dedicated to production is 
+				double ActualLabor=effectiveLabor;
+				int ActualOutputLabor=Math.round(outputLaborDemand/totalDemandLabor*(float)ActualLabor);//labor dedicated to production is 
 				//actual total workers hired multiplied by the share of desired workers for production purpose over total desired workers
 				outputQty=ActualOutputLabor*this.laborProductivity;
 			}else{			
@@ -422,7 +433,7 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 			}
 			CapitalGood inventories = (CapitalGood)this.getItemStockMatrix(true, this.getProductionStockId());
 			inventories.setQuantity(inventories.getQuantity()+outputQty);
-			inventories.setUnitCost(this.getWageBill()/outputQty);
+			inventories.setUnitCost(this.getWageBill()/Math.max(outputQty, this.getCesEpsilon()));
 		}
 		this.addValue(StaticValues.LAG_PRODUCTION, outputQty);
 	}
@@ -477,11 +488,15 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 		double expWages = expectation.getExpectation();
 		int nbWorkers = this.getRequiredWorkers()+(int)Math.floor(this.amountResearch/expWages);
 
-		// Phase B2: Decompose total demand into R/N using simple ratio
-		// TODO Phase C: Replace with CES decomposition
-		double ratioR = 0.65; // TODO: get from parameters (use laborTypeRatioR)
-		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
-		int nbWorkersN = nbWorkers - nbWorkersR;
+		// Phase C3: CES closed-form decomposition of total demand
+		Expectation expWageRExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
+		Expectation expWageNExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
+		double expWageR = expWageRExp != null ? expWageRExp.getExpectation() : expWages;
+		double expWageN = expWageNExp != null ? expWageNExp.getExpectation() : expWages;
+		double ratio = computeLaborRatio(expWageR, expWageN);
+		double[] split = computeLaborSplit(nbWorkers, ratio);
+		int nbWorkersR = Math.min(nbWorkers, Math.max(0, (int) Math.round(split[0])));
+		int nbWorkersN = Math.max(0, nbWorkers - nbWorkersR);
 
 		// Phase B2.3: Partial layoff with probabilistic rounding
 		if(nbWorkers>currentWorkers){

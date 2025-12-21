@@ -359,11 +359,17 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 
 		int nbWorkers = this.getRequiredWorkers();
 
-		// Phase B2: Decompose total demand into R/N using simple ratio
-		// TODO Phase C: Replace with CES decomposition
-		double ratioR = 0.65; // TODO: get from parameters (use laborTypeRatioR)
-		int nbWorkersR = (int) Math.round(nbWorkers * ratioR);
-		int nbWorkersN = nbWorkers - nbWorkersR;
+		// Phase C3: CES closed-form decomposition of total demand
+		Expectation expWageRExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
+		Expectation expWageNExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
+		Expectation expWageLegacyExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
+		double expWageLegacy = expWageLegacyExp.getExpectation();
+		double expWageR = expWageRExp != null ? expWageRExp.getExpectation() : expWageLegacy;
+		double expWageN = expWageNExp != null ? expWageNExp.getExpectation() : expWageLegacy;
+		double ratio = computeLaborRatio(expWageR, expWageN);
+		double[] split = computeLaborSplit(nbWorkers, ratio);
+		int nbWorkersR = Math.min(nbWorkers, Math.max(0, (int) Math.round(split[0])));
+		int nbWorkersN = Math.max(0, nbWorkers - nbWorkersR);
 
 		// Phase B2.3: Partial layoff with probabilistic rounding
 		if(nbWorkers > currentWorkers) {
@@ -531,7 +537,18 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		double outputQty=0;
 		double capacity=0;
 		double capValue=0;
-		if(this.employees.size()>0){
+		int countR = 0;
+		int countN = 0;
+		for(MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+				countR++;
+			} else {
+				countN++;
+			}
+		}
+		double effectiveLabor = computeEffectiveLabor(countR, countN);
+		if(effectiveLabor > 0){
 			List<Item> currentCapitalStock = this.getItemsStockMatrix(true, StaticValues.SM_CAPGOOD);
 			TreeMap<Double,ArrayList<CapitalGood>> orderedCapital = new TreeMap<Double,ArrayList<CapitalGood>>();
 			double amortisationCosts=0;
@@ -551,7 +568,7 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 				}
 
 			}
-			double residualWorkers=this.employees.size();
+			double residualWorkers=effectiveLabor;
 			for (Double key:orderedCapital.descendingKeySet()){
 				for(CapitalGood capital:orderedCapital.get(key)){
 					double employedWorkers = capital.getQuantity()/capital.getCapitalLaborRatio();
@@ -569,7 +586,7 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 			}
 			ConsumptionGood inventories = (ConsumptionGood)this.getItemStockMatrix(true, this.getProductionStockId());
 			inventories.setQuantity(inventories.getQuantity()+outputQty);
-			inventories.setUnitCost((amortisationCosts+this.getWageBill())/outputQty);
+			inventories.setUnitCost((amortisationCosts+this.getWageBill())/Math.max(outputQty, this.getCesEpsilon()));
 		}
 		else{
 			List<Item> currentCapitalStock = this.getItemsStockMatrix(true, StaticValues.SM_CAPGOOD);
