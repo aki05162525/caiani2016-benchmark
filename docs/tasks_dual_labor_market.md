@@ -95,7 +95,7 @@
 
   * `laborDemandR += 1` もしくは `laborDemandN += 1`
   * 企業の市場参加も同じタイプ市場へ再参加させる
-* [ ] `fireAgent()` は既存の雇用関係解消でOK（ただし worker 側が市場参加する際に type 市場へ出ることが前提）
+* [x] `fireAgent()` は既存の雇用関係解消でOK（ただし worker 側が市場参加する際に type 市場へ出ることが前提）
 
 **Done**：支払不能イベントが起きても R/N の求人・再求人・失業プールが混線しない。
 
@@ -387,7 +387,6 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 * [x] δ, ρ(≠0), A_R, A_N（CESパラメータをXMLで設定。企業向けのみ適用）
 * [x] ε, φ_min, φ_max（CESパラメータ/クリップ範囲をXMLで設定。企業向けのみ適用）
 * [x] ω（GovernmentAntiCyclical.unemploymentBenefit として設定済み）
-* [ ] （任意）c1_R, c1_N, c2（需要側フィードバックを入れるなら）
 
 ## P2. 起動時バリデーション
 
@@ -414,8 +413,8 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 ## T3. 簡易挙動確認
 
-* [ ] `η_R < η_N` でショック時にRが維持されやすい
-* [ ] `υ_N < υ_R` で好況時もN賃金が上がりにくい
+* [x] `η_R < η_N` でショック時にRが維持されやすい
+* [x] `υ_N < υ_R` で好況時もN賃金が上がりにくい
 
 ---
 

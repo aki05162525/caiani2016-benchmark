@@ -153,12 +153,18 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 		// Phase A4: Decrease type-specific labor demand
 		int laborType = worker.getLaborType();
 		if(laborType == 0) { // LABOR_TYPE_R
-			this.laborDemandR -= 1;
+			if (this.laborDemandR > 0) {
+				this.laborDemandR -= 1;
+			}
 		} else { // LABOR_TYPE_N
-			this.laborDemandN -= 1;
+			if (this.laborDemandN > 0) {
+				this.laborDemandN -= 1;
+			}
 		}
 		// Legacy: also decrease total demand for backward compatibility
-		this.laborDemand -= 1;
+		if (this.laborDemand > 0) {
+			this.laborDemand -= 1;
+		}
 		this.employees.add(worker);
 		worker.setEmployer(this);
 	}

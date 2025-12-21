@@ -4,10 +4,12 @@ This note summarizes the CSV series added for the dual labor market (R/N).
 
 ## Macro CSV files (data/*.csv)
 
+Files are saved under `benchmark/benchmark/data` with a run suffix (e.g., `unemploymentR1.csv`).
+
 - `unemploymentR.csv`: Unemployment rate for R-type households.
 - `unemploymentN.csv`: Unemployment rate for N-type households.
-- `avWageR.csv`: Average reservation wage for R-type households.
-- `avWageN.csv`: Average reservation wage for N-type households.
+- `avWageR.csv`: Average reservation wage for R-type households (not wage bill per employed).
+- `avWageN.csv`: Average reservation wage for N-type households (not wage bill per employed).
 - `employmentR.csv`: Employed headcount for R-type households.
 - `employmentN.csv`: Employed headcount for N-type households.
 - `laborForceR.csv`: Labor force size for R-type households.
@@ -24,7 +26,7 @@ This note summarizes the CSV series added for the dual labor market (R/N).
 ## Definitions
 
 - Unemployment rate: `1 - employed / laborForce` within each type.
-- Average wage: mean of `Households.getWage()` within each type.
+- Average wage: mean of `Households.getWage()` within each type (reservation wage, includes unemployed).
 - Employment: count of `LaborSupplier.isEmployed()` within each type.
 - Labor force: count of households within each type.
 - Unemployment count: count of households with `isEmployed() == false` within each type.

@@ -9,6 +9,21 @@
 - **市場/イベント**: `TIC_CONSUMPTIONPRICE`（消費財価格設定）、`TIC_CREDITDEMAND`（信用需要）、`TIC_LABORDEMAND`/`TIC_LABORSUPPLY`、`TIC_PRODUCTION`、`TIC_BOND*` などが各エージェントでスイッチに使われる。
 - **SFC**: 各 `TIC_*` は取引の順序を固定し、在庫→生産→利払い→税→配当→預金・債券への最終ポートフォリオ選択というフローの整合を保つ。`SM_*` ID で資産／負債の二重仕訳が強制される。
 
+## 二重労働市場（R/N）の拡張ポイント
+
+- **市場ID**: `MKT_LABOR_R` / `MKT_LABOR_N` を追加し、Households は自分のタイプ市場のみ参加。
+- **需要分解**: 企業は CES に基づく `N^D -> (N_R^D, N_N^D)` を計算し、需要がある市場だけアクティブ化。
+- **雇用/解雇**: タイプ別需要・解雇率（`eta_R`, `eta_N`）で部分解雇。採用は `laborDemandR/N` を上限にする。
+- **賃金期待**: `W_R^e`, `W_N^e` を持ち、家計の賃金更新は `u_R`, `u_N` を参照。
+- **政府**: 政府雇用はRのみ。失業給付はタイプ別平均賃金の加重平均を使用。
+- **代表的な実装箇所**:
+  - `benchmark/benchmark/src/benchmark/agents/Households.java`
+  - `jmab/src/jmab/agents/AbstractFirm.java`
+  - `benchmark/benchmark/src/benchmark/agents/ConsumptionFirm.java`
+  - `benchmark/benchmark/src/benchmark/agents/CapitalFirm.java`
+  - `benchmark/benchmark/src/benchmark/agents/Government.java`
+  - `benchmark/benchmark/Model/modelBenchmark_full.xml`
+
 ## 初期化（benchmark/init/SFCSSMacroAgentInitialiser.java）
 - **役割**: セクション 4（ベースライン校正）に対応し、定常状態で計算した集計値を各エージェントに均等配分しつつ、ローンや資本財の「年齢」「残高」を持つコレクションを作る。初期のネットワーク（どの家計がどの銀行に預け、どの企業がどの銀行から借りるか）もここで固定。
 - **主要ストック/フロー**:

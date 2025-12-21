@@ -280,11 +280,17 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 			macroSim.getActiveMarket().commit(this, worker,marketID);
 			break;
 		case StaticValues.MKT_LABOR_R:
+			if (this.laborDemandR <= 0) {
+				break;
+			}
 			SelectWorkerStrategy strategyR = (SelectWorkerStrategy) this.getStrategy(StaticValues.STRATEGY_LABOR);
 			MacroAgent workerR = (MacroAgent)strategyR.selectWorker(event.getObjects());
 			macroSim.getActiveMarket().commit(this, workerR,marketID);
 			break;
 		case StaticValues.MKT_LABOR_N:
+			if (this.laborDemandN <= 0) {
+				break;
+			}
 			SelectWorkerStrategy strategyN = (SelectWorkerStrategy) this.getStrategy(StaticValues.STRATEGY_LABOR);
 			MacroAgent workerN = (MacroAgent)strategyN.selectWorker(event.getObjects());
 			macroSim.getActiveMarket().commit(this, workerN,marketID);
