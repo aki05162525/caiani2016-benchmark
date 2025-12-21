@@ -47,7 +47,7 @@
 **対象**：`benchmark/.../Households.java`
 
 * [x] `labor_type ∈ {R,N}` を Households に追加（初期割当・以後固定）
-* [ ] タイプ別労働力人口 `LF_R`, `LF_N` を算出できるようにする（集計 or Government側）
+* [x] タイプ別労働力人口 `LF_R`, `LF_N` を算出できるようにする（集計 or Government側）
 * [x] 労働市場への参加フラグ/参加市場の決定を `labor_type` に依存させる
 
 **Done**：Households が「常に自分のタイプ市場にのみ参加」することがコードで保証される。

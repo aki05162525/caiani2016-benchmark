@@ -166,7 +166,25 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 		double unempN = uComputerN != null ? uComputerN.computeVariable(sim) : aggUnemp;
 		this.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_R, unempR);
 		this.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_N, unempN);
+		updateLaborForceByType(sim);
 		this.cleanSM();
+	}
+
+	private void updateLaborForceByType(MacroSimulation sim) {
+		MacroPopulation macroPop = (MacroPopulation) sim.getPopulation();
+		Population households = (Population) macroPop.getPopulation(StaticValues.HOUSEHOLDS_ID);
+		int countR = 0;
+		int countN = 0;
+		for(Agent agent : households.getAgents()){
+			LaborSupplier worker = (LaborSupplier) agent;
+			if(worker.getLaborType() == StaticValues.LABOR_TYPE_R){
+				countR++;
+			}else{
+				countN++;
+			}
+		}
+		this.setAggregateValue(StaticValues.LAG_LABORFORCE_R, countR);
+		this.setAggregateValue(StaticValues.LAG_LABORFORCE_N, countN);
 	}
 
 	public void onAgentArrival(AgentArrivalEvent event) {

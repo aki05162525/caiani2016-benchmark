@@ -29,6 +29,16 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 							<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT_N"/>
 						</key> 
 					</entry>
+					<entry value-ref="pastLaborForceR"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_LABORFORCE_R"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastLaborForceN"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_LABORFORCE_N"/>
+						</key> 
+					</entry>
 					<entry value-ref="pastBadDebts"> 
 						<key>
 							<util:constant static-field="benchmark.StaticValues.LAG_NONPERFORMINGLOANS"/>
@@ -223,6 +233,14 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="nbLags" value="4"/>
 	</bean>
 	<bean id="pastUnemploymentN" class="jmab.expectations.TreeMapPassedValues"
+		scope="simulation">
+		<property name="nbLags" value="4"/>
+	</bean>
+	<bean id="pastLaborForceR" class="jmab.expectations.TreeMapPassedValues"
+		scope="simulation">
+		<property name="nbLags" value="4"/>
+	</bean>
+	<bean id="pastLaborForceN" class="jmab.expectations.TreeMapPassedValues"
 		scope="simulation">
 		<property name="nbLags" value="4"/>
 	</bean>

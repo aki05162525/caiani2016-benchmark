@@ -200,6 +200,8 @@ public interface StaticValues {
 	// Phase C7: Type-specific aggregate unemployment
 	public static int LAG_AGGUNEMPLOYMENT_R = 23;
 	public static int LAG_AGGUNEMPLOYMENT_N = 24;
+	public static int LAG_LABORFORCE_R = 25;
+	public static int LAG_LABORFORCE_N = 26;
 	
 	public static int SM_CASH=0;
 	public static int SM_DEP=1;

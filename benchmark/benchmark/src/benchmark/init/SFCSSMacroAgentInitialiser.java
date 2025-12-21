@@ -568,18 +568,30 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 
 		//Central Bank
 		int nbBondsPerPeriod1 = (int) this.cbBonds/(bondMat*bondPrice);
-		for(int j = 1 ; j<=bondMat; j++){
-			Bond bond = new Bond(nbBondsPerPeriod1*bondPrice, nbBondsPerPeriod1, cb, govt, govt.getBondMaturity(), this.iBonds, bondPrice);
-			bond.setAge(j);
-			cb.addItemStockMatrix(bond, true, StaticValues.SM_BONDS);
-			govt.addItemStockMatrix(bond, false, StaticValues.SM_BONDS);
+			for(int j = 1 ; j<=bondMat; j++){
+				Bond bond = new Bond(nbBondsPerPeriod1*bondPrice, nbBondsPerPeriod1, cb, govt, govt.getBondMaturity(), this.iBonds, bondPrice);
+				bond.setAge(j);
+				cb.addItemStockMatrix(bond, true, StaticValues.SM_BONDS);
+				govt.addItemStockMatrix(bond, false, StaticValues.SM_BONDS);
+			}
+			//TODO: Add Aggregate values, we could use the macrosimulation
+			int laborForceR = 0;
+			int laborForceN = 0;
+			for(net.sourceforge.jabm.agent.Agent ag : households.getAgents()) {
+				Households hh = (Households) ag;
+				if(hh.getLaborType() == StaticValues.LABOR_TYPE_R) {
+					laborForceR++;
+				} else {
+					laborForceN++;
+				}
+			}
+			double aggUnemployment = 0.08*(1+distr.nextDouble());
+			govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, aggUnemployment);//TODO
+			govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_R, aggUnemployment);
+			govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_N, aggUnemployment);
+			govt.setAggregateValue(StaticValues.LAG_LABORFORCE_R, laborForceR);
+			govt.setAggregateValue(StaticValues.LAG_LABORFORCE_N, laborForceN);
 		}
-		//TODO: Add Aggregate values, we could use the macrosimulation
-		double aggUnemployment = 0.08*(1+distr.nextDouble());
-		govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, aggUnemployment);//TODO
-		govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_R, aggUnemployment);
-		govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_N, aggUnemployment);
-	}
 
 	/**
 	 * @return the hhsDep
