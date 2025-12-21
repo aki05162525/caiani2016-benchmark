@@ -13,17 +13,27 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 <bean id="macroSimulation" class="jmab.simulations.OrderedEventsSimulation"
 		scope="simulation">
 		<property name="passedValues">
-			<map>
-				<entry value-ref="pastUnemployment"> 
-					<key>
-						<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT"/>
-					</key> 
-				</entry>
-				<entry value-ref="pastBadDebts"> 
-					<key>
-						<util:constant static-field="benchmark.StaticValues.LAG_NONPERFORMINGLOANS"/>
-					</key>
-				</entry>
+				<map>
+					<entry value-ref="pastUnemployment"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastUnemploymentR"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT_R"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastUnemploymentN"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT_N"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastBadDebts"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_NONPERFORMINGLOANS"/>
+						</key>
+					</entry>
 			</map>
 		</property>
 		<property name="markets">
@@ -208,9 +218,35 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		scope="simulation">
 		<property name="nbLags" value="4"/>
 	</bean>
+	<bean id="pastUnemploymentR" class="jmab.expectations.TreeMapPassedValues"
+		scope="simulation">
+		<property name="nbLags" value="4"/>
+	</bean>
+	<bean id="pastUnemploymentN" class="jmab.expectations.TreeMapPassedValues"
+		scope="simulation">
+		<property name="nbLags" value="4"/>
+	</bean>
 	<bean id="pastBadDebts" class="jmab.expectations.TreeMapPassedValues"
 		scope="simulation">
 		<property name="nbLags" value="4"/>
+	</bean>
+
+	<bean id="unemploymentComputerR" class="jmab.report.UnemploymentRateByTypeComputer" scope="simulation">
+		<property name="householdPopIds">
+			<list>
+				<util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID"/>
+			</list>
+		</property>
+		<property name="laborType" value="0"/>
+	</bean>
+
+	<bean id="unemploymentComputerN" class="jmab.report.UnemploymentRateByTypeComputer" scope="simulation">
+		<property name="householdPopIds">
+			<list>
+				<util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID"/>
+			</list>
+		</property>
+		<property name="laborType" value="1"/>
 	</bean>
 
 <!-- Here we create the market simulations for each market -->
@@ -2916,6 +2952,13 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="macroThreshold" value="0.08"/>
 		<property name="macroAdaptiveParameter" value="1"/>
 		<property name="microAdaptiveParameter" value="1"/>
+		<!-- Phase C7: Type-specific wage parameters (defaults = legacy) -->
+		<property name="macroThresholdR" value="0.08"/>
+		<property name="macroThresholdN" value="0.08"/>
+		<property name="macroAdaptiveParameterR" value="1"/>
+		<property name="macroAdaptiveParameterN" value="1"/>
+		<property name="microAdaptiveParameterR" value="1"/>
+		<property name="microAdaptiveParameterN" value="1"/>
 	</bean>
 	
 	<bean id="householdsTaxesStrategy" scope="prototype" parent="strategy"
@@ -2988,6 +3031,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
 		<property name="unemploymentBenefit" value="0.4" />
 		<property name="uComputer" ref="unemploymentComputer"/>
+		<property name="uComputerR" ref="unemploymentComputerR"/>
+		<property name="uComputerN" ref="unemploymentComputerN"/>
 		<property name="taxedPopulations">
 			<list>
 				<util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID" />

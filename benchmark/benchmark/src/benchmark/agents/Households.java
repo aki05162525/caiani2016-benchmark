@@ -448,8 +448,16 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 	public double getMacroReferenceVariableForWage() {
 		if(this.employer==null)
 			return 0;
-		else
-			return this.getAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, 1);
+		double value;
+		if (this.laborType == StaticValues.LABOR_TYPE_R) {
+			value = this.getAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_R, 1);
+		} else {
+			value = this.getAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_N, 1);
+		}
+		if (Double.isNaN(value)) {
+			value = this.getAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, 1);
+		}
+		return value;
 	}
 	
 	/**

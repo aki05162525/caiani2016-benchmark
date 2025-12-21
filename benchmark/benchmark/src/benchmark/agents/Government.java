@@ -32,6 +32,7 @@ import jmab.agents.SimpleAbstractAgent;
 import jmab.agents.TaxPayer;
 import jmab.events.MacroTicEvent;
 import jmab.population.MacroPopulation;
+import jmab.report.MacroVariableComputer;
 import jmab.report.UnemploymentRateComputer;
 import jmab.simulations.MacroSimulation;
 import jmab.stockmatrix.Bond;
@@ -65,6 +66,8 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	protected int bondMaturity;
 	protected double bondInterestRate;
 	protected UnemploymentRateComputer uComputer; 
+	protected MacroVariableComputer uComputerR;
+	protected MacroVariableComputer uComputerN;
 	protected double wageBill;
 	protected double totInterestsBonds;
 	protected RandomEngine prng;
@@ -156,8 +159,13 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	 * 
 	 */
 	protected void updateAggregateVariables() {
-		this.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, 
-				uComputer.computeVariable((MacroSimulation)((SimulationController)this.scheduler).getSimulation()));
+		MacroSimulation sim = (MacroSimulation)((SimulationController)this.scheduler).getSimulation();
+		double aggUnemp = uComputer.computeVariable(sim);
+		this.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, aggUnemp);
+		double unempR = uComputerR != null ? uComputerR.computeVariable(sim) : aggUnemp;
+		double unempN = uComputerN != null ? uComputerN.computeVariable(sim) : aggUnemp;
+		this.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_R, unempR);
+		this.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_N, unempN);
 		this.cleanSM();
 	}
 
@@ -491,6 +499,34 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	 */
 	public void setuComputer(UnemploymentRateComputer uComputer) {
 		this.uComputer = uComputer;
+	}
+
+	/**
+	 * @return the uComputerR
+	 */
+	public MacroVariableComputer getuComputerR() {
+		return uComputerR;
+	}
+
+	/**
+	 * @param uComputerR the uComputerR to set
+	 */
+	public void setuComputerR(MacroVariableComputer uComputerR) {
+		this.uComputerR = uComputerR;
+	}
+
+	/**
+	 * @return the uComputerN
+	 */
+	public MacroVariableComputer getuComputerN() {
+		return uComputerN;
+	}
+
+	/**
+	 * @param uComputerN the uComputerN to set
+	 */
+	public void setuComputerN(MacroVariableComputer uComputerN) {
+		this.uComputerN = uComputerN;
 	}
 
 	/* (non-Javadoc)

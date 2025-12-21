@@ -575,7 +575,10 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			govt.addItemStockMatrix(bond, false, StaticValues.SM_BONDS);
 		}
 		//TODO: Add Aggregate values, we could use the macrosimulation
-		govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, 0.08*(1+distr.nextDouble()));//TODO
+		double aggUnemployment = 0.08*(1+distr.nextDouble());
+		govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, aggUnemployment);//TODO
+		govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_R, aggUnemployment);
+		govt.setAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT_N, aggUnemployment);
 	}
 
 	/**

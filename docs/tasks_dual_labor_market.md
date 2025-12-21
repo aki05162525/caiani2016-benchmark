@@ -354,11 +354,11 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 * macro threshold の参照変数
 
-* [ ] `macroThreshold` を type 別に（υ_R, υ_N）
+* [x] `macroThreshold` を type 別に（υ_R, υ_N）
 
-* [ ] 必要なら `microAdaptiveParameter/macroAdaptiveParameter` も type 別に（または倍率）
+* [x] 必要なら `microAdaptiveParameter/macroAdaptiveParameter` も type 別に（または倍率）
 
-* [ ] Households が macro reference variable を返す箇所で `u_R` / `u_N` を参照できるようにする
+* [x] Households が macro reference variable を返す箇所で `u_R` / `u_N` を参照できるようにする
 
 **Done**：同一景気でも N の賃金上昇が抑制される等、二重性が設定で表現できる。
 

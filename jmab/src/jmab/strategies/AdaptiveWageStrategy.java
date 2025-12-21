@@ -33,6 +33,12 @@ public class AdaptiveWageStrategy extends AbstractStrategy implements
 	private double macroThreshold;
 	private double microAdaptiveParameter;
 	private double macroAdaptiveParameter;
+	private double macroThresholdR = Double.NaN;
+	private double macroThresholdN = Double.NaN;
+	private double microAdaptiveParameterR = Double.NaN;
+	private double microAdaptiveParameterN = Double.NaN;
+	private double macroAdaptiveParameterR = Double.NaN;
+	private double macroAdaptiveParameterN = Double.NaN;
 	protected AbstractDelegatedDistribution distribution;
 
 	/* (non-Javadoc)
@@ -41,16 +47,35 @@ public class AdaptiveWageStrategy extends AbstractStrategy implements
 	@Override
 	public double computeWage() {
 		WageSetterWithTargets worker = (WageSetterWithTargets)getAgent();
+		double macroThresholdLocal = macroThreshold;
+		double microAdaptiveLocal = microAdaptiveParameter;
+		double macroAdaptiveLocal = macroAdaptiveParameter;
+		if (worker instanceof jmab.agents.LaborSupplier) {
+			int laborType = ((jmab.agents.LaborSupplier) worker).getLaborType();
+			if (laborType == 0) { // Regular
+				macroThresholdLocal = selectParam(macroThresholdR, macroThreshold);
+				microAdaptiveLocal = selectParam(microAdaptiveParameterR, microAdaptiveParameter);
+				macroAdaptiveLocal = selectParam(macroAdaptiveParameterR, macroAdaptiveParameter);
+			} else { // Non-regular
+				macroThresholdLocal = selectParam(macroThresholdN, macroThreshold);
+				microAdaptiveLocal = selectParam(microAdaptiveParameterN, microAdaptiveParameter);
+				macroAdaptiveLocal = selectParam(macroAdaptiveParameterN, macroAdaptiveParameter);
+			}
+		}
 		double microReferenceVariable= worker.getMicroReferenceVariableForWage();
 		double wage = worker.getWage();
 		if(microReferenceVariable>microThreshold){
-			wage-=(microAdaptiveParameter*wage*distribution.nextDouble());
+			wage-=(microAdaptiveLocal*wage*distribution.nextDouble());
 		}else{
 			double macroReferenceVariable= worker.getMacroReferenceVariableForWage();
-			if(macroReferenceVariable<=macroThreshold)
-				wage+=(macroAdaptiveParameter*wage*distribution.nextDouble());
+			if(macroReferenceVariable<=macroThresholdLocal)
+				wage+=(macroAdaptiveLocal*wage*distribution.nextDouble());
 		}
 		return Math.max(wage, worker.getWageLowerBound());
+	}
+
+	private double selectParam(double typeValue, double legacyValue) {
+		return Double.isNaN(typeValue) ? legacyValue : typeValue;
 	}
 
 	/**
@@ -110,6 +135,90 @@ public class AdaptiveWageStrategy extends AbstractStrategy implements
 	}
 
 	/**
+	 * @return the macroThresholdR
+	 */
+	public double getMacroThresholdR() {
+		return macroThresholdR;
+	}
+
+	/**
+	 * @param macroThresholdR the macroThresholdR to set
+	 */
+	public void setMacroThresholdR(double macroThresholdR) {
+		this.macroThresholdR = macroThresholdR;
+	}
+
+	/**
+	 * @return the macroThresholdN
+	 */
+	public double getMacroThresholdN() {
+		return macroThresholdN;
+	}
+
+	/**
+	 * @param macroThresholdN the macroThresholdN to set
+	 */
+	public void setMacroThresholdN(double macroThresholdN) {
+		this.macroThresholdN = macroThresholdN;
+	}
+
+	/**
+	 * @return the microAdaptiveParameterR
+	 */
+	public double getMicroAdaptiveParameterR() {
+		return microAdaptiveParameterR;
+	}
+
+	/**
+	 * @param microAdaptiveParameterR the microAdaptiveParameterR to set
+	 */
+	public void setMicroAdaptiveParameterR(double microAdaptiveParameterR) {
+		this.microAdaptiveParameterR = microAdaptiveParameterR;
+	}
+
+	/**
+	 * @return the microAdaptiveParameterN
+	 */
+	public double getMicroAdaptiveParameterN() {
+		return microAdaptiveParameterN;
+	}
+
+	/**
+	 * @param microAdaptiveParameterN the microAdaptiveParameterN to set
+	 */
+	public void setMicroAdaptiveParameterN(double microAdaptiveParameterN) {
+		this.microAdaptiveParameterN = microAdaptiveParameterN;
+	}
+
+	/**
+	 * @return the macroAdaptiveParameterR
+	 */
+	public double getMacroAdaptiveParameterR() {
+		return macroAdaptiveParameterR;
+	}
+
+	/**
+	 * @param macroAdaptiveParameterR the macroAdaptiveParameterR to set
+	 */
+	public void setMacroAdaptiveParameterR(double macroAdaptiveParameterR) {
+		this.macroAdaptiveParameterR = macroAdaptiveParameterR;
+	}
+
+	/**
+	 * @return the macroAdaptiveParameterN
+	 */
+	public double getMacroAdaptiveParameterN() {
+		return macroAdaptiveParameterN;
+	}
+
+	/**
+	 * @param macroAdaptiveParameterN the macroAdaptiveParameterN to set
+	 */
+	public void setMacroAdaptiveParameterN(double macroAdaptiveParameterN) {
+		this.macroAdaptiveParameterN = macroAdaptiveParameterN;
+	}
+
+	/**
 	 * @return the distribution
 	 */
 	public AbstractDelegatedDistribution getDistribution() {
@@ -127,15 +236,23 @@ public class AdaptiveWageStrategy extends AbstractStrategy implements
 	/**
 	 * Generate the byte array structure of the strategy. The structure is as follow:
 	 * [macroThreshold][microThreshold][macroAdaptiveParameter][microAdaptiveParameter]
+	 * [macroThresholdR][macroThresholdN][macroAdaptiveParameterR][macroAdaptiveParameterN]
+	 * [microAdaptiveParameterR][microAdaptiveParameterN]
 	 * @return the byte array content
 	 */
 	@Override
 	public byte[] getBytes() {
-		ByteBuffer buf = ByteBuffer.allocate(32);
+		ByteBuffer buf = ByteBuffer.allocate(80);
 		buf.putDouble(this.macroThreshold);
 		buf.putDouble(this.microThreshold);
 		buf.putDouble(this.macroAdaptiveParameter);
 		buf.putDouble(this.microAdaptiveParameter);
+		buf.putDouble(this.macroThresholdR);
+		buf.putDouble(this.macroThresholdN);
+		buf.putDouble(this.macroAdaptiveParameterR);
+		buf.putDouble(this.macroAdaptiveParameterN);
+		buf.putDouble(this.microAdaptiveParameterR);
+		buf.putDouble(this.microAdaptiveParameterN);
 		return buf.array();
 	}
 
@@ -143,6 +260,8 @@ public class AdaptiveWageStrategy extends AbstractStrategy implements
 	/**
 	 * Populates the strategy from the byte array content. The structure should be as follows:
 	 * [macroThreshold][microThreshold][macroAdaptiveParameter][microAdaptiveParameter]
+	 * [macroThresholdR][macroThresholdN][macroAdaptiveParameterR][macroAdaptiveParameterN]
+	 * [microAdaptiveParameterR][microAdaptiveParameterN]
 	 * @param content the byte array containing the structure of the strategy
 	 * @param pop the Macro Population of agents
 	 */	@Override
@@ -152,6 +271,21 @@ public class AdaptiveWageStrategy extends AbstractStrategy implements
 		this.microThreshold = buf.getDouble();
 		this.macroAdaptiveParameter= buf.getDouble();
 		this.microAdaptiveParameter= buf.getDouble();
+		if (buf.remaining() >= 48) {
+			this.macroThresholdR = buf.getDouble();
+			this.macroThresholdN = buf.getDouble();
+			this.macroAdaptiveParameterR = buf.getDouble();
+			this.macroAdaptiveParameterN = buf.getDouble();
+			this.microAdaptiveParameterR = buf.getDouble();
+			this.microAdaptiveParameterN = buf.getDouble();
+		} else {
+			this.macroThresholdR = Double.NaN;
+			this.macroThresholdN = Double.NaN;
+			this.macroAdaptiveParameterR = Double.NaN;
+			this.macroAdaptiveParameterN = Double.NaN;
+			this.microAdaptiveParameterR = Double.NaN;
+			this.microAdaptiveParameterN = Double.NaN;
+		}
 	}
 
 }
