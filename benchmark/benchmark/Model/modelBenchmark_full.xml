@@ -115,6 +115,14 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="avWageNReportTic" />
 				<ref bean="employmentRReportTic" />
 				<ref bean="employmentNReportTic" />
+				<ref bean="unemploymentCountRReportTic" />
+				<ref bean="unemploymentCountNReportTic" />
+				<ref bean="unemploymentBoundsRReportTic" />
+				<ref bean="unemploymentBoundsNReportTic" />
+				<ref bean="laborForceGapRReportTic" />
+				<ref bean="laborForceGapNReportTic" />
+				<ref bean="vacanciesRReportTic" />
+				<ref bean="vacanciesNReportTic" />
 				<ref bean="laborForceRReportTic" />
 				<ref bean="laborForceNReportTic" />
 				<ref bean="microLoansKfirmsReportTic" />
@@ -869,6 +877,62 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<property name="variableId"><util:constant static-field="benchmark.StaticValues.EMPLOYMENTNREPORT_ID" /></property>
 	<property name="variableName" value="Employment N"/>
 	<property name="computer" ref="employmentNComputer"/>
+	</bean>
+
+	<bean id="unemploymentCountRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTCOUNTRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTCOUNTRREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Count R"/>
+	<property name="computer" ref="unemploymentCountRComputer"/>
+	</bean>
+
+	<bean id="unemploymentCountNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTCOUNTNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTCOUNTNREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Count N"/>
+	<property name="computer" ref="unemploymentCountNComputer"/>
+	</bean>
+
+	<bean id="unemploymentBoundsRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTBOUNDSRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTBOUNDSRREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Bounds Violation R"/>
+	<property name="computer" ref="unemploymentBoundsRComputer"/>
+	</bean>
+
+	<bean id="unemploymentBoundsNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTBOUNDSNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTBOUNDSNREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Bounds Violation N"/>
+	<property name="computer" ref="unemploymentBoundsNComputer"/>
+	</bean>
+
+	<bean id="laborForceGapRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_LABORFORCEGAPRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.LABORFORCEGAPRREPORT_ID" /></property>
+	<property name="variableName" value="Labor Force Identity Gap R"/>
+	<property name="computer" ref="laborForceGapRComputer"/>
+	</bean>
+
+	<bean id="laborForceGapNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_LABORFORCEGAPNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.LABORFORCEGAPNREPORT_ID" /></property>
+	<property name="variableName" value="Labor Force Identity Gap N"/>
+	<property name="computer" ref="laborForceGapNComputer"/>
+	</bean>
+
+	<bean id="vacanciesRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_VACANCIESRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.VACANCIESRREPORT_ID" /></property>
+	<property name="variableName" value="Vacancies R"/>
+	<property name="computer" ref="vacanciesRComputer"/>
+	</bean>
+
+	<bean id="vacanciesNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_VACANCIESNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.VACANCIESNREPORT_ID" /></property>
+	<property name="variableName" value="Vacancies N"/>
+	<property name="computer" ref="vacanciesNComputer"/>
 	</bean>
 
 	<bean id="laborForceRReportTic" class="jmab.events.MacroVariableTicEvent">

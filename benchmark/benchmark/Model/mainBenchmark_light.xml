@@ -35,6 +35,14 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="avWageNCSVReport" />
 				<ref bean="employmentRCSVReport" />
 				<ref bean="employmentNCSVReport" />
+				<ref bean="unemploymentCountRCSVReport" />
+				<ref bean="unemploymentCountNCSVReport" />
+				<ref bean="unemploymentBoundsRCSVReport" />
+				<ref bean="unemploymentBoundsNCSVReport" />
+				<ref bean="laborForceGapRCSVReport" />
+				<ref bean="laborForceGapNCSVReport" />
+				<ref bean="vacanciesRCSVReport" />
+				<ref bean="vacanciesNCSVReport" />
 				<ref bean="laborForceRCSVReport" />
 				<ref bean="laborForceNCSVReport" />
 				<ref bean="bankCreditEventReport" />
