@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  "Innovation, Demand, and Finance in an Agent Based-Stock Flow Consistent model" 
+<!--  "Innovation, Demand, and Finance in an Agent Based-Stock Flow Consistent model"
 Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kinsella, S., Stiglitz, J.
  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -8,6 +8,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+<!-- Import dual labor market parameters -->
+<import resource="parameters.xml"/>
 
 <!-- Top level bean defining the simulation experiment to be run -->
 <bean id="macroSimulation" class="jmab.simulations.OrderedEventsSimulation"
@@ -1642,7 +1645,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 <property name="ksOCF" value="189.2146501"/>
 <property name="csOCF" value="2340.255574"/>
 <property name="gr" value="0.0075"/>
-<property name="laborTypeRatioR" value="0.65"/><!-- Phase A2: 65% Regular, 35% Non-regular -->
+<property name="laborTypeRatioR" ref="laborTypeRatioR"/><!-- Phase A2: See parameters.xml -->
 	</bean>
 	
 	
@@ -1784,9 +1787,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
 		<property name="layoffRateR" ref="layoffRateRVal" />
 		<property name="layoffRateN" ref="layoffRateNVal" />
-		<!-- Phase C1/C2: CES effective labor parameters -->
-		<property name="cesDelta" value="0.5" />
-		<property name="cesRho" value="0.5" />
+		<!-- Phase C1/C2: CES effective labor parameters (see parameters.xml) -->
+		<property name="cesDelta" ref="cesDelta" />
+		<property name="cesRho" ref="cesRho" />
 		<property name="cesAR" value="1.0" />
 		<property name="cesAN" value="1.0" />
 		<property name="cesEpsilon" value="1.0E-8" />
@@ -2107,9 +2110,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<bean id="capitalLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
 		<property name="prng" ref="prng"/>
-		<!-- Phase C7: Type-specific sampling size (chi_R/chi_N) -->
-		<property name="sampleSizeR" value="0"/>
-		<property name="sampleSizeN" value="0"/>
+		<!-- Phase C7: Type-specific sampling size (see parameters.xml) -->
+		<property name="sampleSizeR" ref="sampleSizeR"/>
+		<property name="sampleSizeN" ref="sampleSizeN"/>
 	</bean>
 	
 	<bean id="capitalRDInvestmentStrategy" scope="prototype" parent="strategy"
@@ -2314,9 +2317,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
 		<property name="layoffRateR" ref="layoffRateRVal" />
 		<property name="layoffRateN" ref="layoffRateNVal" />
-		<!-- Phase C1/C2: CES effective labor parameters -->
-		<property name="cesDelta" value="0.5" />
-		<property name="cesRho" value="0.5" />
+		<!-- Phase C1/C2: CES effective labor parameters (see parameters.xml) -->
+		<property name="cesDelta" ref="cesDelta" />
+		<property name="cesRho" ref="cesRho" />
 		<property name="cesAR" value="1.0" />
 		<property name="cesAN" value="1.0" />
 		<property name="cesEpsilon" value="1.0E-8" />
@@ -2332,23 +2335,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<constructor-arg value="0.05" />
 	</bean>
 
-	<!-- Phase B2.3: Type-specific turnover rates -->
-	<bean id="turnoverLaborRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.02" />  <!-- R型: 2% (低い離職率) -->
-	</bean>
-
-	<bean id="turnoverLaborNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.05" />  <!-- N型: 5% (高い離職率) -->
-	</bean>
-
-	<!-- Phase B2.3: Type-specific layoff rates (η_R < η_N) -->
-	<bean id="layoffRateRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.3" />  <!-- η_R: 30% (Rは解雇されにくい) -->
-	</bean>
-
-	<bean id="layoffRateNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.8" />  <!-- η_N: 80% (Nは調整弁) -->
-	</bean>
+	<!-- Phase B2.3: Type-specific parameters imported from parameters.xml -->
+	<!-- See parameters.xml for: turnoverLaborRVal, turnoverLaborNVal, layoffRateRVal, layoffRateNVal -->
 	
 	<bean id="consumptionMacroStrategy" scope="prototype"
 		class="jmab.strategies.MacroMultipleStrategy">
@@ -2440,9 +2428,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<bean id="consumptionLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
 		<property name="prng" ref="prng"/>
-		<!-- Phase C7: Type-specific sampling size (chi_R/chi_N) -->
-		<property name="sampleSizeR" value="0"/>
-		<property name="sampleSizeN" value="0"/>
+		<!-- Phase C7: Type-specific sampling size (see parameters.xml) -->
+		<property name="sampleSizeR" ref="sampleSizeR"/>
+		<property name="sampleSizeN" ref="sampleSizeN"/>
 	</bean>
 	
 	<bean id="consumptionBuyingStrategy" scope="prototype" parent="strategy"
@@ -3107,9 +3095,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="macroThreshold" value="0.08"/>
 		<property name="macroAdaptiveParameter" value="1"/>
 		<property name="microAdaptiveParameter" value="1"/>
-		<!-- Phase C7: Type-specific wage parameters (defaults = legacy) -->
-		<property name="macroThresholdR" value="0.08"/>
-		<property name="macroThresholdN" value="0.08"/>
+		<!-- Phase C7: Type-specific wage parameters (see parameters.xml) -->
+		<property name="macroThresholdR" ref="macroThresholdR"/>
+		<property name="macroThresholdN" ref="macroThresholdN"/>
 		<property name="macroAdaptiveParameterR" value="1"/>
 		<property name="macroAdaptiveParameterN" value="1"/>
 		<property name="microAdaptiveParameterR" value="1"/>
@@ -3221,9 +3209,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<bean id="governmentLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectRandomWorkerStrategy">
 		<property name="prng" ref="prng"/>
-		<!-- Phase C7: Type-specific sampling size (chi_R/chi_N) -->
-		<property name="sampleSizeR" value="0"/>
-		<property name="sampleSizeN" value="0"/>
+		<!-- Phase C7: Type-specific sampling size (see parameters.xml) -->
+		<property name="sampleSizeR" ref="sampleSizeR"/>
+		<property name="sampleSizeN" ref="sampleSizeN"/>
 	</bean>
 	
 	<bean id="governmentBondsInterestStrategy" scope="prototype" parent="strategy"
