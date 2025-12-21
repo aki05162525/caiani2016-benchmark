@@ -261,8 +261,8 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 ## C1. CES 実効労働関数 `N_eff(N_R, N_N)` を実装
 
-* [ ] `N_eff = [ δ (A_R N_R)^ρ + (1-δ)(A_N N_N)^ρ ]^(1/ρ)` を関数化
-* [ ] 数値安定
+* [x] `N_eff = [ δ (A_R N_R)^ρ + (1-δ)(A_N N_N)^ρ ]^(1/ρ)` を関数化
+* [x] 数値安定
 
   * `N_R, N_N ≥ 0` を保証
   * `ε` によるゼロ割/負値ガード
@@ -384,7 +384,7 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 * [x] η_R, η_N（layoffRateR/N in XML: 0.3, 0.8、0 < η_R < η_N ≤ 1 を満たす。※現状は企業向けのみ適用。Government系にはsetterがないためXML注入は削除）
 * [ ] χ_R, χ_N
 * [ ] υ_R, υ_N
-* [ ] δ, ρ(≠0), A_R, A_N
+* [x] δ, ρ(≠0), A_R, A_N（CESパラメータをXMLで設定。企業向けのみ適用）
 * [ ] ε, φ_min, φ_max
 * [ ] ω
 * [ ] （任意）c1_R, c1_N, c2（需要側フィードバックを入れるなら）

@@ -1601,6 +1601,18 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
 		<property name="layoffRateR" ref="layoffRateRVal" />
 		<property name="layoffRateN" ref="layoffRateNVal" />
+		<!-- Phase C1: CES effective labor parameters -->
+		<property name="cesDelta" value="0.5" />
+		<property name="cesRho" value="0.5" />
+		<property name="cesAR" value="1.0" />
+		<property name="cesAN" value="1.0" />
+		<property name="cesEpsilon" value="1.0E-8" />
+		<!-- Phase C1: CES effective labor parameters -->
+		<property name="cesDelta" value="0.5" />
+		<property name="cesRho" value="0.5" />
+		<property name="cesAR" value="1.0" />
+		<property name="cesAN" value="1.0" />
+		<property name="cesEpsilon" value="1.0E-8" />
 		<property name="prng" ref="prng" />
 	</bean>
 	

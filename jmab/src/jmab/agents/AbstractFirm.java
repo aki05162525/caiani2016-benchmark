@@ -47,6 +47,12 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	// Phase B2.3: Partial layoff rates (η_R, η_N)
 	protected double layoffRateR; // Layoff rate for Regular workers (0 < η_R < 1)
 	protected double layoffRateN; // Layoff rate for Non-regular workers (η_R < η_N ≤ 1)
+	// Phase C1: CES effective labor parameters
+	protected double cesDelta; // Delta in (0,1)
+	protected double cesRho; // Rho (non-zero)
+	protected double cesAR; // A_R > 0
+	protected double cesAN; // A_N > 0
+	protected double cesEpsilon = 1e-8; // Numerical guard, > 0
 	
 	/**
 	 * 
@@ -226,6 +232,76 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	}
 
 	/**
+	 * @return the cesDelta
+	 */
+	public double getCesDelta() {
+		return cesDelta;
+	}
+
+	/**
+	 * @param cesDelta the cesDelta to set
+	 */
+	public void setCesDelta(double cesDelta) {
+		this.cesDelta = cesDelta;
+	}
+
+	/**
+	 * @return the cesRho
+	 */
+	public double getCesRho() {
+		return cesRho;
+	}
+
+	/**
+	 * @param cesRho the cesRho to set
+	 */
+	public void setCesRho(double cesRho) {
+		this.cesRho = cesRho;
+	}
+
+	/**
+	 * @return the cesAR
+	 */
+	public double getCesAR() {
+		return cesAR;
+	}
+
+	/**
+	 * @param cesAR the cesAR to set
+	 */
+	public void setCesAR(double cesAR) {
+		this.cesAR = cesAR;
+	}
+
+	/**
+	 * @return the cesAN
+	 */
+	public double getCesAN() {
+		return cesAN;
+	}
+
+	/**
+	 * @param cesAN the cesAN to set
+	 */
+	public void setCesAN(double cesAN) {
+		this.cesAN = cesAN;
+	}
+
+	/**
+	 * @return the cesEpsilon
+	 */
+	public double getCesEpsilon() {
+		return cesEpsilon;
+	}
+
+	/**
+	 * @param cesEpsilon the cesEpsilon to set
+	 */
+	public void setCesEpsilon(double cesEpsilon) {
+		this.cesEpsilon = cesEpsilon;
+	}
+
+	/**
 	 * Probabilistic rounding for partial layoff calculation.
 	 * Phase B2.3: fire = floor(x) + Bernoulli(frac(x))
 	 * @param value the continuous value to round (e.g., η * excess)
@@ -236,6 +312,34 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 		double frac = value - floor;
 		// Bernoulli trial: returns 1 with probability frac, 0 otherwise
 		return floor + (prng.nextDouble() < frac ? 1 : 0);
+	}
+
+	/**
+	 * Computes effective labor using a CES aggregator.
+	 * N_eff = [ delta (A_R N_R)^rho + (1-delta)(A_N N_N)^rho ]^(1/rho)
+	 */
+	protected double computeEffectiveLabor(double nR, double nN) {
+		if (cesDelta <= 0.0 || cesDelta >= 1.0) {
+			throw new IllegalArgumentException("cesDelta must be in (0,1)");
+		}
+		if (Math.abs(cesRho) < 1e-12) {
+			throw new IllegalArgumentException("cesRho must be non-zero");
+		}
+		if (cesAR <= 0.0 || cesAN <= 0.0 || cesEpsilon <= 0.0) {
+			throw new IllegalArgumentException("cesAR, cesAN, cesEpsilon must be > 0");
+		}
+		double adjNR = Math.max(0.0, nR);
+		double adjNN = Math.max(0.0, nN);
+		if (adjNR == 0.0 && adjNN == 0.0) {
+			return 0.0;
+		}
+		double baseR = Math.max(cesAR * adjNR, cesEpsilon);
+		double baseN = Math.max(cesAN * adjNN, cesEpsilon);
+		double termR = cesDelta * Math.pow(baseR, cesRho);
+		double termN = (1.0 - cesDelta) * Math.pow(baseN, cesRho);
+		double sum = termR + termN;
+		sum = Math.max(sum, cesEpsilon);
+		return Math.pow(sum, 1.0 / cesRho);
 	}
 
 	/**
