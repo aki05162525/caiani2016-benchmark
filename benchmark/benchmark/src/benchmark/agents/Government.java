@@ -741,6 +741,7 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 		if(active){
 			// Government hires R-only; legacy market disabled.
 			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
 			this.setActive(true, StaticValues.MKT_LABOR_R);
 		}else{
 			this.setActive(false, StaticValues.MKT_LABOR);

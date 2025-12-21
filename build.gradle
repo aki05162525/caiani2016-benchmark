@@ -127,9 +127,18 @@ project(':benchmark') {
         main {
             java {
                 srcDirs = ['src']
+                exclude 'test/**'
             }
             resources {
                 srcDirs = ['src', 'resources']
+            }
+        }
+        test {
+            java {
+                srcDirs = ['src/test/java']
+            }
+            resources {
+                srcDirs = ['src/test/resources']
             }
         }
     }

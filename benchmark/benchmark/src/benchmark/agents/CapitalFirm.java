@@ -1247,6 +1247,8 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 		if(active){
 			// Legacy labor market is disabled; activate only demanded R/N markets.
 			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.setActive(false, StaticValues.MKT_LABOR_N);
 			if(this.laborDemandR > 0){
 				this.setActive(true, StaticValues.MKT_LABOR_R);
 			}
