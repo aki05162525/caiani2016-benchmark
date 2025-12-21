@@ -161,6 +161,8 @@ public interface StaticValues {
 	public static int TIC_CRSALESEXPERRORREPORT=138;
 	public static int TIC_KRSALESEXPERRORREPORT=139;
 	public static int TIC_HHPRICESEXPERRORREPORT=140;
+	public static int TIC_LABORFORCERREPORT=141;
+	public static int TIC_LABORFORCENREPORT=142;
 	public static int TIC_POPULATIONHANDLER=1000;
 	public static int TIC_UPDATEEXPECTATIONS=1001;
 	public static int TIC_SERIALIZATION=1002;
@@ -367,6 +369,8 @@ public interface StaticValues {
 	public static int CRSALESEXPERRORREPORT_ID=101;
 	public static int KRSALESEXPERRORREPORT_ID=102;
 	public static int HHPRICESEXPERRORREPORT_ID=103;
+	public static int LABORFORCERREPORT_ID=104;
+	public static int LABORFORCENREPORT_ID=105;
 	
 
 

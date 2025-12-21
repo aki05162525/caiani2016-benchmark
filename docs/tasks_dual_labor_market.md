@@ -82,7 +82,7 @@
 ### A4.2 addEmployee のタイプ認識
 
 * [x] `addEmployee(LaborSupplier worker)` で worker の `labor_type` を取得し、対応する `laborDemand{R/N}` を減らす
-* [ ] employees 管理方針を決める
+* [x] employees 管理方針を決める
 
   * **推奨（最小改変）**：employeesは1本のまま、必要箇所で type フィルタ
   * 代替案：employeesR / employeesN に分割（改修範囲が増える）

@@ -109,6 +109,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	            <ref bean="avNetIncomeReportTic" />
 				<ref bean="nominalInvReportTic" />
 				<ref bean="unemploymentReportTic" />
+				<ref bean="laborForceRReportTic" />
+				<ref bean="laborForceNReportTic" />
 				<ref bean="microLoansKfirmsReportTic" />
 				<ref bean="microLoansCfirmsReportTic" />
 				<ref bean="microBankCreditReportTic" />
@@ -818,6 +820,20 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTREPORT_ID" /></property>
 	<property name="variableName" value="Unemployment Rate"/>
 	<property name="computer" ref="unemploymentComputer"/>
+	</bean>
+
+	<bean id="laborForceRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_LABORFORCERREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.LABORFORCERREPORT_ID" /></property>
+	<property name="variableName" value="Labor Force R"/>
+	<property name="computer" ref="laborForceRComputer"/>
+	</bean>
+
+	<bean id="laborForceNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_LABORFORCENREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.LABORFORCENREPORT_ID" /></property>
+	<property name="variableName" value="Labor Force N"/>
+	<property name="computer" ref="laborForceNComputer"/>
 	</bean>
 	
 	<bean id="cFirmsBankruptcyReportTic" class="jmab.events.MacroVariableTicEvent">
