@@ -382,11 +382,11 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 * [x] ϑ_R, ϑ_N（turnoverLaborR/N in XML: 0.02, 0.05）
 * [x] η_R, η_N（layoffRateR/N in XML: 0.3, 0.8、0 < η_R < η_N ≤ 1 を満たす。※現状は企業向けのみ適用。Government系にはsetterがないためXML注入は削除）
-* [ ] χ_R, χ_N
-* [ ] υ_R, υ_N
+* [x] χ_R, χ_N（労働者選択戦略のサンプリングサイズとして設定可能）
+* [x] υ_R, υ_N（AdaptiveWageStrategy の macroThresholdR/N で設定済み）
 * [x] δ, ρ(≠0), A_R, A_N（CESパラメータをXMLで設定。企業向けのみ適用）
 * [x] ε, φ_min, φ_max（CESパラメータ/クリップ範囲をXMLで設定。企業向けのみ適用）
-* [ ] ω
+* [x] ω（GovernmentAntiCyclical.unemploymentBenefit として設定済み）
 * [ ] （任意）c1_R, c1_N, c2（需要側フィードバックを入れるなら）
 
 ## P2. 起動時バリデーション

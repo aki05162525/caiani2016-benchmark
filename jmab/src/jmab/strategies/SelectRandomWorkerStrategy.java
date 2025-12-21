@@ -17,6 +17,7 @@ package jmab.strategies;
 import java.util.ArrayList;
 import java.util.List;
 
+import jmab.agents.LaborSupplier;
 import jmab.agents.MacroAgent;
 import jmab.population.MacroPopulation;
 import net.sourceforge.jabm.agent.Agent;
@@ -33,13 +34,16 @@ public class SelectRandomWorkerStrategy extends AbstractStrategy implements
 		SelectWorkerStrategy {
 
 	protected RandomEngine prng;
+	protected int sampleSizeR;
+	protected int sampleSizeN;
 	
 	/* (non-Javadoc)
 	 * @see jmab.strategies.SelectWorkerStrategy#selectWorker(java.util.ArrayList)
 	 */
 	@Override
 	public MacroAgent selectWorker(List<Agent> workers) {
-		AgentList agents = new AgentList(workers);
+		List<Agent> sampled = sampleWorkers(workers);
+		AgentList agents = new AgentList(sampled);
 		agents.shuffle(prng);
 		return (MacroAgent)agents.get(0);
 	}
@@ -49,13 +53,40 @@ public class SelectRandomWorkerStrategy extends AbstractStrategy implements
 	 */
 	@Override
 	public List<MacroAgent> selectWorkers(List<Agent> workers, int n) {
-		AgentList agents = new AgentList(workers);
+		List<Agent> sampled = sampleWorkers(workers);
+		AgentList agents = new AgentList(sampled);
 		agents.shuffle(prng);
 		List<MacroAgent> result = new ArrayList<MacroAgent>();
 		for(int i = 0; i<Math.min(n, agents.size());i++){
 			result.add((MacroAgent)agents.get(i));
 		}
 		return result;
+	}
+
+	private List<Agent> sampleWorkers(List<Agent> workers) {
+		if (workers == null || workers.isEmpty()) {
+			return workers;
+		}
+		int sampleSize = resolveSampleSize(workers);
+		if (sampleSize <= 0 || sampleSize >= workers.size()) {
+			return workers;
+		}
+		AgentList agents = new AgentList(workers);
+		agents.shuffle(prng);
+		List<Agent> result = new ArrayList<Agent>(sampleSize);
+		for (int i = 0; i < sampleSize; i++) {
+			result.add(agents.get(i));
+		}
+		return result;
+	}
+
+	private int resolveSampleSize(List<Agent> workers) {
+		Agent first = workers.get(0);
+		if (first instanceof LaborSupplier) {
+			int laborType = ((LaborSupplier) first).getLaborType();
+			return laborType == 0 ? sampleSizeR : sampleSizeN;
+		}
+		return 0;
 	}
 
 	/**
@@ -70,6 +101,34 @@ public class SelectRandomWorkerStrategy extends AbstractStrategy implements
 	 */
 	public void setPrng(RandomEngine prng) {
 		this.prng = prng;
+	}
+
+	/**
+	 * @return the sampleSizeR
+	 */
+	public int getSampleSizeR() {
+		return sampleSizeR;
+	}
+
+	/**
+	 * @param sampleSizeR the sampleSizeR to set
+	 */
+	public void setSampleSizeR(int sampleSizeR) {
+		this.sampleSizeR = sampleSizeR;
+	}
+
+	/**
+	 * @return the sampleSizeN
+	 */
+	public int getSampleSizeN() {
+		return sampleSizeN;
+	}
+
+	/**
+	 * @param sampleSizeN the sampleSizeN to set
+	 */
+	public void setSampleSizeN(int sampleSizeN) {
+		this.sampleSizeN = sampleSizeN;
 	}
 
 	/* (non-Javadoc)

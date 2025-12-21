@@ -1959,6 +1959,10 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="capitalLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
+		<property name="prng" ref="prng"/>
+		<!-- Phase C7: Type-specific sampling size (chi_R/chi_N) -->
+		<property name="sampleSizeR" value="0"/>
+		<property name="sampleSizeN" value="0"/>
 	</bean>
 	
 	<bean id="capitalRDInvestmentStrategy" scope="prototype" parent="strategy"
@@ -2288,6 +2292,10 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="consumptionLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
+		<property name="prng" ref="prng"/>
+		<!-- Phase C7: Type-specific sampling size (chi_R/chi_N) -->
+		<property name="sampleSizeR" value="0"/>
+		<property name="sampleSizeN" value="0"/>
 	</bean>
 	
 	<bean id="consumptionBuyingStrategy" scope="prototype" parent="strategy"
@@ -3066,6 +3074,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<bean id="governmentLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectRandomWorkerStrategy">
 		<property name="prng" ref="prng"/>
+		<!-- Phase C7: Type-specific sampling size (chi_R/chi_N) -->
+		<property name="sampleSizeR" value="0"/>
+		<property name="sampleSizeN" value="0"/>
 	</bean>
 	
 	<bean id="governmentBondsInterestStrategy" scope="prototype" parent="strategy"

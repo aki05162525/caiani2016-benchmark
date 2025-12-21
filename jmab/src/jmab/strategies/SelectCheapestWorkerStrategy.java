@@ -21,7 +21,9 @@ import jmab.agents.LaborSupplier;
 import jmab.agents.MacroAgent;
 import jmab.population.MacroPopulation;
 import net.sourceforge.jabm.agent.Agent;
+import net.sourceforge.jabm.agent.AgentList;
 import net.sourceforge.jabm.strategy.AbstractStrategy;
+import cern.jet.random.engine.RandomEngine;
 
 /**
  * @author Alessandro Caiani and Antoine Godin
@@ -30,14 +32,19 @@ import net.sourceforge.jabm.strategy.AbstractStrategy;
 @SuppressWarnings("serial")
 public class SelectCheapestWorkerStrategy extends AbstractStrategy implements SelectWorkerStrategy {
 
+	private int sampleSizeR;
+	private int sampleSizeN;
+	private RandomEngine prng;
+
 	/* (non-Javadoc)
 	 * @see jmab.strategies.SelectWorkerStrategy#selectWorker(java.util.ArrayList)
 	 */
 	@Override
 	public MacroAgent selectWorker(List<Agent> workers) {
+		List<Agent> sampled = sampleWorkers(workers);
 		double minWage=Double.POSITIVE_INFINITY;
-		MacroAgent cheapestWorker=(MacroAgent)workers.get(0);
-		for(Agent agent:workers){
+		MacroAgent cheapestWorker=(MacroAgent)sampled.get(0);
+		for(Agent agent:sampled){
 			LaborSupplier worker=(LaborSupplier)agent;
 			if(worker.getWage()<minWage){
 				minWage=worker.getWage();
@@ -52,9 +59,10 @@ public class SelectCheapestWorkerStrategy extends AbstractStrategy implements Se
 	 */
 	@Override
 	public List<MacroAgent> selectWorkers(List<Agent> workers, int n) {
+		List<Agent> sampled = sampleWorkers(workers);
 		double maxWage=Double.POSITIVE_INFINITY;
 		TreeMap<Double, MacroAgent> tree = new TreeMap<Double, MacroAgent>(); 
-		for(Agent agent:workers){
+		for(Agent agent:sampled){
 			LaborSupplier worker=(LaborSupplier)agent;
 			if(tree.size()<n){
 				maxWage=Math.max(maxWage,worker.getWage());
@@ -66,6 +74,76 @@ public class SelectCheapestWorkerStrategy extends AbstractStrategy implements Se
 			}
 		}
 		return (List<MacroAgent>)tree.values();
+	}
+
+	private List<Agent> sampleWorkers(List<Agent> workers) {
+		if (workers == null || workers.isEmpty()) {
+			return workers;
+		}
+		int sampleSize = resolveSampleSize(workers);
+		if (sampleSize <= 0 || sampleSize >= workers.size()) {
+			return workers;
+		}
+		AgentList agents = new AgentList(workers);
+		if (prng != null) {
+			agents.shuffle(prng);
+		}
+		List<Agent> result = new java.util.ArrayList<Agent>(sampleSize);
+		for (int i = 0; i < sampleSize; i++) {
+			result.add(agents.get(i));
+		}
+		return result;
+	}
+
+	private int resolveSampleSize(List<Agent> workers) {
+		Agent first = workers.get(0);
+		if (first instanceof LaborSupplier) {
+			int laborType = ((LaborSupplier) first).getLaborType();
+			return laborType == 0 ? sampleSizeR : sampleSizeN;
+		}
+		return 0;
+	}
+
+	/**
+	 * @return the sampleSizeR
+	 */
+	public int getSampleSizeR() {
+		return sampleSizeR;
+	}
+
+	/**
+	 * @param sampleSizeR the sampleSizeR to set
+	 */
+	public void setSampleSizeR(int sampleSizeR) {
+		this.sampleSizeR = sampleSizeR;
+	}
+
+	/**
+	 * @return the sampleSizeN
+	 */
+	public int getSampleSizeN() {
+		return sampleSizeN;
+	}
+
+	/**
+	 * @param sampleSizeN the sampleSizeN to set
+	 */
+	public void setSampleSizeN(int sampleSizeN) {
+		this.sampleSizeN = sampleSizeN;
+	}
+
+	/**
+	 * @return the prng
+	 */
+	public RandomEngine getPrng() {
+		return prng;
+	}
+
+	/**
+	 * @param prng the prng to set
+	 */
+	public void setPrng(RandomEngine prng) {
+		this.prng = prng;
 	}
 
 	/* (non-Javadoc)
