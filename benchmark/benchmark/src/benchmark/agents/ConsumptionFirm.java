@@ -687,15 +687,50 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		this.getExpectation(StaticValues.EXPECTATIONS_REALSALES).addObservation(rSales);
 		this.addValue(StaticValues.LAG_REALSALES, realSales);
 		this.addValue(StaticValues.LAG_NOMINALSALES, sales[0]);
+		// Type別wagebillとカウントの集計
 		double wagebill = 0;
-		for(MacroAgent employee:this.employees){
-			wagebill+=((LaborSupplier)employee).getWage();
+		double wagebillR = 0, wagebillN = 0;
+		int countR = 0, countN = 0;
+
+		for(MacroAgent employee : this.employees) {
+			LaborSupplier worker = (LaborSupplier) employee;
+			double wage = worker.getWage();
+			wagebill += wage;  // Legacy用
+
+			if(worker.getLaborType() == StaticValues.LABOR_TYPE_R) {
+				wagebillR += wage;
+				countR++;
+			} else {
+				wagebillN += wage;
+				countN++;
+			}
 		}
+
+		// Phase B1: Type別期待賃金の更新
+		double[] avWageR = new double[1];
+		if(countR > 0) {
+			avWageR[0] = wagebillR / countR;
+		} else {
+			// 従業員がいない場合は前回の期待値を保持
+			avWageR[0] = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R).getExpectation();
+		}
+		this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R).addObservation(avWageR);
+
+		double[] avWageN = new double[1];
+		if(countN > 0) {
+			avWageN[0] = wagebillN / countN;
+		} else {
+			avWageN[0] = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N).getExpectation();
+		}
+		this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N).addObservation(avWageN);
+
+		// Legacy: 既存のEXPECTATIONS_WAGESも並行維持（後方互換性）
 		double[] avWage = new double[1];
-		if(this.employees.size()>0)
-			avWage[0]=wagebill/this.employees.size();
-		else
-			avWage[0]=this.getExpectation(StaticValues.EXPECTATIONS_WAGES).getExpectation();
+		if(this.employees.size() > 0) {
+			avWage[0] = wagebill / this.employees.size();
+		} else {
+			avWage[0] = this.getExpectation(StaticValues.EXPECTATIONS_WAGES).getExpectation();
+		}
 		this.getExpectation(StaticValues.EXPECTATIONS_WAGES).addObservation(avWage);
 		List<Item> capStocks = this.getItemsStockMatrix(true, StaticValues.SM_CAPGOOD);
 		double capitalAmortization = 0;

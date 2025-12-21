@@ -170,7 +170,10 @@ public interface StaticValues {
 	public static int EXPECTATIONS_CONSPRICE=2;
 	public static int EXPECTATIONS_DEPOSITS=3;
 	public static int EXPECTATIONS_REALSALES = 4;
-	
+	// Phase B1: Type-specific wage expectations
+	public static int EXPECTATIONS_WAGES_R = 5;  // Regular labor wage expectation
+	public static int EXPECTATIONS_WAGES_N = 6;  // Non-regular labor wage expectation
+
 	public static int LAG_INVENTORIES=0;
 	public static int LAG_REALSALES=1;
 	public static int LAG_PRODUCTION=2;

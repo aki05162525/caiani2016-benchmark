@@ -1491,14 +1491,19 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.TIC_UPDATEEXPECTATIONS"/>
 			</list>
 		</property>
-		<property name="expectations"> 
+		<property name="expectations">
 		<map>
-			<entry value-ref="expSales"> 
+			<entry value-ref="expSales">
 				<key>
 				<util:constant static-field="benchmark.StaticValues.EXPECTATIONS_NOMINALSALES"/></key></entry>
-			<entry value-ref="expWages"> 
+			<entry value-ref="expWages">
 				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES"/></key></entry>
-			<entry value-ref="expRSales"> 
+			<!-- Phase B1: Add type-specific wage expectations -->
+			<entry value-ref="expWagesR">
+				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES_R"/></key></entry>
+			<entry value-ref="expWagesN">
+				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES_N"/></key></entry>
+			<entry value-ref="expRSales">
 				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_REALSALES"/></key></entry>
 		</map>
 		</property>
@@ -1625,7 +1630,54 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
         </array>
     </property>
 	</bean>
-	
+
+	<!-- Phase B1: Type-specific wage expectations -->
+	<bean id="expWagesR" class="jmab.expectations.SimpleAdaptiveExpectation"
+		scope="prototype">
+		<property name="numberPeriod" value="4"/>
+		<property name="nbVariables" value="1"/>
+		<property name="adaptiveParam" value="0.25"/>
+		<property name="weights">
+			<array>
+				<array>
+					<value>1.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+        </array>
+    </property>
+	</bean>
+
+	<bean id="expWagesN" class="jmab.expectations.SimpleAdaptiveExpectation"
+		scope="prototype">
+		<property name="numberPeriod" value="4"/>
+		<property name="nbVariables" value="1"/>
+		<property name="adaptiveParam" value="0.25"/>
+		<property name="weights">
+			<array>
+				<array>
+					<value>1.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+        </array>
+    </property>
+	</bean>
+
 	<bean id="pastInventories" class="jmab.expectations.TreeMapPassedValues"
 		scope="prototype">
 		<property name="nbLags" value="4"></property>
@@ -1956,14 +2008,19 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.TIC_UPDATEEXPECTATIONS"/>
 			</list>
 		</property>
-		<property name="expectations"> 
+		<property name="expectations">
 		<map>
-			<entry value-ref="expSales"> 
+			<entry value-ref="expSales">
 				<key>
 				<util:constant static-field="benchmark.StaticValues.EXPECTATIONS_NOMINALSALES"/></key></entry>
-			<entry value-ref="expWages"> 
+			<entry value-ref="expWages">
 				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES"/></key></entry>
-			<entry value-ref="expRSales"> 
+			<!-- Phase B1: Add type-specific wage expectations -->
+			<entry value-ref="expWagesR">
+				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES_R"/></key></entry>
+			<entry value-ref="expWagesN">
+				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES_N"/></key></entry>
+			<entry value-ref="expRSales">
 				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_REALSALES"/></key></entry>
 		</map>
 		</property>

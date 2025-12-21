@@ -105,16 +105,21 @@
 
 **Phase B2.3 完全完了（2025-12-21）**：全7クラス（ConsumptionFirm, CapitalFirm, ConsumptionFirmWagesEnd, CapitalFirmWagesEnd, Government, Government2WagesEnd, GovernmentAntiCyclical）にtype-specific turnover & partial layoff実装、XML設定完了
 
-## B1. 期待賃金（Expectations）を2系列化する設計を確定
+## B1. 期待賃金（Expectations）を2系列化する設計を確定 ✓
+
+**Phase B1 完全完了（2025-12-21）**：期待賃金2系列化（EXPECTATIONS_WAGES_R/N）実装、XML設定・初期化・更新処理完了
 
 **理由**：CES 分解（ratio式）・価格式は `W^e_R, W^e_N` を参照するが、現状は `EXPECTATIONS_WAGES` が単一。
 
-* [ ] `StaticValues.EXPECTATIONS_WAGES_R`, `..._N` を追加する（推奨）
-* [ ] 企業側で `W^e_R` と `W^e_N` を取得できる経路を作る
+* [x] `StaticValues.EXPECTATIONS_WAGES_R=5`, `EXPECTATIONS_WAGES_N=6` を追加（既存の0-4は維持）
+* [x] 企業側で `W^e_R` と `W^e_N` を取得できる経路を作る
+  * [x] XML設定: expWagesR/N bean定義とexpectationsマップ登録
+  * [x] SFCSSMacroAgentInitialiser: CapitalFirm/ConsumptionFirmの初期化
+  * [x] ConsumptionFirm/CapitalFirm の updatePreTaxProfits() でタイプ別平均賃金更新
+  * [x] WagesEnd系: 親クラスの実装が適用されることを確認
+  * [x] 既存 EXPECTATIONS_WAGES も並行維持（後方互換性）
 
-  * 既存 expectation の観測更新箇所（ConsumptionFirm行616-625等）をタイプ別平均賃金で更新できるようにする（Phase Cでも使用）
-
-**Done**：企業が `W^e_R, W^e_N` を安定して参照できる。
+**Done**：企業が `W^e_R, W^e_N` を安定して参照できる。Phase Cへの準備完了。
 
 ---
 

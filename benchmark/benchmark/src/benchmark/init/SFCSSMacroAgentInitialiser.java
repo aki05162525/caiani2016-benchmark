@@ -290,6 +290,27 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 				passedWage[j][1]=this.hhWage*(1+distr.nextDouble());
 			}
 			kWageExp.setPassedValues(passedWage);
+
+			// Phase B1: EXPECTATIONS_WAGES_R の初期化
+			Expectation kWageExpR = k.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
+			int nbObsR = kWageExpR.getNumberPeriod();
+			double[][] passedWageR = new double[nbObsR][2];
+			for(int j = 0; j < nbObsR; j++){
+				passedWageR[j][0] = this.hhWage * (1 + distr.nextDouble());
+				passedWageR[j][1] = this.hhWage * (1 + distr.nextDouble());
+			}
+			kWageExpR.setPassedValues(passedWageR);
+
+			// Phase B1: EXPECTATIONS_WAGES_N の初期化
+			Expectation kWageExpN = k.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
+			int nbObsN = kWageExpN.getNumberPeriod();
+			double[][] passedWageN = new double[nbObsN][2];
+			for(int j = 0; j < nbObsN; j++){
+				passedWageN[j][0] = this.hhWage * (1 + distr.nextDouble());
+				passedWageN[j][1] = this.hhWage * (1 + distr.nextDouble());
+			}
+			kWageExpN.setPassedValues(passedWageN);
+
 			Expectation kSalesExp = k.getExpectation(StaticValues.EXPECTATIONS_NOMINALSALES);
 			nbObs = kSalesExp .getNumberPeriod();
 			double[][] passedSales = new double[nbObs][2];
@@ -422,6 +443,27 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 				passedWage[j][1]=this.hhWage*(1+distr.nextDouble());
 			}
 			cWageExp.setPassedValues(passedWage);
+
+			// Phase B1: EXPECTATIONS_WAGES_R の初期化
+			Expectation cWageExpR = c.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
+			int nbObsR = cWageExpR.getNumberPeriod();
+			double[][] passedWageR = new double[nbObsR][2];
+			for(int j = 0; j < nbObsR; j++){
+				passedWageR[j][0] = this.hhWage * (1 + distr.nextDouble());
+				passedWageR[j][1] = this.hhWage * (1 + distr.nextDouble());
+			}
+			cWageExpR.setPassedValues(passedWageR);
+
+			// Phase B1: EXPECTATIONS_WAGES_N の初期化
+			Expectation cWageExpN = c.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
+			int nbObsN = cWageExpN.getNumberPeriod();
+			double[][] passedWageN = new double[nbObsN][2];
+			for(int j = 0; j < nbObsN; j++){
+				passedWageN[j][0] = this.hhWage * (1 + distr.nextDouble());
+				passedWageN[j][1] = this.hhWage * (1 + distr.nextDouble());
+			}
+			cWageExpN.setPassedValues(passedWageN);
+
 			Expectation cSalesExp = c.getExpectation(StaticValues.EXPECTATIONS_NOMINALSALES);
 			nbObs = cSalesExp .getNumberPeriod();
 			double[][] passedSales = new double[nbObs][2];
