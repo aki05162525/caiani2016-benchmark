@@ -244,6 +244,9 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 * @param cesDelta the cesDelta to set
 	 */
 	public void setCesDelta(double cesDelta) {
+		if (cesDelta <= 0.0 || cesDelta >= 1.0) {
+			throw new IllegalArgumentException("cesDelta must be in (0,1)");
+		}
 		this.cesDelta = cesDelta;
 	}
 
@@ -258,6 +261,12 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 * @param cesRho the cesRho to set
 	 */
 	public void setCesRho(double cesRho) {
+		if (Math.abs(cesRho) < 1e-12) {
+			throw new IllegalArgumentException("cesRho must be non-zero");
+		}
+		if (Math.abs(1.0 - cesRho) < 1e-12) {
+			throw new IllegalArgumentException("cesRho must be different from 1");
+		}
 		this.cesRho = cesRho;
 	}
 
@@ -272,6 +281,9 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 * @param cesAR the cesAR to set
 	 */
 	public void setCesAR(double cesAR) {
+		if (cesAR <= 0.0) {
+			throw new IllegalArgumentException("cesAR must be > 0");
+		}
 		this.cesAR = cesAR;
 	}
 
@@ -286,6 +298,9 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 * @param cesAN the cesAN to set
 	 */
 	public void setCesAN(double cesAN) {
+		if (cesAN <= 0.0) {
+			throw new IllegalArgumentException("cesAN must be > 0");
+		}
 		this.cesAN = cesAN;
 	}
 
@@ -300,6 +315,9 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 * @param cesEpsilon the cesEpsilon to set
 	 */
 	public void setCesEpsilon(double cesEpsilon) {
+		if (cesEpsilon <= 0.0) {
+			throw new IllegalArgumentException("cesEpsilon must be > 0");
+		}
 		this.cesEpsilon = cesEpsilon;
 	}
 
@@ -314,6 +332,12 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 * @param phiMin the phiMin to set
 	 */
 	public void setPhiMin(double phiMin) {
+		if (phiMin <= 0.0) {
+			throw new IllegalArgumentException("phiMin must be > 0");
+		}
+		if (this.phiMax > 0.0 && phiMin >= this.phiMax) {
+			throw new IllegalArgumentException("phiMin must be < phiMax");
+		}
 		this.phiMin = phiMin;
 	}
 
@@ -328,6 +352,12 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	 * @param phiMax the phiMax to set
 	 */
 	public void setPhiMax(double phiMax) {
+		if (phiMax <= 0.0) {
+			throw new IllegalArgumentException("phiMax must be > 0");
+		}
+		if (this.phiMin > 0.0 && phiMax <= this.phiMin) {
+			throw new IllegalArgumentException("phiMax must be > phiMin");
+		}
 		this.phiMax = phiMax;
 	}
 
