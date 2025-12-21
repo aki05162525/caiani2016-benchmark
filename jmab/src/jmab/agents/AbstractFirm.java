@@ -53,6 +53,8 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	protected double cesAR; // A_R > 0
 	protected double cesAN; // A_N > 0
 	protected double cesEpsilon = 1e-8; // Numerical guard, > 0
+	protected double phiMin; // Ratio lower bound (> 0)
+	protected double phiMax; // Ratio upper bound (phiMin < phiMax)
 	
 	/**
 	 * 
@@ -302,6 +304,34 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	}
 
 	/**
+	 * @return the phiMin
+	 */
+	public double getPhiMin() {
+		return phiMin;
+	}
+
+	/**
+	 * @param phiMin the phiMin to set
+	 */
+	public void setPhiMin(double phiMin) {
+		this.phiMin = phiMin;
+	}
+
+	/**
+	 * @return the phiMax
+	 */
+	public double getPhiMax() {
+		return phiMax;
+	}
+
+	/**
+	 * @param phiMax the phiMax to set
+	 */
+	public void setPhiMax(double phiMax) {
+		this.phiMax = phiMax;
+	}
+
+	/**
 	 * Probabilistic rounding for partial layoff calculation.
 	 * Phase B2.3: fire = floor(x) + Bernoulli(frac(x))
 	 * @param value the continuous value to round (e.g., η * excess)
@@ -340,6 +370,41 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 		double sum = termR + termN;
 		sum = Math.max(sum, cesEpsilon);
 		return Math.pow(sum, 1.0 / cesRho);
+	}
+
+	/**
+	 * Computes the CES optimal labor ratio and applies clipping.
+	 */
+	protected double computeLaborRatio(double expWageR, double expWageN) {
+		if (cesDelta <= 0.0 || cesDelta >= 1.0) {
+			throw new IllegalArgumentException("cesDelta must be in (0,1)");
+		}
+		if (Math.abs(cesRho) < 1e-12) {
+			throw new IllegalArgumentException("cesRho must be non-zero");
+		}
+		if (Math.abs(1.0 - cesRho) < 1e-12) {
+			throw new IllegalArgumentException("cesRho must be different from 1");
+		}
+		if (cesAR <= 0.0 || cesAN <= 0.0 || cesEpsilon <= 0.0) {
+			throw new IllegalArgumentException("cesAR, cesAN, cesEpsilon must be > 0");
+		}
+		if (phiMin <= 0.0 || phiMax <= phiMin) {
+			throw new IllegalArgumentException("phiMin must be > 0 and phiMax > phiMin");
+		}
+		double adjWR = Math.max(expWageR, cesEpsilon);
+		double adjWN = Math.max(expWageN, cesEpsilon);
+		double invOneMinusRho = 1.0 / (1.0 - cesRho);
+		double termDelta = Math.pow(cesDelta / (1.0 - cesDelta), invOneMinusRho);
+		double termA = Math.pow(cesAR / cesAN, cesRho * invOneMinusRho);
+		double termW = Math.pow(adjWN / adjWR, invOneMinusRho);
+		double ratioRaw = termDelta * termA * termW;
+		if (ratioRaw < phiMin) {
+			return phiMin;
+		}
+		if (ratioRaw > phiMax) {
+			return phiMax;
+		}
+		return ratioRaw;
 	}
 
 	/**

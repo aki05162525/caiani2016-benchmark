@@ -274,8 +274,8 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 ## C2. 需要比率（FOC）とクリップを実装
 
-* [ ] `ratio_raw = (δ/(1-δ))^(1/(1-ρ)) * (A_R/A_N)^(ρ/(1-ρ)) * (W^e_N/W^e_R)^(1/(1-ρ))`
-* [ ] `ratio = clip(ratio_raw, φ_min, φ_max)`
+* [x] `ratio_raw = (δ/(1-δ))^(1/(1-ρ)) * (A_R/A_N)^(ρ/(1-ρ)) * (W^e_N/W^e_R)^(1/(1-ρ))`
+* [x] `ratio = clip(ratio_raw, φ_min, φ_max)`
 
 **Done**：`W^e_R↑` で ratio↓ など、符号が直観に一致。
 
@@ -385,7 +385,7 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 * [ ] χ_R, χ_N
 * [ ] υ_R, υ_N
 * [x] δ, ρ(≠0), A_R, A_N（CESパラメータをXMLで設定。企業向けのみ適用）
-* [ ] ε, φ_min, φ_max
+* [x] ε, φ_min, φ_max（CESパラメータ/クリップ範囲をXMLで設定。企業向けのみ適用）
 * [ ] ω
 * [ ] （任意）c1_R, c1_N, c2（需要側フィードバックを入れるなら）
 
