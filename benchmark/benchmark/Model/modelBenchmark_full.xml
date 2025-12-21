@@ -1534,6 +1534,11 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="shareOfExpIncomeAsDeposit" value="1"/>
 		<property name="minWageDiscount" value="1"/>
 		<property name="turnoverLabor" ref="turnoverVal"/>
+		<!-- Phase B2.3: Type-specific parameters -->
+		<property name="turnoverLaborR" ref="turnoverLaborRVal" />
+		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
+		<property name="layoffRateR" ref="layoffRateRVal" />
+		<property name="layoffRateN" ref="layoffRateNVal" />
 		<property name="prng" ref="prng" />
 	</bean>
 	
@@ -1995,7 +2000,12 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="loanLength" value="20"/>
 		<property name="loanAmortizationType" value="0" />
 		<property name="turnoverLabor" ref="turnoverVal" />
-		<property name="prng" ref="prng" /> 
+		<!-- Phase B2.3: Type-specific parameters -->
+		<property name="turnoverLaborR" ref="turnoverLaborRVal" />
+		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
+		<property name="layoffRateR" ref="layoffRateRVal" />
+		<property name="layoffRateN" ref="layoffRateNVal" />
+		<property name="prng" ref="prng" />
 		<property name="shareOfExpIncomeAsDeposit" value="1" />
 		<property name="minWageDiscount" value="1" />
 		
@@ -2003,6 +2013,24 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="turnoverVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
 		<constructor-arg value="0.05" />
+	</bean>
+
+	<!-- Phase B2.3: Type-specific turnover rates -->
+	<bean id="turnoverLaborRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
+		<constructor-arg value="0.02" />  <!-- R型: 2% (低い離職率) -->
+	</bean>
+
+	<bean id="turnoverLaborNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
+		<constructor-arg value="0.05" />  <!-- N型: 5% (高い離職率) -->
+	</bean>
+
+	<!-- Phase B2.3: Type-specific layoff rates (η_R < η_N) -->
+	<bean id="layoffRateRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
+		<constructor-arg value="0.3" />  <!-- η_R: 30% (Rは解雇されにくい) -->
+	</bean>
+
+	<bean id="layoffRateNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
+		<constructor-arg value="0.8" />  <!-- η_N: 80% (Nは調整弁) -->
 	</bean>
 	
 	<bean id="consumptionMacroStrategy" scope="prototype"
@@ -2824,7 +2852,12 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="prng" ref="prng"/>
 		<property name="bondPrice" value="1.0" />
 		<property name="fixedLaborDemand" value="1360" />
-		<property name="turnoverLabor" ref="turnoverVal" /> 
+		<property name="turnoverLabor" ref="turnoverVal" />
+		<!-- Phase B2.3: Type-specific parameters (Government hires R-only) -->
+		<property name="turnoverLaborR" ref="turnoverLaborRVal" />
+		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
+		<property name="layoffRateR" ref="layoffRateRVal" />
+		<property name="layoffRateN" ref="layoffRateNVal" />
 		<property name="unemploymentBenefit" value="0.4" />
 		<property name="uComputer" ref="unemploymentComputer"/>
 		<property name="taxedPopulations">

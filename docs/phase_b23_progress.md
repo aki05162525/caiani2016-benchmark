@@ -30,23 +30,21 @@
 - ✓ Government2WagesEnd.java: `turnoverLaborR/N`追加、R型turnover実装
 - ✓ GovernmentAntiCyclical.java: `turnoverLaborR/N`追加、シリアライゼーション更新
 
-## 残タスク
+### 7. SFCSSMacroAgentInitialiser.java ✓
+**benchmark/benchmark/src/benchmark/init/SFCSSMacroAgentInitialiser.java**
+- ✓ 調査完了：Spring XMLから直接プロパティ注入されるため、変更不要
 
-### 3. SFCSSMacroAgentInitialiser.java (benchmark/benchmark/src/benchmark/init/)
-企業・政府の初期化時にパラメータ設定:
-- `setTurnoverLaborR()`, `setTurnoverLaborN()`
-- `setLayoffRateR()`, `setLayoffRateN()`
-
-### 4. XML設定ファイル
+### 8. XML設定ファイル ✓
 **modelBenchmark_full.xml, modelBenchmark_light.xml**
-
-各企業・政府クラスの設定に追加:
-```xml
-<property name="turnoverLaborR" value="0.02"/>  <!-- 例: R型2% -->
-<property name="turnoverLaborN" value="0.05"/>  <!-- 例: N型5% -->
-<property name="layoffRateR" value="0.3"/>      <!-- η_R < η_N -->
-<property name="layoffRateN" value="0.8"/>      <!-- η_N: N型は解雇されやすい -->
-```
+- ✓ Bean定義追加：
+  - `turnoverLaborRVal` (0.02): R型離職率 2%
+  - `turnoverLaborNVal` (0.05): N型離職率 5%
+  - `layoffRateRVal` (0.3): R型解雇率 30%
+  - `layoffRateNVal` (0.8): N型解雇率 80%
+- ✓ 以下のbeanに type-specific parameters 設定:
+  - ConsumptionFirmWagesEnd
+  - CapitalFirmWagesEnd
+  - GovernmentAntiCyclical
 
 ## 実装パターン（WagesEnd系に適用）
 
@@ -142,13 +140,16 @@ buf.putDouble(turnoverLaborR);
 buf.putDouble(turnoverLaborN);
 ```
 
-## 次のステップ
-1. ✓ ConsumptionFirmWagesEnd, CapitalFirmWagesEnd実装 → **完了**
-2. ✓ Government, Government2WagesEnd, GovernmentAntiCyclical実装 → **完了**
-3. SFCSSMacroAgentInitialiser更新 → **残タスク**
-4. XML設定ファイル更新 → **残タスク**
+## Phase B2.3 完全完了！✓
 
-**Phase B2.3 完了！**
-次のフェーズ候補:
+全タスク完了:
+1. ✓ AbstractFirm.java: layoffRateR/N、probabilisticRound実装
+2. ✓ ConsumptionFirm.java, CapitalFirm.java: type-specific turnover & partial layoff
+3. ✓ ConsumptionFirmWagesEnd, CapitalFirmWagesEnd: 同上
+4. ✓ Government, Government2WagesEnd, GovernmentAntiCyclical: turnoverLaborR/N追加
+5. ✓ SFCSSMacroAgentInitialiser: 調査完了（変更不要）
+6. ✓ XML設定ファイル（full/light）: bean定義＋parameters設定完了
+
+**次のフェーズ候補**:
 - Phase B1: 期待賃金2系列化（EXPECTATIONS_WAGES_R/N）
 - Phase C: CES分解・実効労働・価格統合

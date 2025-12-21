@@ -101,7 +101,9 @@
 
 ---
 
-# Phase B: 企業・政府の「雇用調整」経路（computeLaborDemand + payWages）をタイプ別に通す
+# Phase B: 企業・政府の「雇用調整」経路（computeLaborDemand + payWages）をタイプ別に通す ✓
+
+**Phase B2.3 完全完了（2025-12-21）**：全7クラス（ConsumptionFirm, CapitalFirm, ConsumptionFirmWagesEnd, CapitalFirmWagesEnd, Government, Government2WagesEnd, GovernmentAntiCyclical）にtype-specific turnover & partial layoff実装、XML設定完了
 
 ## B1. 期待賃金（Expectations）を2系列化する設計を確定
 
@@ -373,8 +375,8 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 ## P1. type 別パラメータを設定可能にする
 
-* [ ] ϑ_R, ϑ_N
-* [ ] η_R, η_N（0 < η_R < η_N ≤ 1）
+* [x] ϑ_R, ϑ_N（turnoverLaborR/N in XML: 0.02, 0.05）
+* [x] η_R, η_N（layoffRateR/N in XML: 0.3, 0.8、0 < η_R < η_N ≤ 1 を満たす）
 * [ ] χ_R, χ_N
 * [ ] υ_R, υ_N
 * [ ] δ, ρ(≠0), A_R, A_N
