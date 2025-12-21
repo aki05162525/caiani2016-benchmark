@@ -159,6 +159,8 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	 */
 	@Override
 	protected void computeLaborDemand() {
+		// Legacy labor market is disabled.
+		this.setActive(false, StaticValues.MKT_LABOR);
 		// Type-specific turnover (Government hires R-only, so only R workers are employed)
 		// All employees are R-type, so we only apply turnoverLaborR
 		AgentList emplPop = new AgentList();
@@ -180,9 +182,7 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 			this.laborDemand=nbWorkers-currentWorkers;
 			// Activate type-specific market
 			this.setActive(true, StaticValues.MKT_LABOR_R);
-			this.setActive(true, StaticValues.MKT_LABOR); // Legacy
 		}else{
-			this.setActive(false, StaticValues.MKT_LABOR);
 			this.setActive(false, StaticValues.MKT_LABOR_R);
 			this.laborDemandR = 0;
 			this.laborDemandN = 0;
@@ -201,7 +201,7 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	protected void payWages(){
 		if(employees.size()>0){
 			Deposit deposit = (Deposit) this.getItemStockMatrix(true, StaticValues.SM_RESERVES);
-			payWages(deposit,StaticValues.MKT_LABOR);
+			payWages(deposit,StaticValues.MKT_LABOR_R);
 		}
 	}
 

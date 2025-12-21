@@ -164,6 +164,12 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="nominalGDPReportTic" />
 				<ref bean="nominalInvReportTic" />
 				<ref bean="unemploymentReportTic" />
+				<ref bean="unemploymentRReportTic" />
+				<ref bean="unemploymentNReportTic" />
+				<ref bean="avWageRReportTic" />
+				<ref bean="avWageNReportTic" />
+				<ref bean="employmentRReportTic" />
+				<ref bean="employmentNReportTic" />
 				<ref bean="laborForceRReportTic" />
 				<ref bean="laborForceNReportTic" />
 				<ref bean="microBankCreditReportTic" />
@@ -841,6 +847,48 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTREPORT_ID" /></property>
 	<property name="variableName" value="Unemployment Rate"></property>
 	<property name="computer" ref="unemploymentComputer"></property>
+	</bean>
+
+	<bean id="unemploymentRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTRREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Rate R"></property>
+	<property name="computer" ref="unemploymentRComputer"></property>
+	</bean>
+
+	<bean id="unemploymentNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTNREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Rate N"></property>
+	<property name="computer" ref="unemploymentNComputer"></property>
+	</bean>
+
+	<bean id="avWageRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVWAGERREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVWAGERREPORT_ID" /></property>
+	<property name="variableName" value="Average Wage R"></property>
+	<property name="computer" ref="avWageRComputer"></property>
+	</bean>
+
+	<bean id="avWageNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVWAGENREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVWAGENREPORT_ID" /></property>
+	<property name="variableName" value="Average Wage N"></property>
+	<property name="computer" ref="avWageNComputer"></property>
+	</bean>
+
+	<bean id="employmentRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_EMPLOYMENTRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.EMPLOYMENTRREPORT_ID" /></property>
+	<property name="variableName" value="Employment R"></property>
+	<property name="computer" ref="employmentRComputer"></property>
+	</bean>
+
+	<bean id="employmentNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_EMPLOYMENTNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.EMPLOYMENTNREPORT_ID" /></property>
+	<property name="variableName" value="Employment N"></property>
+	<property name="computer" ref="employmentNComputer"></property>
 	</bean>
 
 	<bean id="laborForceRReportTic" class="jmab.events.MacroVariableTicEvent">

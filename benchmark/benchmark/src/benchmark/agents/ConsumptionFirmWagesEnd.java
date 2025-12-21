@@ -280,9 +280,6 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		if (laborDemandN > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR_N);
 		}
-		if (laborDemand > 0) {
-			this.setActive(true, StaticValues.MKT_LABOR);
-		}
 	}
 
 	/**

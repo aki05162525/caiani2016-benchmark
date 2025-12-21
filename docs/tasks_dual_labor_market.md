@@ -34,7 +34,7 @@
 
   * `MKT_LABOR_R`
   * `MKT_LABOR_N`
-* [ ] 既存コードで `StaticValues.MKT_LABOR` を参照している箇所を洗い出し、段階的に置換できるようにする
+* [x] 既存コードで `StaticValues.MKT_LABOR` を参照している箇所を洗い出し、段階的に置換できるようにする
 
   * まずは「出す側（労働供給）」と「呼ぶ側（企業）」の最小経路を置換する
 
@@ -73,7 +73,7 @@
 ### A4.1 laborDemand の二重化
 
 * [x] `laborDemand` を `laborDemandR`, `laborDemandN` に置換（または map/struct で保持）
-* [ ] 既存 `setActive(true, StaticValues.MKT_LABOR)` の設計を見直し：
+* [x] 既存 `setActive(true, StaticValues.MKT_LABOR)` の設計を見直し：
 
   * Rの求人があるなら `MKT_LABOR_R`
   * Nの求人があるなら `MKT_LABOR_N`

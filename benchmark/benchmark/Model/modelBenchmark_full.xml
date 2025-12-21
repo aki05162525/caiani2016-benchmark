@@ -109,6 +109,12 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	            <ref bean="avNetIncomeReportTic" />
 				<ref bean="nominalInvReportTic" />
 				<ref bean="unemploymentReportTic" />
+				<ref bean="unemploymentRReportTic" />
+				<ref bean="unemploymentNReportTic" />
+				<ref bean="avWageRReportTic" />
+				<ref bean="avWageNReportTic" />
+				<ref bean="employmentRReportTic" />
+				<ref bean="employmentNReportTic" />
 				<ref bean="laborForceRReportTic" />
 				<ref bean="laborForceNReportTic" />
 				<ref bean="microLoansKfirmsReportTic" />
@@ -203,7 +209,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 			</list>
 		</property>
 		<property name="simulationController" ref="simulationController" />
-		<property name="maximumRounds" value="1000" />
+<!--    実行回数-->
+		<property name="maximumRounds" value="5" />
 		<property name="population" ref="macroPopulation" />
 		<property name="agentInitialiser" ref="sfcAgentsInitialiser" />
 		<property name="handler" ref="populationHandler" />
@@ -820,6 +827,48 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTREPORT_ID" /></property>
 	<property name="variableName" value="Unemployment Rate"/>
 	<property name="computer" ref="unemploymentComputer"/>
+	</bean>
+
+	<bean id="unemploymentRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTRREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Rate R"/>
+	<property name="computer" ref="unemploymentRComputer"/>
+	</bean>
+
+	<bean id="unemploymentNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTNREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Rate N"/>
+	<property name="computer" ref="unemploymentNComputer"/>
+	</bean>
+
+	<bean id="avWageRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVWAGERREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVWAGERREPORT_ID" /></property>
+	<property name="variableName" value="Average Wage R"/>
+	<property name="computer" ref="avWageRComputer"/>
+	</bean>
+
+	<bean id="avWageNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVWAGENREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVWAGENREPORT_ID" /></property>
+	<property name="variableName" value="Average Wage N"/>
+	<property name="computer" ref="avWageNComputer"/>
+	</bean>
+
+	<bean id="employmentRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_EMPLOYMENTRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.EMPLOYMENTRREPORT_ID" /></property>
+	<property name="variableName" value="Employment R"/>
+	<property name="computer" ref="employmentRComputer"/>
+	</bean>
+
+	<bean id="employmentNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_EMPLOYMENTNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.EMPLOYMENTNREPORT_ID" /></property>
+	<property name="variableName" value="Employment N"/>
+	<property name="computer" ref="employmentNComputer"/>
 	</bean>
 
 	<bean id="laborForceRReportTic" class="jmab.events.MacroVariableTicEvent">

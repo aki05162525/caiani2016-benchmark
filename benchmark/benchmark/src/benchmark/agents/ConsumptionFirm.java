@@ -413,15 +413,12 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		}
 
 		// Phase B2: Activate type-specific labor markets
+		this.setActive(false, StaticValues.MKT_LABOR);
 		if (laborDemandR > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR_R);
 		}
 		if (laborDemandN > 0) {
 			this.setActive(true, StaticValues.MKT_LABOR_N);
-		}
-		// Legacy market activation (for backward compatibility)
-		if (laborDemand > 0) {
-			this.setActive(true, StaticValues.MKT_LABOR);
 		}
 		if(employees.size()>0){
 			List<Item> deposits = this.getItemsStockMatrix(true, StaticValues.SM_DEP);
@@ -1357,8 +1354,20 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 
 	@Override
 	public void setLaborActive(boolean active) {
-		this.setActive(active, StaticValues.MKT_LABOR);
-		
+		if(active){
+			// Legacy labor market is disabled; activate only demanded R/N markets.
+			this.setActive(false, StaticValues.MKT_LABOR);
+			if(this.laborDemandR > 0){
+				this.setActive(true, StaticValues.MKT_LABOR_R);
+			}
+			if(this.laborDemandN > 0){
+				this.setActive(true, StaticValues.MKT_LABOR_N);
+			}
+		}else{
+			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.setActive(false, StaticValues.MKT_LABOR_N);
+		}
 	}
 	
 }

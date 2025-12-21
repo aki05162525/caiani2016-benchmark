@@ -489,7 +489,6 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 			}else{
 				// Phase A4: Re-hire based on worker's labor type
 				int laborType = employee.getLaborType();
-				this.setLaborActive(true);
 				fireAgent(employee);
 				// Increase type-specific demand
 				if(laborType == 0) { // LABOR_TYPE_R
@@ -499,6 +498,8 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 				}
 				// Legacy: also increase total demand for backward compatibility
 				this.laborDemand += 1;
+				// Reactivate only the relevant labor market(s) based on demand
+				this.setLaborActive(true);
 			}
 
 		}

@@ -297,6 +297,8 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 	 * Phase B2: Government only hires Regular (R) workers.
 	 */
 	protected void computeLaborDemand() {
+		// Legacy labor market is disabled.
+		this.setActive(false, StaticValues.MKT_LABOR);
 		int currentWorkers = this.employees.size();
 		int nbWorkers = this.fixedLaborDemand;
 		if(nbWorkers>currentWorkers){
@@ -306,9 +308,7 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 			this.laborDemand=nbWorkers-currentWorkers;
 			// Activate type-specific market
 			this.setActive(true, StaticValues.MKT_LABOR_R);
-			this.setActive(true, StaticValues.MKT_LABOR); // Legacy
 		}else{
-			this.setActive(false, StaticValues.MKT_LABOR);
 			this.setActive(false, StaticValues.MKT_LABOR_R);
 			this.laborDemandR = 0;
 			this.laborDemandN = 0;
@@ -324,7 +324,7 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 		cleanEmployeeList();
 		if(employees.size()>0){
 			Deposit deposit = (Deposit) this.getItemStockMatrix(true, StaticValues.SM_RESERVES);
-			payWages(deposit,StaticValues.MKT_LABOR);
+			payWages(deposit,StaticValues.MKT_LABOR_R);
 		}
 
 		cleanEmployeeList();
@@ -738,8 +738,14 @@ public class Government extends SimpleAbstractAgent implements LaborDemander, Bo
 
 	@Override
 	public void setLaborActive(boolean active) {
-		this.setActive(active, StaticValues.MKT_LABOR);
-		
+		if(active){
+			// Government hires R-only; legacy market disabled.
+			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(true, StaticValues.MKT_LABOR_R);
+		}else{
+			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+		}
 	}
 
 	public RandomEngine getPrng() {

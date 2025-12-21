@@ -540,13 +540,11 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 		}
 
 		// Phase B2: Activate type-specific labor markets
+		this.setActive(false, StaticValues.MKT_LABOR);
 		if(this.laborDemandR>0)
 			this.setActive(true, StaticValues.MKT_LABOR_R);
 		if(this.laborDemandN>0)
 			this.setActive(true, StaticValues.MKT_LABOR_N);
-		// Legacy market activation
-		if(this.laborDemand>0)
-			this.setActive(true, StaticValues.MKT_LABOR);
 		cleanEmployeeList();
 		if(employees.size()>0){
 			List<Item> deposits = this.getItemsStockMatrix(true, StaticValues.SM_DEP);
@@ -1246,8 +1244,20 @@ public class CapitalFirm extends AbstractFirm implements GoodSupplier,
 
 	@Override
 	public void setLaborActive(boolean active) {
-		this.setActive(active, StaticValues.MKT_LABOR);
-		
+		if(active){
+			// Legacy labor market is disabled; activate only demanded R/N markets.
+			this.setActive(false, StaticValues.MKT_LABOR);
+			if(this.laborDemandR > 0){
+				this.setActive(true, StaticValues.MKT_LABOR_R);
+			}
+			if(this.laborDemandN > 0){
+				this.setActive(true, StaticValues.MKT_LABOR_N);
+			}
+		}else{
+			this.setActive(false, StaticValues.MKT_LABOR);
+			this.setActive(false, StaticValues.MKT_LABOR_R);
+			this.setActive(false, StaticValues.MKT_LABOR_N);
+		}
 	}
 	
 	
