@@ -243,6 +243,16 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 			MacroAgent worker= (MacroAgent)strategy.selectWorker(event.getObjects());
 			macroSim.getActiveMarket().commit(this, worker,marketID);
 			break;
+		case StaticValues.MKT_LABOR_R:
+			SelectWorkerStrategy strategyR = (SelectWorkerStrategy) this.getStrategy(StaticValues.STRATEGY_LABOR);
+			MacroAgent workerR = (MacroAgent)strategyR.selectWorker(event.getObjects());
+			macroSim.getActiveMarket().commit(this, workerR,marketID);
+			break;
+		case StaticValues.MKT_LABOR_N:
+			SelectWorkerStrategy strategyN = (SelectWorkerStrategy) this.getStrategy(StaticValues.STRATEGY_LABOR);
+			MacroAgent workerN = (MacroAgent)strategyN.selectWorker(event.getObjects());
+			macroSim.getActiveMarket().commit(this, workerN,marketID);
+			break;
 		}
 	}
 	

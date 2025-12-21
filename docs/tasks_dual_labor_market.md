@@ -249,9 +249,9 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 **対象**：ConsumptionFirm の `onAgentArrival`（Task1: 行239-244）等
 
-* [ ] 企業が市場から渡される候補者リストは、市場IDにより既に分離されている前提にする
-* [ ] `SelectWorkerStrategy` は基本そのまま（候補者リストが同一タイプのみなら追加実装不要）
-* [ ] もし市場側が単一で分離できない場合は、strategy側で type フィルタを追加（ただし最終手段）
+* [x] 企業が市場から渡される候補者リストは、市場IDにより既に分離されている前提にする
+* [x] `SelectWorkerStrategy` は基本そのまま（候補者リストが同一タイプのみなら追加実装不要）
+* [x] もし市場側が単一で分離できない場合は、strategy側で type フィルタを追加（ただし最終手段）
 
 **Done**：企業がR市場でN workerを commit されることが構造的に起きない。
 

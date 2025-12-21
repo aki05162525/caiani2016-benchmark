@@ -32,6 +32,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="consumptionMarket" />
 				<ref bean="creditMarket" />
 				<ref bean="laborMarket" />
+				<ref bean="laborMarketR" />
+				<ref bean="laborMarketN" />
 				<ref bean="depositMarket" />
 				<ref bean="bondMarket" />
 				<ref bean="reservesMarketBonds" />
@@ -368,6 +370,61 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		scope="simulation">
 		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR" /></property>
 		<property name="prng" ref="prng" />
+	</bean>
+
+	<!-- Phase B3: Regular labor market (MKT_LABOR_R) -->
+	<bean id="laborMarketR" class="jmab.simulations.SimpleMarketSimulation" scope="simulation">
+		<property name="transaction" ref="laborMktTransactionMechanism"></property>
+		<property name="sellersId">
+			<list>
+	           <util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID"/>
+	        </list>
+		</property>
+		<property name="buyersId">
+			<list>
+	           <util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID"/>
+	           <util:constant static-field="benchmark.StaticValues.CONSUMPTIONFIRMS_ID"/>
+	           <util:constant static-field="benchmark.StaticValues.GOVERNMENT_ID"/>
+	        </list>
+	    </property>
+		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR_R"/></property>
+		<property name="mixer" ref="laborMarketMixer"/>
+		<property name="scheduler" ref="simulationController"></property>
+		<property name="ticId"><util:constant static-field="benchmark.StaticValues.TIC_LABORMARKET"/></property>
+		<property name="initialiser" ref="laborMarketInitialiserR"/>
+		<property name="nbRuns" value="8000"></property>
+	</bean>
+
+	<bean id="laborMarketInitialiserR" class="jmab.init.RandomMarketInitialiser" scope="simulation">
+		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR_R"/></property>
+		<property name="prng" ref="prng"/>
+	</bean>
+
+	<!-- Phase B3: Non-regular labor market (MKT_LABOR_N) -->
+	<bean id="laborMarketN" class="jmab.simulations.SimpleMarketSimulation" scope="simulation">
+		<property name="transaction" ref="laborMktTransactionMechanism"></property>
+		<property name="sellersId">
+			<list>
+	           <util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID"/>
+	        </list>
+		</property>
+		<property name="buyersId">
+			<list>
+	           <util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID"/>
+	           <util:constant static-field="benchmark.StaticValues.CONSUMPTIONFIRMS_ID"/>
+	        </list>
+	    </property>
+		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR_N"/></property>
+		<property name="mixer" ref="laborMarketMixer"/>
+		<property name="scheduler" ref="simulationController"></property>
+		<property name="ticId"><util:constant static-field="benchmark.StaticValues.TIC_LABORMARKET"/></property>
+		<property name="initialiser" ref="laborMarketInitialiserN"/>
+		<property name="nbRuns" value="8000"></property>
+	</bean>
+
+	<bean id="laborMarketInitialiserN" class="jmab.init.RandomMarketInitialiser" scope="simulation">
+		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR_N"/></property>
+		<property name="prng" ref="prng"/>
 	</bean>
 
 <!-- The market mixer for the labor market -->
