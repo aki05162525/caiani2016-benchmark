@@ -402,9 +402,9 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 
 ## T1. 単体テスト
 
-* [ ] `N_eff` 非負・単調・境界
-* [ ] C3の分解：`N_eff(N^{D,R}, N^{D,N}) ≈ N^D`
-* [ ] ratio clip が効く（極端賃金比でも破綻しない）
+* [x] `N_eff` 非負・単調・境界
+* [x] C3の分解：`N_eff(N^{D,R}, N^{D,N}) ≈ N^D`
+* [x] ratio clip が効く（極端賃金比でも破綻しない）
 
 ## T2. 統合テスト（1ステップ）
 

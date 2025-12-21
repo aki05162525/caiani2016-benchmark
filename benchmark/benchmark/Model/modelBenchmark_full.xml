@@ -210,7 +210,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		</property>
 		<property name="simulationController" ref="simulationController" />
 <!--    実行回数-->
-		<property name="maximumRounds" value="5" />
+		<property name="maximumRounds" value="400" />
 		<property name="population" ref="macroPopulation" />
 		<property name="agentInitialiser" ref="sfcAgentsInitialiser" />
 		<property name="handler" ref="populationHandler" />

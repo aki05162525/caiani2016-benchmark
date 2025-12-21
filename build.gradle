@@ -85,9 +85,18 @@ project(':jmab') {
         main {
             java {
                 srcDirs = ['src']
+                exclude 'test/**'
             }
             resources {
                 srcDirs = ['src']
+            }
+        }
+        test {
+            java {
+                srcDirs = ['src/test/java']
+            }
+            resources {
+                srcDirs = ['src/test/resources']
             }
         }
     }
