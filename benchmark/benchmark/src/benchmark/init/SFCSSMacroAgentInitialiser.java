@@ -136,6 +136,7 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 		int hhPercFirm = hhSize/cSize;
 
 		Uniform distr = new Uniform(-uniformDistr,uniformDistr,prng);
+		Uniform laborTypeDistr = new Uniform(0.0, 1.0, prng);
 
 		//Households
 		double hhDep = this.hhsDep/hhSize;
@@ -146,8 +147,7 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			hh.setDividendsReceived(this.dividendsReceived/hhSize);
 
 			//Phase A2: Set labor type based on ratio
-			Uniform distr = new Uniform(0.0, 1.0, prng);
-			if(distr.nextDouble() < this.laborTypeRatioR) {
+			if(laborTypeDistr.nextDouble() < this.laborTypeRatioR) {
 				hh.setLaborType(StaticValues.LABOR_TYPE_R);
 			} else {
 				hh.setLaborType(StaticValues.LABOR_TYPE_N);
@@ -1151,4 +1151,3 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 
 
 
-}

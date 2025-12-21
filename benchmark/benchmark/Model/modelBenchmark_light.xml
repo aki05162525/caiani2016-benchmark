@@ -1595,7 +1595,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		</map>
 		</property>
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID" /> </property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<!-- From AbstractFirm -->
 		<property name="productionStockId"><util:constant static-field="benchmark.StaticValues.SM_CAPGOOD"/> </property>
@@ -2121,7 +2121,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 			</entry>
 		</map>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.CONSUMPTIONFIRMS_ID" /> </property>
 		<!-- From Abstract Firm -->
@@ -2425,7 +2425,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 			
 		</map>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="riskAversionC" value="3.922445" /> 
 		<property name="riskAversionK" value="21.513347" />
 		<property name="bankInterestRate" value="0.0075" />
@@ -2807,7 +2807,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.LAG_TAXES"/></key></entry>
 		</map>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID" /> </property>
 		<!-- From Households -->
@@ -2974,7 +2974,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.TIC_UPDATEEXPECTATIONS" />
 			</list>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.GOVERNMENT_ID" /> </property>
 		<!-- From Government -->
@@ -3077,7 +3077,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.TIC_CBBONDSPURCHASES" />
 			</list>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.CB_ID" /> </property>
 		<!-- From AbstractBank -->

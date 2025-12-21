@@ -381,7 +381,7 @@ WagesEnd系は computeLaborDemand と賃金支払いが分離されており、B
 ## P1. type 別パラメータを設定可能にする
 
 * [x] ϑ_R, ϑ_N（turnoverLaborR/N in XML: 0.02, 0.05）
-* [x] η_R, η_N（layoffRateR/N in XML: 0.3, 0.8、0 < η_R < η_N ≤ 1 を満たす）
+* [x] η_R, η_N（layoffRateR/N in XML: 0.3, 0.8、0 < η_R < η_N ≤ 1 を満たす。※現状は企業向けのみ適用。Government系にはsetterがないためXML注入は削除）
 * [ ] χ_R, χ_N
 * [ ] υ_R, υ_N
 * [ ] δ, ρ(≠0), A_R, A_N
