@@ -1790,11 +1790,11 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<!-- Phase C1/C2: CES effective labor parameters (see parameters.xml) -->
 		<property name="cesDelta" ref="cesDelta" />
 		<property name="cesRho" ref="cesRho" />
-		<property name="cesAR" value="1.0" />
-		<property name="cesAN" value="1.0" />
-		<property name="cesEpsilon" value="1.0E-8" />
-		<property name="phiMin" value="0.2" />
-		<property name="phiMax" value="5.0" />
+		<property name="cesAR" ref="cesAR" />
+		<property name="cesAN" ref="cesAN" />
+		<property name="cesEpsilon" ref="cesEpsilon" />
+		<property name="phiMin" ref="phiMin" />
+		<property name="phiMax" ref="phiMax" />
 		<property name="prng" ref="prng" />
 	</bean>
 	
@@ -2320,11 +2320,11 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<!-- Phase C1/C2: CES effective labor parameters (see parameters.xml) -->
 		<property name="cesDelta" ref="cesDelta" />
 		<property name="cesRho" ref="cesRho" />
-		<property name="cesAR" value="1.0" />
-		<property name="cesAN" value="1.0" />
-		<property name="cesEpsilon" value="1.0E-8" />
-		<property name="phiMin" value="0.2" />
-		<property name="phiMax" value="5.0" />
+		<property name="cesAR" ref="cesAR" />
+		<property name="cesAN" ref="cesAN" />
+		<property name="cesEpsilon" ref="cesEpsilon" />
+		<property name="phiMin" ref="phiMin" />
+		<property name="phiMax" ref="phiMax" />
 		<property name="prng" ref="prng" />
 		<property name="shareOfExpIncomeAsDeposit" value="1" />
 		<property name="minWageDiscount" value="1" />
@@ -3098,10 +3098,10 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<!-- Phase C7: Type-specific wage parameters (see parameters.xml) -->
 		<property name="macroThresholdR" ref="macroThresholdR"/>
 		<property name="macroThresholdN" ref="macroThresholdN"/>
-		<property name="macroAdaptiveParameterR" value="1"/>
-		<property name="macroAdaptiveParameterN" value="1"/>
-		<property name="microAdaptiveParameterR" value="1"/>
-		<property name="microAdaptiveParameterN" value="1"/>
+		<property name="macroAdaptiveParameterR" ref="macroAdaptiveParameterR"/>
+		<property name="macroAdaptiveParameterN" ref="macroAdaptiveParameterN"/>
+		<property name="microAdaptiveParameterR" ref="microAdaptiveParameterR"/>
+		<property name="microAdaptiveParameterN" ref="microAdaptiveParameterN"/>
 	</bean>
 	
 	<bean id="householdsTaxesStrategy" scope="prototype" parent="strategy"

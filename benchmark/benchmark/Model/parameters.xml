@@ -63,6 +63,31 @@
 		<constructor-arg value="0.5" /> <!-- Moderate substitutability -->
 	</bean>
 
+	<!-- CES efficiency parameter for Regular labor (A_R) -->
+	<bean id="cesAR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Default: equal efficiency -->
+	</bean>
+
+	<!-- CES efficiency parameter for Non-regular labor (A_N) -->
+	<bean id="cesAN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Default: equal efficiency -->
+	</bean>
+
+	<!-- CES numerical stability parameter (epsilon) -->
+	<bean id="cesEpsilon" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0E-8" /> <!-- Small value to avoid division by zero -->
+	</bean>
+
+	<!-- Minimum productivity adjustment factor (phi_min) -->
+	<bean id="phiMin" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.2" /> <!-- Lower bound for productivity shock -->
+	</bean>
+
+	<!-- Maximum productivity adjustment factor (phi_max) -->
+	<bean id="phiMax" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="5.0" /> <!-- Upper bound for productivity shock -->
+	</bean>
+
 	<!--
 	Phase C7: Type-Specific Hiring and Wage Parameters
 	===================================================
@@ -85,6 +110,26 @@
 	<!-- Macro threshold for Non-regular wage adjustment -->
 	<bean id="macroThresholdN" scope="simulation" class="java.lang.Double">
 		<constructor-arg value="0.08" /> <!-- 8% unemployment threshold -->
+	</bean>
+
+	<!-- Macro adaptive parameter for Regular wage adjustment -->
+	<bean id="macroAdaptiveParameterR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Sensitivity to macro unemployment -->
+	</bean>
+
+	<!-- Macro adaptive parameter for Non-regular wage adjustment -->
+	<bean id="macroAdaptiveParameterN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Sensitivity to macro unemployment -->
+	</bean>
+
+	<!-- Micro adaptive parameter for Regular wage adjustment -->
+	<bean id="microAdaptiveParameterR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Sensitivity to micro (firm-level) conditions -->
+	</bean>
+
+	<!-- Micro adaptive parameter for Non-regular wage adjustment -->
+	<bean id="microAdaptiveParameterN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Sensitivity to micro (firm-level) conditions -->
 	</bean>
 
 </beans>
