@@ -221,7 +221,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		</property>
 		<property name="simulationController" ref="simulationController" />
 <!--    実行回数-->
-		<property name="maximumRounds" value="100" />
+		<property name="maximumRounds" value="400" />
 		<property name="population" ref="macroPopulation" />
 		<property name="agentInitialiser" ref="sfcAgentsInitialiser" />
 		<property name="handler" ref="populationHandler" />
@@ -1792,6 +1792,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="cesRho" ref="cesRho" />
 		<property name="cesAR" ref="cesAR" />
 		<property name="cesAN" ref="cesAN" />
+		<property name="regularTenureProductivityA" ref="regularTenureProductivityA" />
+		<property name="regularTenureProductivityGamma" ref="regularTenureProductivityGamma" />
 		<property name="cesEpsilon" ref="cesEpsilon" />
 		<property name="phiMin" ref="phiMin" />
 		<property name="phiMax" ref="phiMax" />
@@ -2324,6 +2326,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="cesRho" ref="cesRho" />
 		<property name="cesAR" ref="cesAR" />
 		<property name="cesAN" ref="cesAN" />
+		<property name="regularTenureProductivityA" ref="regularTenureProductivityA" />
+		<property name="regularTenureProductivityGamma" ref="regularTenureProductivityGamma" />
 		<property name="cesEpsilon" ref="cesEpsilon" />
 		<property name="phiMin" ref="phiMin" />
 		<property name="phiMax" ref="phiMax" />

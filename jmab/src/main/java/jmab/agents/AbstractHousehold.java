@@ -30,6 +30,7 @@ public abstract class AbstractHousehold extends SimpleAbstractAgent implements L
 
 	protected double wage; 
 	protected MacroAgent employer;
+	protected int tenure;
 	
 	/**
 	 * 
@@ -61,6 +62,9 @@ public abstract class AbstractHousehold extends SimpleAbstractAgent implements L
 	 * @param employer the employer to set
 	 */
 	public void setEmployer(LaborDemander employer) {
+		if (this.employer != employer) {
+			this.tenure = 0;
+		}
 		this.employer = employer;
 	}
 	
@@ -85,22 +89,32 @@ public abstract class AbstractHousehold extends SimpleAbstractAgent implements L
 	public boolean isEmployed(){
 		return this.employer!=null;
 	}
+
+	@Override
+	public int getTenure() {
+		return tenure;
+	}
+
+	protected void incrementTenure() {
+		this.tenure += 1;
+	}
 	
 	/**
 	 * Generates the byte array representing the characteristics of the agent. The structure is the following
-	 * [superStructSize][superStruct][wage][employed][employerPopId][employerId]
+	 * [superStructSize][superStruct][wage][tenure][employed][employerPopId][employerId]
 	 * @return the byte array
 	 */
 	public byte[] getAgentCharacteristicsBytes(){
 		byte[] superStruct = super.getAgentCharacteristicsBytes();
 		ByteBuffer buf;
 		if(this.isEmployed())
-			buf = ByteBuffer.allocate(superStruct.length+25);
+			buf = ByteBuffer.allocate(superStruct.length+29);
 		else
-			buf = ByteBuffer.allocate(superStruct.length+13);
+			buf = ByteBuffer.allocate(superStruct.length+17);
 		buf.putInt(superStruct.length);
 		buf.put(superStruct);
 		buf.putDouble(wage);
+		buf.putInt(tenure);
 		if(this.isEmployed()){
 			buf.put((byte)1);
 			buf.putInt(this.employer.getPopulationId());
@@ -112,7 +126,7 @@ public abstract class AbstractHousehold extends SimpleAbstractAgent implements L
 
 	/**
 	 * Populates the characteristics of the agent using the byte array content. The structure is the following
-	 * [superStructSize][superStruct][wage]
+	 * [superStructSize][superStruct][wage][tenure]
 	 * @param the byte array
 	 */
 	public void populateCharacteristics(byte[] content,MacroPopulation pop){
@@ -122,6 +136,7 @@ public abstract class AbstractHousehold extends SimpleAbstractAgent implements L
 		buf.get(superStruct);
 		super.populateCharacteristics(superStruct, pop);
 		this.wage = buf.getDouble();
+		this.tenure = buf.getInt();
 		boolean empl = buf.get()==(byte)1;
 		if(empl){
 			int popId = buf.getInt();

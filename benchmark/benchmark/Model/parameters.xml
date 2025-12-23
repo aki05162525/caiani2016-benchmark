@@ -73,6 +73,16 @@
 		<constructor-arg value="1.84" /> <!-- Normalized with A_R/A_N=1.20 at baseline mix -->
 	</bean>
 
+	<!-- Regular tenure productivity scale (a > 1 enables tenure gains) -->
+	<bean id="regularTenureProductivityA" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.20" />
+	</bean>
+
+	<!-- Regular tenure productivity curvature (gamma > 0) -->
+	<bean id="regularTenureProductivityGamma" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.50" />
+	</bean>
+
 	<!-- CES numerical stability parameter (epsilon) -->
 	<bean id="cesEpsilon" scope="simulation" class="java.lang.Double">
 		<constructor-arg value="1.0E-8" /> <!-- Small value to avoid division by zero -->

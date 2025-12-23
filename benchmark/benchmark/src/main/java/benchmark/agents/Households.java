@@ -243,6 +243,15 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 		else
 			employed=1;
 		this.addValue(StaticValues.LAG_EMPLOYED,employed);
+		if (this.laborType == StaticValues.LABOR_TYPE_R) {
+			if (this.employer == null) {
+				this.tenure = 0;
+			} else {
+				incrementTenure();
+			}
+		} else {
+			this.tenure = 0;
+		}
 		this.cleanSM();
 	}
 
@@ -465,13 +474,6 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 	 */
 	public MacroAgent getEmployer() {
 		return employer;
-	}
-
-	/**
-	 * @param employer the employer to set
-	 */
-	public void setEmployer(MacroAgent employer) {
-		this.employer = employer;
 	}
 
 	/* (non-Javadoc)

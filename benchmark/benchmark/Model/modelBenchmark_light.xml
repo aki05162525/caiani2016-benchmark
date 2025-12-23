@@ -1803,6 +1803,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="cesRho" value="0.5" />
 		<property name="cesAR" value="1.0" />
 		<property name="cesAN" value="1.0" />
+		<property name="regularTenureProductivityA" ref="regularTenureProductivityA" />
+		<property name="regularTenureProductivityGamma" ref="regularTenureProductivityGamma" />
 		<property name="cesEpsilon" value="1.0E-8" />
 		<property name="phiMin" value="0.2" />
 		<property name="phiMax" value="5.0" />
@@ -2335,6 +2337,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="cesRho" value="0.5" />
 		<property name="cesAR" value="1.0" />
 		<property name="cesAN" value="1.0" />
+		<property name="regularTenureProductivityA" ref="regularTenureProductivityA" />
+		<property name="regularTenureProductivityGamma" ref="regularTenureProductivityGamma" />
 		<property name="cesEpsilon" value="1.0E-8" />
 		<property name="phiMin" value="0.2" />
 		<property name="phiMax" value="5.0" />

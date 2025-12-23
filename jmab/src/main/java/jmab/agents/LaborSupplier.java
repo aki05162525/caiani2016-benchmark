@@ -50,4 +50,9 @@ public interface LaborSupplier extends MacroAgent {
 	 */
 	public int getLaborType();
 
+	/**
+	 * @return the tenure (periods employed with current employer)
+	 */
+	public int getTenure();
+
 }

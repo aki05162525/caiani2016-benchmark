@@ -55,6 +55,8 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 	protected double cesEpsilon = 1e-8; // Numerical guard, > 0
 	protected double phiMin; // Ratio lower bound (> 0)
 	protected double phiMax; // Ratio upper bound (phiMin < phiMax)
+	protected double regularTenureProductivityA = 1.0;
+	protected double regularTenureProductivityGamma = 1.0;
 	
 	/**
 	 * 
@@ -239,6 +241,22 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 		this.layoffRateN = layoffRateN;
 	}
 
+	public double getRegularTenureProductivityA() {
+		return regularTenureProductivityA;
+	}
+
+	public void setRegularTenureProductivityA(double regularTenureProductivityA) {
+		this.regularTenureProductivityA = regularTenureProductivityA;
+	}
+
+	public double getRegularTenureProductivityGamma() {
+		return regularTenureProductivityGamma;
+	}
+
+	public void setRegularTenureProductivityGamma(double regularTenureProductivityGamma) {
+		this.regularTenureProductivityGamma = regularTenureProductivityGamma;
+	}
+
 	/**
 	 * @return the cesDelta
 	 */
@@ -395,6 +413,10 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 			throw new IllegalArgumentException("cesAR, cesAN, cesEpsilon must be > 0");
 		}
 		double adjNR = Math.max(0.0, nR);
+		double tenureMultiplier = computeRegularTenureMultiplier();
+		if (tenureMultiplier > 1.0) {
+			adjNR *= tenureMultiplier;
+		}
 		double adjNN = Math.max(0.0, nN);
 		if (adjNR == 0.0 && adjNN == 0.0) {
 			return 0.0;
@@ -414,6 +436,28 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 		}
 
 		return effectiveLabor;
+	}
+
+	protected double computeRegularTenureMultiplier() {
+		if (regularTenureProductivityA <= 1.0 || regularTenureProductivityGamma <= 0.0) {
+			return 1.0;
+		}
+		int countR = 0;
+		double totalTenure = 0.0;
+		for (MacroAgent emp : this.employees) {
+			LaborSupplier worker = (LaborSupplier) emp;
+			if (worker.getLaborType() == 0) { // LABOR_TYPE_R (benchmark.StaticValues)
+				countR += 1;
+				totalTenure += worker.getTenure();
+			}
+		}
+		if (countR == 0) {
+			return 1.0;
+		}
+		double avgTenure = totalTenure / (double) countR;
+		double tau = Math.max(avgTenure, 1.0);
+		double shape = 1.0 - Math.pow(tau, -regularTenureProductivityGamma);
+		return 1.0 + (regularTenureProductivityA - 1.0) * shape;
 	}
 
 	/**
