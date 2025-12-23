@@ -1842,6 +1842,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="capitalLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
+		<property name="hiringCostRateR" ref="hiringCostRateR"/>
+		<property name="hiringCostRateN" ref="hiringCostRateN"/>
 	</bean>
 	
 	<bean id="capitalRDInvestmentStrategy" scope="prototype" parent="strategy"
@@ -2136,6 +2138,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="consumptionLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
+		<property name="hiringCostRateR" ref="hiringCostRateR"/>
+		<property name="hiringCostRateN" ref="hiringCostRateN"/>
 	</bean>
 	
 	<bean id="consumptionBuyingStrategy" scope="prototype" parent="strategy"

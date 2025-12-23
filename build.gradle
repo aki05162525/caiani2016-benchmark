@@ -79,18 +79,6 @@ project(':jmab') {
         implementation 'jfree:jcommon:1.0.16'
         implementation 'org.springframework:spring-context:3.2.3.RELEASE'
     }
-
-    // Eclipse/Legacy構成への対応
-    sourceSets {
-        main {
-            java {
-                srcDirs = ['src']
-            }
-            resources {
-                srcDirs = ['src']
-            }
-        }
-    }
 }
 
 // --- Benchmark (モデル本体) ---
@@ -111,18 +99,6 @@ project(':benchmark') {
         implementation 'org.springframework:spring-context:3.2.3.RELEASE'
         implementation 'org.springframework:spring-beans:3.2.3.RELEASE'
         implementation 'org.springframework:spring-core:3.2.3.RELEASE'
-    }
-
-    // Eclipse/Legacy構成への対応
-    sourceSets {
-        main {
-            java {
-                srcDirs = ['src']
-            }
-            resources {
-                srcDirs = ['src', 'resources']
-            }
-        }
     }
 
     // 実行タスク: Light設定

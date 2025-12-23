@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  "Innovation, Demand, and Finance in an Agent Based-Stock Flow Consistent model" 
+<!--  "Innovation, Demand, and Finance in an Agent Based-Stock Flow Consistent model"
 Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kinsella, S., Stiglitz, J.
  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -9,21 +9,44 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+<!-- Import dual labor market parameters -->
+<import resource="parameters.xml"/>
+
 <!-- Top level bean defining the simulation experiment to be run -->
 <bean id="macroSimulation" class="jmab.simulations.OrderedEventsSimulation"
 		scope="simulation">
 		<property name="passedValues">
-			<map>
-				<entry value-ref="pastUnemployment"> 
-					<key>
-						<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT"/>
-					</key> 
-				</entry>
-				<entry value-ref="pastBadDebts"> 
-					<key>
-						<util:constant static-field="benchmark.StaticValues.LAG_NONPERFORMINGLOANS"/>
-					</key>
-				</entry>
+				<map>
+					<entry value-ref="pastUnemployment"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastUnemploymentR"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT_R"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastUnemploymentN"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_AGGUNEMPLOYMENT_N"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastLaborForceR"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_LABORFORCE_R"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastLaborForceN"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_LABORFORCE_N"/>
+						</key> 
+					</entry>
+					<entry value-ref="pastBadDebts"> 
+						<key>
+							<util:constant static-field="benchmark.StaticValues.LAG_NONPERFORMINGLOANS"/>
+						</key>
+					</entry>
 			</map>
 		</property>
 		<property name="markets">
@@ -32,6 +55,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="consumptionMarket" />
 				<ref bean="creditMarket" />
 				<ref bean="laborMarket" />
+				<ref bean="laborMarketR" />
+				<ref bean="laborMarketN" />
 				<ref bean="depositMarket" />
 				<ref bean="bondMarket" />
 				<ref bean="reservesMarketBonds" />
@@ -87,6 +112,22 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	            <ref bean="avNetIncomeReportTic" />
 				<ref bean="nominalInvReportTic" />
 				<ref bean="unemploymentReportTic" />
+				<ref bean="unemploymentRReportTic" />
+				<ref bean="unemploymentNReportTic" />
+				<ref bean="avWageRReportTic" />
+				<ref bean="avWageNReportTic" />
+				<ref bean="employmentRReportTic" />
+				<ref bean="employmentNReportTic" />
+				<ref bean="unemploymentCountRReportTic" />
+				<ref bean="unemploymentCountNReportTic" />
+				<ref bean="unemploymentBoundsRReportTic" />
+				<ref bean="unemploymentBoundsNReportTic" />
+				<ref bean="laborForceGapRReportTic" />
+				<ref bean="laborForceGapNReportTic" />
+				<ref bean="vacanciesRReportTic" />
+				<ref bean="vacanciesNReportTic" />
+				<ref bean="laborForceRReportTic" />
+				<ref bean="laborForceNReportTic" />
 				<ref bean="microLoansKfirmsReportTic" />
 				<ref bean="microLoansCfirmsReportTic" />
 				<ref bean="microBankCreditReportTic" />
@@ -179,7 +220,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 			</list>
 		</property>
 		<property name="simulationController" ref="simulationController" />
-		<property name="maximumRounds" value="1000" />
+<!--    実行回数-->
+		<property name="maximumRounds" value="400" />
 		<property name="population" ref="macroPopulation" />
 		<property name="agentInitialiser" ref="sfcAgentsInitialiser" />
 		<property name="handler" ref="populationHandler" />
@@ -206,9 +248,43 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		scope="simulation">
 		<property name="nbLags" value="4"/>
 	</bean>
+	<bean id="pastUnemploymentR" class="jmab.expectations.TreeMapPassedValues"
+		scope="simulation">
+		<property name="nbLags" value="4"/>
+	</bean>
+	<bean id="pastUnemploymentN" class="jmab.expectations.TreeMapPassedValues"
+		scope="simulation">
+		<property name="nbLags" value="4"/>
+	</bean>
+	<bean id="pastLaborForceR" class="jmab.expectations.TreeMapPassedValues"
+		scope="simulation">
+		<property name="nbLags" value="4"/>
+	</bean>
+	<bean id="pastLaborForceN" class="jmab.expectations.TreeMapPassedValues"
+		scope="simulation">
+		<property name="nbLags" value="4"/>
+	</bean>
 	<bean id="pastBadDebts" class="jmab.expectations.TreeMapPassedValues"
 		scope="simulation">
 		<property name="nbLags" value="4"/>
+	</bean>
+
+	<bean id="unemploymentComputerR" class="jmab.report.UnemploymentRateByTypeComputer" scope="simulation">
+		<property name="householdPopIds">
+			<list>
+				<util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID"/>
+			</list>
+		</property>
+		<property name="laborType" value="0"/>
+	</bean>
+
+	<bean id="unemploymentComputerN" class="jmab.report.UnemploymentRateByTypeComputer" scope="simulation">
+		<property name="householdPopIds">
+			<list>
+				<util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID"/>
+			</list>
+		</property>
+		<property name="laborType" value="1"/>
 	</bean>
 
 <!-- Here we create the market simulations for each market -->
@@ -360,6 +436,61 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		scope="simulation">
 		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR" /></property>
 		<property name="prng" ref="prng" />
+	</bean>
+
+	<!-- Phase B3: Regular labor market (MKT_LABOR_R) -->
+	<bean id="laborMarketR" class="jmab.simulations.SimpleMarketSimulation" scope="simulation">
+		<property name="transaction" ref="laborMktTransactionMechanism"/>
+		<property name="sellersId">
+			<list>
+	           <util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID"/>
+	        </list>
+		</property>
+		<property name="buyersId">
+			<list>
+	           <util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID"/>
+	           <util:constant static-field="benchmark.StaticValues.CONSUMPTIONFIRMS_ID"/>
+	           <util:constant static-field="benchmark.StaticValues.GOVERNMENT_ID"/>
+	        </list>
+	    </property>
+		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR_R"/></property>
+		<property name="mixer" ref="laborMarketMixer" />
+		<property name="scheduler" ref="simulationController"/>
+		<property name="ticId"><util:constant static-field="benchmark.StaticValues.TIC_LABORMARKET" /></property>
+		<property name="initialiser" ref="laborMarketInitialiserR" />
+		<property name="nbRuns" value="8000"/>
+	</bean>
+
+	<bean id="laborMarketInitialiserR" class="jmab.init.RandomMarketInitialiser" scope="simulation">
+		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR_R"/></property>
+		<property name="prng" ref="prng"/>
+	</bean>
+
+	<!-- Phase B3: Non-regular labor market (MKT_LABOR_N) -->
+	<bean id="laborMarketN" class="jmab.simulations.SimpleMarketSimulation" scope="simulation">
+		<property name="transaction" ref="laborMktTransactionMechanism"/>
+		<property name="sellersId">
+			<list>
+	           <util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID"/>
+	        </list>
+		</property>
+		<property name="buyersId">
+			<list>
+	           <util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID"/>
+	           <util:constant static-field="benchmark.StaticValues.CONSUMPTIONFIRMS_ID"/>
+	        </list>
+	    </property>
+		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR_N"/></property>
+		<property name="mixer" ref="laborMarketMixer" />
+		<property name="scheduler" ref="simulationController"/>
+		<property name="ticId"><util:constant static-field="benchmark.StaticValues.TIC_LABORMARKET" /></property>
+		<property name="initialiser" ref="laborMarketInitialiserN" />
+		<property name="nbRuns" value="8000"/>
+	</bean>
+
+	<bean id="laborMarketInitialiserN" class="jmab.init.RandomMarketInitialiser" scope="simulation">
+		<property name="marketId"><util:constant static-field="benchmark.StaticValues.MKT_LABOR_N"/></property>
+		<property name="prng" ref="prng"/>
 	</bean>
 
 <!-- The market mixer for the labor market -->
@@ -707,6 +838,118 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTREPORT_ID" /></property>
 	<property name="variableName" value="Unemployment Rate"/>
 	<property name="computer" ref="unemploymentComputer"/>
+	</bean>
+
+	<bean id="unemploymentRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTRREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Rate R"/>
+	<property name="computer" ref="unemploymentRComputer"/>
+	</bean>
+
+	<bean id="unemploymentNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTNREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Rate N"/>
+	<property name="computer" ref="unemploymentNComputer"/>
+	</bean>
+
+	<bean id="avWageRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVWAGERREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVWAGERREPORT_ID" /></property>
+	<property name="variableName" value="Average Wage R"/>
+	<property name="computer" ref="avWageRComputer"/>
+	</bean>
+
+	<bean id="avWageNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVWAGENREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVWAGENREPORT_ID" /></property>
+	<property name="variableName" value="Average Wage N"/>
+	<property name="computer" ref="avWageNComputer"/>
+	</bean>
+
+	<bean id="employmentRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_EMPLOYMENTRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.EMPLOYMENTRREPORT_ID" /></property>
+	<property name="variableName" value="Employment R"/>
+	<property name="computer" ref="employmentRComputer"/>
+	</bean>
+
+	<bean id="employmentNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_EMPLOYMENTNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.EMPLOYMENTNREPORT_ID" /></property>
+	<property name="variableName" value="Employment N"/>
+	<property name="computer" ref="employmentNComputer"/>
+	</bean>
+
+	<bean id="unemploymentCountRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTCOUNTRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTCOUNTRREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Count R"/>
+	<property name="computer" ref="unemploymentCountRComputer"/>
+	</bean>
+
+	<bean id="unemploymentCountNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTCOUNTNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTCOUNTNREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Count N"/>
+	<property name="computer" ref="unemploymentCountNComputer"/>
+	</bean>
+
+	<bean id="unemploymentBoundsRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTBOUNDSRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTBOUNDSRREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Bounds Violation R"/>
+	<property name="computer" ref="unemploymentBoundsRComputer"/>
+	</bean>
+
+	<bean id="unemploymentBoundsNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_UNEMPLOYMENTBOUNDSNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.UNEMPLOYMENTBOUNDSNREPORT_ID" /></property>
+	<property name="variableName" value="Unemployment Bounds Violation N"/>
+	<property name="computer" ref="unemploymentBoundsNComputer"/>
+	</bean>
+
+	<bean id="laborForceGapRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_LABORFORCEGAPRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.LABORFORCEGAPRREPORT_ID" /></property>
+	<property name="variableName" value="Labor Force Identity Gap R"/>
+	<property name="computer" ref="laborForceGapRComputer"/>
+	</bean>
+
+	<bean id="laborForceGapNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_LABORFORCEGAPNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.LABORFORCEGAPNREPORT_ID" /></property>
+	<property name="variableName" value="Labor Force Identity Gap N"/>
+	<property name="computer" ref="laborForceGapNComputer"/>
+	</bean>
+
+	<bean id="vacanciesRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_VACANCIESRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.VACANCIESRREPORT_ID" /></property>
+	<property name="variableName" value="Vacancies R"/>
+	<property name="computer" ref="vacanciesRComputer"/>
+	</bean>
+
+	<bean id="vacanciesNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_VACANCIESNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.VACANCIESNREPORT_ID" /></property>
+	<property name="variableName" value="Vacancies N"/>
+	<property name="computer" ref="vacanciesNComputer"/>
+	</bean>
+
+	<bean id="laborForceRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_LABORFORCERREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.LABORFORCERREPORT_ID" /></property>
+	<property name="variableName" value="Labor Force R"/>
+	<property name="computer" ref="laborForceRComputer"/>
+	</bean>
+
+	<bean id="laborForceNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_LABORFORCENREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.LABORFORCENREPORT_ID" /></property>
+	<property name="variableName" value="Labor Force N"/>
+	<property name="computer" ref="laborForceNComputer"/>
 	</bean>
 	
 	<bean id="cFirmsBankruptcyReportTic" class="jmab.events.MacroVariableTicEvent">
@@ -1402,6 +1645,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 <property name="ksOCF" value="189.2146501"/>
 <property name="csOCF" value="2340.255574"/>
 <property name="gr" value="0.0075"/>
+<property name="laborTypeRatioR" ref="laborTypeRatioR"/><!-- Phase A2: See parameters.xml -->
 	</bean>
 	
 	
@@ -1475,14 +1719,19 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.TIC_UPDATEEXPECTATIONS"/>
 			</list>
 		</property>
-		<property name="expectations"> 
+		<property name="expectations">
 		<map>
-			<entry value-ref="expSales"> 
+			<entry value-ref="expSales">
 				<key>
 				<util:constant static-field="benchmark.StaticValues.EXPECTATIONS_NOMINALSALES"/></key></entry>
-			<entry value-ref="expWages"> 
+			<entry value-ref="expWages">
 				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES"/></key></entry>
-			<entry value-ref="expRSales"> 
+			<!-- Phase B1: Add type-specific wage expectations -->
+			<entry value-ref="expWagesR">
+				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES_R"/></key></entry>
+			<entry value-ref="expWagesN">
+				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES_N"/></key></entry>
+			<entry value-ref="expRSales">
 				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_REALSALES"/></key></entry>
 		</map>
 		</property>
@@ -1517,7 +1766,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		</map>
 		</property>
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID" /> </property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<!-- From AbstractFirm -->
 		<property name="productionStockId"><util:constant static-field="benchmark.StaticValues.SM_CAPGOOD"/> </property>
@@ -1533,6 +1782,21 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="shareOfExpIncomeAsDeposit" value="1"/>
 		<property name="minWageDiscount" value="1"/>
 		<property name="turnoverLabor" ref="turnoverVal"/>
+		<!-- Phase B2.3: Type-specific parameters -->
+		<property name="turnoverLaborR" ref="turnoverLaborRVal" />
+		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
+		<property name="layoffRateR" ref="layoffRateRVal" />
+		<property name="layoffRateN" ref="layoffRateNVal" />
+		<!-- Phase C1/C2: CES effective labor parameters (see parameters.xml) -->
+		<property name="cesDelta" ref="cesDelta" />
+		<property name="cesRho" ref="cesRho" />
+		<property name="cesAR" ref="cesAR" />
+		<property name="cesAN" ref="cesAN" />
+		<property name="regularTenureProductivityA" ref="regularTenureProductivityA" />
+		<property name="regularTenureProductivityGamma" ref="regularTenureProductivityGamma" />
+		<property name="cesEpsilon" ref="cesEpsilon" />
+		<property name="phiMin" ref="phiMin" />
+		<property name="phiMax" ref="phiMax" />
 		<property name="prng" ref="prng" />
 	</bean>
 	
@@ -1604,7 +1868,54 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
         </array>
     </property>
 	</bean>
-	
+
+	<!-- Phase B1: Type-specific wage expectations -->
+	<bean id="expWagesR" class="jmab.expectations.SimpleAdaptiveExpectation"
+		scope="prototype">
+		<property name="numberPeriod" value="4"/>
+		<property name="nbVariables" value="1"/>
+		<property name="adaptiveParam" value="0.25"/>
+		<property name="weights">
+			<array>
+				<array>
+					<value>1.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+        </array>
+    </property>
+	</bean>
+
+	<bean id="expWagesN" class="jmab.expectations.SimpleAdaptiveExpectation"
+		scope="prototype">
+		<property name="numberPeriod" value="4"/>
+		<property name="nbVariables" value="1"/>
+		<property name="adaptiveParam" value="0.25"/>
+		<property name="weights">
+			<array>
+				<array>
+					<value>1.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+				<array>
+					<value>0.0</value>
+				</array>
+        </array>
+    </property>
+	</bean>
+
 	<bean id="pastInventories" class="jmab.expectations.TreeMapPassedValues"
 		scope="prototype">
 		<property name="nbLags" value="4"/>
@@ -1800,6 +2111,12 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="capitalLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
+		<property name="prng" ref="prng"/>
+		<!-- Phase C7: Type-specific sampling size (see parameters.xml) -->
+		<property name="sampleSizeR" ref="sampleSizeR"/>
+		<property name="sampleSizeN" ref="sampleSizeN"/>
+		<property name="hiringCostRateR" ref="hiringCostRateR"/>
+		<property name="hiringCostRateN" ref="hiringCostRateN"/>
 	</bean>
 	
 	<bean id="capitalRDInvestmentStrategy" scope="prototype" parent="strategy"
@@ -1935,14 +2252,19 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.TIC_UPDATEEXPECTATIONS"/>
 			</list>
 		</property>
-		<property name="expectations"> 
+		<property name="expectations">
 		<map>
-			<entry value-ref="expSales"> 
+			<entry value-ref="expSales">
 				<key>
 				<util:constant static-field="benchmark.StaticValues.EXPECTATIONS_NOMINALSALES"/></key></entry>
-			<entry value-ref="expWages"> 
+			<entry value-ref="expWages">
 				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES"/></key></entry>
-			<entry value-ref="expRSales"> 
+			<!-- Phase B1: Add type-specific wage expectations -->
+			<entry value-ref="expWagesR">
+				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES_R"/></key></entry>
+			<entry value-ref="expWagesN">
+				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_WAGES_N"/></key></entry>
+			<entry value-ref="expRSales">
 				<key><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_REALSALES"/></key></entry>
 		</map>
 		</property>
@@ -1986,7 +2308,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 			</entry>
 		</map>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.CONSUMPTIONFIRMS_ID" /> </property>
 		<!-- From Abstract Firm -->
@@ -1994,7 +2316,22 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="loanLength" value="20"/>
 		<property name="loanAmortizationType" value="0" />
 		<property name="turnoverLabor" ref="turnoverVal" />
-		<property name="prng" ref="prng" /> 
+		<!-- Phase B2.3: Type-specific parameters -->
+		<property name="turnoverLaborR" ref="turnoverLaborRVal" />
+		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
+		<property name="layoffRateR" ref="layoffRateRVal" />
+		<property name="layoffRateN" ref="layoffRateNVal" />
+		<!-- Phase C1/C2: CES effective labor parameters (see parameters.xml) -->
+		<property name="cesDelta" ref="cesDelta" />
+		<property name="cesRho" ref="cesRho" />
+		<property name="cesAR" ref="cesAR" />
+		<property name="cesAN" ref="cesAN" />
+		<property name="regularTenureProductivityA" ref="regularTenureProductivityA" />
+		<property name="regularTenureProductivityGamma" ref="regularTenureProductivityGamma" />
+		<property name="cesEpsilon" ref="cesEpsilon" />
+		<property name="phiMin" ref="phiMin" />
+		<property name="phiMax" ref="phiMax" />
+		<property name="prng" ref="prng" />
 		<property name="shareOfExpIncomeAsDeposit" value="1" />
 		<property name="minWageDiscount" value="1" />
 		
@@ -2003,6 +2340,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<bean id="turnoverVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
 		<constructor-arg value="0.05" />
 	</bean>
+
+	<!-- Phase B2.3: Type-specific parameters imported from parameters.xml -->
+	<!-- See parameters.xml for: turnoverLaborRVal, turnoverLaborNVal, layoffRateRVal, layoffRateNVal -->
 	
 	<bean id="consumptionMacroStrategy" scope="prototype"
 		class="jmab.strategies.MacroMultipleStrategy">
@@ -2093,6 +2433,12 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="consumptionLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
+		<property name="prng" ref="prng"/>
+		<!-- Phase C7: Type-specific sampling size (see parameters.xml) -->
+		<property name="sampleSizeR" ref="sampleSizeR"/>
+		<property name="sampleSizeN" ref="sampleSizeN"/>
+		<property name="hiringCostRateR" ref="hiringCostRateR"/>
+		<property name="hiringCostRateN" ref="hiringCostRateN"/>
 	</bean>
 	
 	<bean id="consumptionBuyingStrategy" scope="prototype" parent="strategy"
@@ -2266,7 +2612,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 			
 		</map>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="riskAversionC" value="3.922445" /> 
 		<property name="riskAversionK" value="21.513347" />
 		<property name="bankInterestRate" value="0.0075" />
@@ -2647,7 +2993,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.LAG_TAXES"/></key></entry>
 		</map>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID" /> </property>
 		<!-- From Households -->
@@ -2757,6 +3103,13 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="macroThreshold" value="0.08"/>
 		<property name="macroAdaptiveParameter" value="1"/>
 		<property name="microAdaptiveParameter" value="1"/>
+		<!-- Phase C7: Type-specific wage parameters (see parameters.xml) -->
+		<property name="macroThresholdR" ref="macroThresholdR"/>
+		<property name="macroThresholdN" ref="macroThresholdN"/>
+		<property name="macroAdaptiveParameterR" ref="macroAdaptiveParameterR"/>
+		<property name="macroAdaptiveParameterN" ref="macroAdaptiveParameterN"/>
+		<property name="microAdaptiveParameterR" ref="microAdaptiveParameterR"/>
+		<property name="microAdaptiveParameterN" ref="microAdaptiveParameterN"/>
 	</bean>
 	
 	<bean id="householdsTaxesStrategy" scope="prototype" parent="strategy"
@@ -2814,7 +3167,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.TIC_UPDATEEXPECTATIONS" />
 			</list>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.GOVERNMENT_ID" /> </property>
 		<!-- From Government -->
@@ -2823,9 +3176,17 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="prng" ref="prng"/>
 		<property name="bondPrice" value="1.0" />
 		<property name="fixedLaborDemand" value="1360" />
-		<property name="turnoverLabor" ref="turnoverVal" /> 
+		<property name="turnoverLabor" ref="turnoverVal" />
+		<!-- Phase B2.3: Type-specific parameters (Government hires R-only) -->
+		<property name="turnoverLaborR" ref="turnoverLaborRVal" />
+		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
 		<property name="unemploymentBenefit" value="0.4" />
+		<property name="unemploymentTarget" value="0.08" />
+		<property name="laborAdjustmentSpeed" value="0.5" />
+		<property name="maxLaborAdjustment" value="0.3" />
 		<property name="uComputer" ref="unemploymentComputer"/>
+		<property name="uComputerR" ref="unemploymentComputerR"/>
+		<property name="uComputerN" ref="unemploymentComputerN"/>
 		<property name="taxedPopulations">
 			<list>
 				<util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID" />
@@ -2859,6 +3220,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<bean id="governmentLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectRandomWorkerStrategy">
 		<property name="prng" ref="prng"/>
+		<!-- Phase C7: Type-specific sampling size (see parameters.xml) -->
+		<property name="sampleSizeR" ref="sampleSizeR"/>
+		<property name="sampleSizeN" ref="sampleSizeN"/>
 	</bean>
 	
 	<bean id="governmentBondsInterestStrategy" scope="prototype" parent="strategy"
@@ -2912,7 +3276,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<util:constant static-field="benchmark.StaticValues.TIC_CBBONDSPURCHASES" />
 			</list>
 		</property>
-		<property name="numberMarkets" value="7" />
+		<property name="numberMarkets" value="9" />
 		<property name="numberStocks" value="8" />
 		<property name="populationId"><util:constant static-field="benchmark.StaticValues.CB_ID" /> </property>
 		<!-- From AbstractBank -->

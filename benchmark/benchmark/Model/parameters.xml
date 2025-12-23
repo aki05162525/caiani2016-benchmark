@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!--
+	=============================================================================
+	Dual Labor Market Parameters (Phase A2, B2.3, C1, C2, C7)
+	=============================================================================
+	This file contains all parameters related to the dual labor market structure:
+	- R (Regular): Full-time, stable employment with lower turnover and layoff rates
+	- N (Non-regular): Part-time/temporary with higher turnover and layoff rates
+	=============================================================================
+	-->
+
+	<!--
+	Phase A2: Initial Labor Type Distribution
+	===========================================
+	-->
+	<!-- Ratio of Regular workers in initial population (0.0-1.0) -->
+	<bean id="laborTypeRatioR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.65" /> <!-- 65% Regular, 35% Non-regular -->
+	</bean>
+
+	<!--
+	Phase B2.3: Type-Specific Turnover and Layoff Rates
+	====================================================
+	-->
+	<!-- Regular worker turnover rate (voluntary quits) -->
+	<bean id="turnoverLaborRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
+		<constructor-arg value="0.02" /> <!-- 2% per period (low turnover) -->
+	</bean>
+
+	<!-- Non-regular worker turnover rate (voluntary quits) -->
+	<bean id="turnoverLaborNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
+		<constructor-arg value="0.05" /> <!-- 5% per period (high turnover) -->
+	</bean>
+
+	<!-- Regular worker layoff rate (involuntary separation) -->
+	<bean id="layoffRateRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
+		<constructor-arg value="0.3" /> <!-- 30% - harder to fire -->
+	</bean>
+
+	<!-- Non-regular worker layoff rate (involuntary separation) -->
+	<bean id="layoffRateNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
+		<constructor-arg value="0.8" /> <!-- 80% - adjustment buffer -->
+	</bean>
+
+	<!--
+	Phase C1/C2: CES Production Function Parameters for Effective Labor
+	====================================================================
+	The effective labor L_eff is computed using CES aggregation:
+	L_eff = [(δ * L_R^ρ) + ((1-δ) * L_N^ρ)]^(1/ρ)
+	where elasticity of substitution σ = 1/(1-ρ)
+	-->
+	<!-- CES distribution parameter δ (weight on Regular labor) -->
+	<bean id="cesDelta" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.55" /> <!-- R weight tuned to balance unemployment -->
+	</bean>
+
+	<!-- CES substitution parameter ρ (ρ=0: Cobb-Douglas, ρ→1: perfect substitutes) -->
+	<bean id="cesRho" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.5" /> <!-- Moderate substitutability -->
+	</bean>
+
+	<!-- CES efficiency parameter for Regular labor (A_R) -->
+	<bean id="cesAR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="2.21" /> <!-- Normalized with A_R/A_N=1.20 at baseline mix -->
+	</bean>
+
+	<!-- CES efficiency parameter for Non-regular labor (A_N) -->
+	<bean id="cesAN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.84" /> <!-- Normalized with A_R/A_N=1.20 at baseline mix -->
+	</bean>
+
+	<!-- Regular tenure productivity scale (a > 1 enables tenure gains) -->
+	<bean id="regularTenureProductivityA" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.20" />
+	</bean>
+
+	<!-- Regular tenure productivity curvature (gamma > 0) -->
+	<bean id="regularTenureProductivityGamma" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.50" />
+	</bean>
+
+	<!-- CES numerical stability parameter (epsilon) -->
+	<bean id="cesEpsilon" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0E-8" /> <!-- Small value to avoid division by zero -->
+	</bean>
+
+	<!-- Minimum productivity adjustment factor (phi_min) -->
+	<bean id="phiMin" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.2" /> <!-- Lower bound for productivity shock -->
+	</bean>
+
+	<!-- Maximum productivity adjustment factor (phi_max) -->
+	<bean id="phiMax" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="5.0" /> <!-- Upper bound for productivity shock -->
+	</bean>
+
+	<!--
+	Phase C7: Type-Specific Hiring and Wage Parameters
+	===================================================
+	-->
+	<!-- Sample size for Regular worker hiring (0 = all vacancies) -->
+	<bean id="sampleSizeR" scope="simulation" class="java.lang.Integer">
+		<constructor-arg value="0" />
+	</bean>
+
+	<!-- Sample size for Non-regular worker hiring (0 = all vacancies) -->
+	<bean id="sampleSizeN" scope="simulation" class="java.lang.Integer">
+		<constructor-arg value="0" />
+	</bean>
+
+	<!-- Hiring cost rate for Regular workers (as a wage surcharge) -->
+	<bean id="hiringCostRateR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.10" />
+	</bean>
+
+	<!-- Hiring cost rate for Non-regular workers (as a wage surcharge) -->
+	<bean id="hiringCostRateN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.00" />
+	</bean>
+
+	<!-- Macro threshold for Regular wage adjustment -->
+	<bean id="macroThresholdR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.10" /> <!-- Higher threshold for Regular wage rigidity -->
+	</bean>
+
+	<!-- Macro threshold for Non-regular wage adjustment -->
+	<bean id="macroThresholdN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.05" /> <!-- Lower threshold for Non-regular flexibility -->
+	</bean>
+
+	<!-- Macro adaptive parameter for Regular wage adjustment -->
+	<bean id="macroAdaptiveParameterR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Sensitivity to macro unemployment -->
+	</bean>
+
+	<!-- Macro adaptive parameter for Non-regular wage adjustment -->
+	<bean id="macroAdaptiveParameterN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Sensitivity to macro unemployment -->
+	</bean>
+
+	<!-- Micro adaptive parameter for Regular wage adjustment -->
+	<bean id="microAdaptiveParameterR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Sensitivity to micro (firm-level) conditions -->
+	</bean>
+
+	<!-- Micro adaptive parameter for Non-regular wage adjustment -->
+	<bean id="microAdaptiveParameterN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="1.0" /> <!-- Sensitivity to micro (firm-level) conditions -->
+	</bean>
+
+</beans>
