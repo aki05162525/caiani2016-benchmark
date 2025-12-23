@@ -37,6 +37,7 @@
 |-----------|------|------|
 | `unemployment` | 全体失業率 | 比率 |
 | `hhAvWage` | 家計平均賃金 | 金額 |
+| `hhAvgTenure` | 平均勤続年数（就業者のみ） | 期間数 |
 
 ### 3.2 正規労働者 (R: Regular)
 
@@ -50,6 +51,7 @@
 | `vacanciesR` | R求人数 | 件数 |
 | `laborForceGapR` | R労働力ギャップ | 人数 |
 | `avWageR` | R平均賃金 | 金額 |
+| `hhAvgTenureR` | R平均勤続年数（就業者のみ） | 期間数 |
 
 ### 3.3 非正規労働者 (N: Non-regular)
 
@@ -63,6 +65,7 @@
 | `vacanciesN` | N求人数 | 件数 |
 | `laborForceGapN` | N労働力ギャップ | 人数 |
 | `avWageN` | N平均賃金 | 金額 |
+| `hhAvgTenureN` | N平均勤続年数（就業者のみ） | 期間数 |
 
 ---
 

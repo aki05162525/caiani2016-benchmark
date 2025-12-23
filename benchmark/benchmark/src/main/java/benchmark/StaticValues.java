@@ -399,7 +399,10 @@ public interface StaticValues {
 	public static int LABORFORCEGAPNREPORT_ID=117;
 	public static int VACANCIESRREPORT_ID=118;
 	public static int VACANCIESNREPORT_ID=119;
-	
+	public static int AVGTENUREREPORT_ID=120;
+	public static int AVGTENUREREPORT_R_ID=121;
+	public static int AVGTENUREREPORT_N_ID=122;
+
 
 
 

@@ -83,6 +83,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="avWageCSVReport" />
 				<ref bean="avNetIncomeEventReport" />
 				<ref bean="avNetIncomeCSVReport" />
+				<ref bean="avgTenureCSVReport" />
+				<ref bean="avgTenureRCSVReport" />
+				<ref bean="avgTenureNCSVReport" />
 				<ref bean="kFirmsBankruptcyEventReport" />
 				<ref bean="kFirmsBankruptcyCSVReport" />
 				<ref bean="cFirmsBankruptcyEventReport" />
