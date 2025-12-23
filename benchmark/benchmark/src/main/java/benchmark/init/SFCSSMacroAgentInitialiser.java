@@ -359,7 +359,9 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			for(int j = 0 ; j < kMat ; j++){
 				CapitalGood kGood = new CapitalGood(this.kPrice*cCapPerPeriod*(1-j/kAm)/Math.pow((1+gr),j), cCapPerPeriod, c, kFirm, 
 						this.kPrice/Math.pow((1+gr),j),kFirm.getCapitalProductivity(),kMat,(int)kAm,kFirm.getCapitalLaborRatio());
-				kGood.setAge(j);
+				// Align initial GDP: avoid counting existing capital stock as new investment in period 1.
+				int initialAge = (kMat > 1 && j == 0) ? 1 : j;
+				kGood.setAge(initialAge);
 				kGood.setUnitCost(kUnitCost);
 				capitalValue+=kGood.getValue();
 				c.addItemStockMatrix(kGood, true, StaticValues.SM_CAPGOOD);

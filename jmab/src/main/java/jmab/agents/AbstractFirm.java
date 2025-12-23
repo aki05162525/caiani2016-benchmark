@@ -405,7 +405,15 @@ public abstract class AbstractFirm extends SimpleAbstractAgent implements LaborD
 		double termN = (1.0 - cesDelta) * Math.pow(baseN, cesRho);
 		double sum = termR + termN;
 		sum = Math.max(sum, cesEpsilon);
-		return Math.pow(sum, 1.0 / cesRho);
+		double effectiveLabor = Math.pow(sum, 1.0 / cesRho);
+
+		// 雇用者がいる場合、最低1名分の労働力を保証
+		// これにより、outputQty=0による単価爆発（unitCost→∞）を防止
+		if (adjNR + adjNN > 0) {
+			effectiveLabor = Math.max(1.0, effectiveLabor);
+		}
+
+		return effectiveLabor;
 	}
 
 	/**

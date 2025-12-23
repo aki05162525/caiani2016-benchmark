@@ -23,7 +23,7 @@
 	</property>
 	<property name="gdpGoodsAges">
 		<list>
-	        <value>0</value>
+	        <value>1</value>
 	        <value>1</value>
 	 	</list>
 	</property>

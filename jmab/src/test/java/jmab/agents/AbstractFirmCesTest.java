@@ -83,6 +83,43 @@ public class AbstractFirmCesTest {
 		Assert.assertTrue(ratio >= 0.5 && ratio <= 1.5);
 	}
 
+	@Test
+	public void testComputeEffectiveLaborMinimumBound() {
+		// 極小値が1.0に制限されることを確認（GDP問題対策）
+		TestFirm firm = new TestFirm();
+		firm.setCesDelta(0.5);
+		firm.setCesRho(0.5);
+		firm.setCesAR(1.0);
+		firm.setCesAN(1.0);
+		firm.setCesEpsilon(1e-8);
+
+		// nR=1, nN=0のケース（理論値は0.25未満になり得る）
+		double result = firm.effectiveLabor(1.0, 0.0);
+		Assert.assertTrue("Effective labor should be >= 1.0 when workers exist", result >= 1.0);
+
+		// nR=0, nN=1のケース
+		result = firm.effectiveLabor(0.0, 1.0);
+		Assert.assertTrue("Effective labor should be >= 1.0 when workers exist", result >= 1.0);
+
+		// 両方がいる場合も確認
+		result = firm.effectiveLabor(1.0, 1.0);
+		Assert.assertTrue("Effective labor should be >= 1.0 when workers exist", result >= 1.0);
+	}
+
+	@Test
+	public void testComputeEffectiveLaborZeroWorkers() {
+		// 雇用者ゼロの場合は下限なし（0.0を返す）
+		TestFirm firm = new TestFirm();
+		firm.setCesDelta(0.5);
+		firm.setCesRho(0.5);
+		firm.setCesAR(1.0);
+		firm.setCesAN(1.0);
+		firm.setCesEpsilon(1e-8);
+
+		double result = firm.effectiveLabor(0.0, 0.0);
+		Assert.assertEquals("Effective labor should be 0.0 when no workers exist", 0.0, result, TOL);
+	}
+
 	private static final class TestFirm extends AbstractFirm {
 		@Override
 		public void onAgentArrival(AgentArrivalEvent event) {
