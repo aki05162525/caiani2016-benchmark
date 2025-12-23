@@ -365,7 +365,7 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 
 		int nbWorkers = this.getRequiredWorkers();
 
-		// Phase C3: CES closed-form decomposition of total demand
+		// Phase C3: Headcount-based split using CES optimal ratio (nR/nN).
 		Expectation expWageRExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_R);
 		Expectation expWageNExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES_N);
 		Expectation expWageLegacyExp = this.getExpectation(StaticValues.EXPECTATIONS_WAGES);
@@ -373,8 +373,8 @@ LaborDemander, DepositDemander, PriceSetterWithTargets, ProfitsTaxPayer, Finance
 		double expWageR = expWageRExp != null ? expWageRExp.getExpectation() : expWageLegacy;
 		double expWageN = expWageNExp != null ? expWageNExp.getExpectation() : expWageLegacy;
 		double ratio = computeLaborRatio(expWageR, expWageN);
-		double[] split = computeLaborSplit(nbWorkers, ratio);
-		int nbWorkersR = Math.min(nbWorkers, Math.max(0, (int) Math.round(split[0])));
+		double shareR = ratio / (1.0 + ratio);
+		int nbWorkersR = Math.min(nbWorkers, Math.max(0, (int) Math.round(nbWorkers * shareR)));
 		int nbWorkersN = Math.max(0, nbWorkers - nbWorkersR);
 
 		// Phase B2.3: Partial layoff with probabilistic rounding

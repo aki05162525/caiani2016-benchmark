@@ -65,12 +65,12 @@
 
 	<!-- CES efficiency parameter for Regular labor (A_R) -->
 	<bean id="cesAR" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="1.0" /> <!-- Default: equal efficiency -->
+		<constructor-arg value="2.05" /> <!-- Normalized to keep L_eff ~= L_total at baseline mix -->
 	</bean>
 
 	<!-- CES efficiency parameter for Non-regular labor (A_N) -->
 	<bean id="cesAN" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="1.0" /> <!-- Default: equal efficiency -->
+		<constructor-arg value="2.05" /> <!-- Normalized to keep L_eff ~= L_total at baseline mix -->
 	</bean>
 
 	<!-- CES numerical stability parameter (epsilon) -->
