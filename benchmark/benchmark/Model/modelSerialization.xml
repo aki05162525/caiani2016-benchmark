@@ -1706,6 +1706,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="capitalLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
+		<property name="hiringCostRateR" ref="hiringCostRateR"/>
+		<property name="hiringCostRateN" ref="hiringCostRateN"/>
 	</bean>
 	
 	<bean id="capitalRDInvestmentStrategy" scope="prototype" parent="strategy"
@@ -1988,6 +1990,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	
 	<bean id="consumptionLaborStrategy" scope="prototype" parent="strategy"
 		class="jmab.strategies.SelectCheapestWorkerStrategy">
+		<property name="hiringCostRateR" ref="hiringCostRateR"/>
+		<property name="hiringCostRateN" ref="hiringCostRateN"/>
 	</bean>
 	
 	<bean id="consumptionBuyingStrategy" scope="prototype" parent="strategy"
@@ -2751,6 +2755,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="fixedLaborDemand" value="1360" />
 		<property name="turnoverLabor" value="0.3" /> 
 		<property name="unemploymentBenefit" value="0.4" />
+		<property name="unemploymentTarget" value="0.08" />
+		<property name="laborAdjustmentSpeed" value="0.5" />
+		<property name="maxLaborAdjustment" value="0.3" />
 		<property name="uComputer" ref="unemploymentComputer"/>
 		<property name="taxedPopulations">
 			<list>

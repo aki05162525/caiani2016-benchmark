@@ -139,7 +139,7 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 		Uniform laborTypeDistr = new Uniform(0.0, 1.0, prng);
 
 		// Wage gap calibration: keep average wage at hhWage while enforcing R/N gap.
-		double wageGapRatio = 1.36; // R/N wage ratio (approx. Japan 2022 hourly gap)
+		double wageGapRatio = 1.20; // R/N wage ratio (moderate gap)
 		double wageFactorN = 1.0 / (this.laborTypeRatioR * wageGapRatio + (1.0 - this.laborTypeRatioR));
 		double wageFactorR = wageGapRatio * wageFactorN;
 		double initialWageR = this.hhWage * wageFactorR;

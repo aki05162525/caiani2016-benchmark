@@ -51,6 +51,9 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	protected double profitsFromCB;
 	protected double turnoverLaborR;
 	protected double turnoverLaborN;
+	protected double unemploymentTarget;
+	protected double laborAdjustmentSpeed;
+	protected double maxLaborAdjustment;
 	
 
 	/**
@@ -65,6 +68,48 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 	 */
 	public void setUnemploymentBenefit(double unemploymentBenefit) {
 		this.unemploymentBenefit = unemploymentBenefit;
+	}
+
+	/**
+	 * @return the unemploymentTarget
+	 */
+	public double getUnemploymentTarget() {
+		return unemploymentTarget;
+	}
+
+	/**
+	 * @param unemploymentTarget the unemploymentTarget to set
+	 */
+	public void setUnemploymentTarget(double unemploymentTarget) {
+		this.unemploymentTarget = unemploymentTarget;
+	}
+
+	/**
+	 * @return the laborAdjustmentSpeed
+	 */
+	public double getLaborAdjustmentSpeed() {
+		return laborAdjustmentSpeed;
+	}
+
+	/**
+	 * @param laborAdjustmentSpeed the laborAdjustmentSpeed to set
+	 */
+	public void setLaborAdjustmentSpeed(double laborAdjustmentSpeed) {
+		this.laborAdjustmentSpeed = laborAdjustmentSpeed;
+	}
+
+	/**
+	 * @return the maxLaborAdjustment
+	 */
+	public double getMaxLaborAdjustment() {
+		return maxLaborAdjustment;
+	}
+
+	/**
+	 * @param maxLaborAdjustment the maxLaborAdjustment to set
+	 */
+	public void setMaxLaborAdjustment(double maxLaborAdjustment) {
+		this.maxLaborAdjustment = maxLaborAdjustment;
 	}
 
 	/* (non-Javadoc)
@@ -175,6 +220,25 @@ public class GovernmentAntiCyclical extends Government implements LaborDemander,
 
 		int currentWorkers = this.employees.size();
 		int nbWorkers = this.fixedLaborDemand;
+		double aggUnemp = this.getAggregateValue(StaticValues.LAG_AGGUNEMPLOYMENT, 1);
+		if (laborAdjustmentSpeed > 0.0 && unemploymentTarget > 0.0) {
+			double adjustment = laborAdjustmentSpeed * (aggUnemp - unemploymentTarget);
+			if (maxLaborAdjustment > 0.0) {
+				if (adjustment > maxLaborAdjustment) {
+					adjustment = maxLaborAdjustment;
+				} else if (adjustment < -maxLaborAdjustment) {
+					adjustment = -maxLaborAdjustment;
+				}
+			}
+			nbWorkers = (int) Math.round(this.fixedLaborDemand * (1.0 + adjustment));
+			if (nbWorkers < 0) {
+				nbWorkers = 0;
+			}
+			int laborForceR = (int) Math.round(this.getAggregateValue(StaticValues.LAG_LABORFORCE_R, 1));
+			if (laborForceR > 0) {
+				nbWorkers = Math.min(nbWorkers, laborForceR);
+			}
+		}
 		if(nbWorkers>currentWorkers){
 			// Phase B2: Government only hires Regular workers
 			this.laborDemandR = nbWorkers - currentWorkers;

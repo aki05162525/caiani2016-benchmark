@@ -65,12 +65,12 @@
 
 	<!-- CES efficiency parameter for Regular labor (A_R) -->
 	<bean id="cesAR" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="2.05" /> <!-- Normalized to keep L_eff ~= L_total at baseline mix -->
+		<constructor-arg value="2.21" /> <!-- Normalized with A_R/A_N=1.20 at baseline mix -->
 	</bean>
 
 	<!-- CES efficiency parameter for Non-regular labor (A_N) -->
 	<bean id="cesAN" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="2.05" /> <!-- Normalized to keep L_eff ~= L_total at baseline mix -->
+		<constructor-arg value="1.84" /> <!-- Normalized with A_R/A_N=1.20 at baseline mix -->
 	</bean>
 
 	<!-- CES numerical stability parameter (epsilon) -->
@@ -100,6 +100,16 @@
 	<!-- Sample size for Non-regular worker hiring (0 = all vacancies) -->
 	<bean id="sampleSizeN" scope="simulation" class="java.lang.Integer">
 		<constructor-arg value="0" />
+	</bean>
+
+	<!-- Hiring cost rate for Regular workers (as a wage surcharge) -->
+	<bean id="hiringCostRateR" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.10" />
+	</bean>
+
+	<!-- Hiring cost rate for Non-regular workers (as a wage surcharge) -->
+	<bean id="hiringCostRateN" scope="simulation" class="java.lang.Double">
+		<constructor-arg value="0.00" />
 	</bean>
 
 	<!-- Macro threshold for Regular wage adjustment -->

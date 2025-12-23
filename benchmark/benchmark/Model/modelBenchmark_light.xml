@@ -2124,6 +2124,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<!-- Phase C7: Type-specific sampling size (chi_R/chi_N) -->
 		<property name="sampleSizeR" value="0"/>
 		<property name="sampleSizeN" value="0"/>
+		<property name="hiringCostRateR" ref="hiringCostRateR"/>
+		<property name="hiringCostRateN" ref="hiringCostRateN"/>
 	</bean>
 	
 	<bean id="capitalRDInvestmentStrategy" scope="prototype" parent="strategy"
@@ -2457,6 +2459,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<!-- Phase C7: Type-specific sampling size (chi_R/chi_N) -->
 		<property name="sampleSizeR" value="0"/>
 		<property name="sampleSizeN" value="0"/>
+		<property name="hiringCostRateR" ref="hiringCostRateR"/>
+		<property name="hiringCostRateN" ref="hiringCostRateN"/>
 	</bean>
 	
 	<bean id="consumptionBuyingStrategy" scope="prototype" parent="strategy"
@@ -3201,6 +3205,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="turnoverLaborR" ref="turnoverLaborRVal" />
 		<property name="turnoverLaborN" ref="turnoverLaborNVal" />
 		<property name="unemploymentBenefit" value="0.4" />
+		<property name="unemploymentTarget" value="0.08" />
+		<property name="laborAdjustmentSpeed" value="0.5" />
+		<property name="maxLaborAdjustment" value="0.3" />
 		<property name="uComputer" ref="unemploymentComputer"/>
 		<property name="uComputerR" ref="unemploymentComputerR"/>
 		<property name="uComputerN" ref="unemploymentComputerN"/>

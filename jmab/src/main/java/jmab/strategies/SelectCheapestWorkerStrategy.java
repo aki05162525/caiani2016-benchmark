@@ -35,6 +35,8 @@ public class SelectCheapestWorkerStrategy extends AbstractStrategy implements Se
 	private int sampleSizeR;
 	private int sampleSizeN;
 	private RandomEngine prng;
+	private double hiringCostRateR;
+	private double hiringCostRateN;
 
 	/* (non-Javadoc)
 	 * @see jmab.strategies.SelectWorkerStrategy#selectWorker(java.util.ArrayList)
@@ -46,8 +48,9 @@ public class SelectCheapestWorkerStrategy extends AbstractStrategy implements Se
 		MacroAgent cheapestWorker=(MacroAgent)sampled.get(0);
 		for(Agent agent:sampled){
 			LaborSupplier worker=(LaborSupplier)agent;
-			if(worker.getWage()<minWage){
-				minWage=worker.getWage();
+			double effectiveWage = getEffectiveWage(worker);
+			if(effectiveWage<minWage){
+				minWage=effectiveWage;
 				cheapestWorker=worker;
 			}
 		}
@@ -64,16 +67,24 @@ public class SelectCheapestWorkerStrategy extends AbstractStrategy implements Se
 		TreeMap<Double, MacroAgent> tree = new TreeMap<Double, MacroAgent>(); 
 		for(Agent agent:sampled){
 			LaborSupplier worker=(LaborSupplier)agent;
+			double effectiveWage = getEffectiveWage(worker);
 			if(tree.size()<n){
-				maxWage=Math.max(maxWage,worker.getWage());
-				tree.put(worker.getWage(), worker);
-			}else if(worker.getWage()<maxWage){
+				maxWage=Math.max(maxWage,effectiveWage);
+				tree.put(effectiveWage, worker);
+			}else if(effectiveWage<maxWage){
 				tree.remove(maxWage);
-				tree.put(worker.getWage(),worker);
+				tree.put(effectiveWage,worker);
 				maxWage = tree.lastKey();
 			}
 		}
 		return (List<MacroAgent>)tree.values();
+	}
+
+	private double getEffectiveWage(LaborSupplier worker) {
+		double wage = worker.getWage();
+		int laborType = worker.getLaborType();
+		double hiringCostRate = laborType == 0 ? hiringCostRateR : hiringCostRateN;
+		return wage * (1 + hiringCostRate);
 	}
 
 	private List<Agent> sampleWorkers(List<Agent> workers) {
@@ -144,6 +155,34 @@ public class SelectCheapestWorkerStrategy extends AbstractStrategy implements Se
 	 */
 	public void setPrng(RandomEngine prng) {
 		this.prng = prng;
+	}
+
+	/**
+	 * @return the hiringCostRateR
+	 */
+	public double getHiringCostRateR() {
+		return hiringCostRateR;
+	}
+
+	/**
+	 * @param hiringCostRateR the hiringCostRateR to set
+	 */
+	public void setHiringCostRateR(double hiringCostRateR) {
+		this.hiringCostRateR = hiringCostRateR;
+	}
+
+	/**
+	 * @return the hiringCostRateN
+	 */
+	public double getHiringCostRateN() {
+		return hiringCostRateN;
+	}
+
+	/**
+	 * @param hiringCostRateN the hiringCostRateN to set
+	 */
+	public void setHiringCostRateN(double hiringCostRateN) {
+		this.hiringCostRateN = hiringCostRateN;
 	}
 
 	/* (non-Javadoc)
