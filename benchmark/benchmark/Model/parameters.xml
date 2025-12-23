@@ -104,12 +104,12 @@
 
 	<!-- Macro threshold for Regular wage adjustment -->
 	<bean id="macroThresholdR" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="0.08" /> <!-- 8% unemployment threshold -->
+		<constructor-arg value="0.10" /> <!-- Higher threshold for Regular wage rigidity -->
 	</bean>
 
 	<!-- Macro threshold for Non-regular wage adjustment -->
 	<bean id="macroThresholdN" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="0.08" /> <!-- 8% unemployment threshold -->
+		<constructor-arg value="0.05" /> <!-- Lower threshold for Non-regular flexibility -->
 	</bean>
 
 	<!-- Macro adaptive parameter for Regular wage adjustment -->

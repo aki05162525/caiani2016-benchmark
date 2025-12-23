@@ -138,6 +138,13 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 		Uniform distr = new Uniform(-uniformDistr,uniformDistr,prng);
 		Uniform laborTypeDistr = new Uniform(0.0, 1.0, prng);
 
+		// Wage gap calibration: keep average wage at hhWage while enforcing R/N gap.
+		double wageGapRatio = 1.36; // R/N wage ratio (approx. Japan 2022 hourly gap)
+		double wageFactorN = 1.0 / (this.laborTypeRatioR * wageGapRatio + (1.0 - this.laborTypeRatioR));
+		double wageFactorR = wageGapRatio * wageFactorN;
+		double initialWageR = this.hhWage * wageFactorR;
+		double initialWageN = this.hhWage * wageFactorN;
+
 		//Households
 		double hhDep = this.hhsDep/hhSize;
 		double hhCash = this.hhsCash/hhSize;
@@ -149,8 +156,10 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			//Phase A2: Set labor type based on ratio
 			if(laborTypeDistr.nextDouble() < this.laborTypeRatioR) {
 				hh.setLaborType(StaticValues.LABOR_TYPE_R);
+				hh.setWage(initialWageR);
 			} else {
 				hh.setLaborType(StaticValues.LABOR_TYPE_N);
+				hh.setWage(initialWageN);
 			}
 
 			//Cash Holdings
@@ -180,7 +189,6 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			depositStrategy.setPreviousDepositSupplier(previousBankDeposit);
 
 			//Expectations and Lagged values
-			hh.setWage(hhWage);
 			hh.addValue(StaticValues.LAG_NETWEALTH, hh.getNetWealth());
 			Expectation cPriceExp = hh.getExpectation(StaticValues.EXPECTATIONS_CONSPRICE);
 			int nbObs = cPriceExp.getNumberPeriod();
@@ -296,8 +304,8 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			int nbObsR = kWageExpR.getNumberPeriod();
 			double[][] passedWageR = new double[nbObsR][2];
 			for(int j = 0; j < nbObsR; j++){
-				passedWageR[j][0] = this.hhWage * (1 + distr.nextDouble());
-				passedWageR[j][1] = this.hhWage * (1 + distr.nextDouble());
+				passedWageR[j][0] = initialWageR * (1 + distr.nextDouble());
+				passedWageR[j][1] = initialWageR * (1 + distr.nextDouble());
 			}
 			kWageExpR.setPassedValues(passedWageR);
 
@@ -306,8 +314,8 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			int nbObsN = kWageExpN.getNumberPeriod();
 			double[][] passedWageN = new double[nbObsN][2];
 			for(int j = 0; j < nbObsN; j++){
-				passedWageN[j][0] = this.hhWage * (1 + distr.nextDouble());
-				passedWageN[j][1] = this.hhWage * (1 + distr.nextDouble());
+				passedWageN[j][0] = initialWageN * (1 + distr.nextDouble());
+				passedWageN[j][1] = initialWageN * (1 + distr.nextDouble());
 			}
 			kWageExpN.setPassedValues(passedWageN);
 
@@ -451,8 +459,8 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			int nbObsR = cWageExpR.getNumberPeriod();
 			double[][] passedWageR = new double[nbObsR][2];
 			for(int j = 0; j < nbObsR; j++){
-				passedWageR[j][0] = this.hhWage * (1 + distr.nextDouble());
-				passedWageR[j][1] = this.hhWage * (1 + distr.nextDouble());
+				passedWageR[j][0] = initialWageR * (1 + distr.nextDouble());
+				passedWageR[j][1] = initialWageR * (1 + distr.nextDouble());
 			}
 			cWageExpR.setPassedValues(passedWageR);
 
@@ -461,8 +469,8 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			int nbObsN = cWageExpN.getNumberPeriod();
 			double[][] passedWageN = new double[nbObsN][2];
 			for(int j = 0; j < nbObsN; j++){
-				passedWageN[j][0] = this.hhWage * (1 + distr.nextDouble());
-				passedWageN[j][1] = this.hhWage * (1 + distr.nextDouble());
+				passedWageN[j][0] = initialWageN * (1 + distr.nextDouble());
+				passedWageN[j][1] = initialWageN * (1 + distr.nextDouble());
 			}
 			cWageExpN.setPassedValues(passedWageN);
 
