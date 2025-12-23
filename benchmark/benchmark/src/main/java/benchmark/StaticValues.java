@@ -177,6 +177,9 @@ public interface StaticValues {
 	public static int TIC_LABORFORCEGAPNREPORT=154;
 	public static int TIC_VACANCIESRREPORT=155;
 	public static int TIC_VACANCIESNREPORT=156;
+	public static int TIC_AVGTENUREREPORT=157;
+	public static int TIC_AVGTENUREREPORT_R=158;
+	public static int TIC_AVGTENUREREPORT_N=159;
 	public static int TIC_POPULATIONHANDLER=1000;
 	public static int TIC_UPDATEEXPECTATIONS=1001;
 	public static int TIC_SERIALIZATION=1002;
