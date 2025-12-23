@@ -1799,7 +1799,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="layoffRateR" ref="layoffRateRVal" />
 		<property name="layoffRateN" ref="layoffRateNVal" />
 		<!-- Phase C1/C2: CES effective labor parameters -->
-		<property name="cesDelta" value="0.5" />
+		<property name="cesDelta" value="0.60" />
 		<property name="cesRho" value="0.5" />
 		<property name="cesAR" value="1.0" />
 		<property name="cesAN" value="1.0" />
@@ -2333,7 +2333,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 		<property name="layoffRateR" ref="layoffRateRVal" />
 		<property name="layoffRateN" ref="layoffRateNVal" />
 		<!-- Phase C1/C2: CES effective labor parameters -->
-		<property name="cesDelta" value="0.5" />
+		<property name="cesDelta" value="0.60" />
 		<property name="cesRho" value="0.5" />
 		<property name="cesAR" value="1.0" />
 		<property name="cesAN" value="1.0" />
