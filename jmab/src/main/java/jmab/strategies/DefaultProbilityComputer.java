@@ -24,6 +24,15 @@ import jmab.population.MacroPopulation;
 public interface DefaultProbilityComputer {
 
 	public double getDefaultProbability(MacroAgent creditDemander, MacroAgent creditSupplier, double creditDemanded);
+
+	/**
+	 * Overload that accepts a pre-computed numeric balance sheet to avoid repeated scans.
+	 * Default implementation delegates to the legacy method for backward compatibility.
+	 */
+	public default double getDefaultProbability(MacroAgent creditDemander, MacroAgent creditSupplier,
+			double creditDemanded, double[][] borrowerBalanceSheet) {
+		return getDefaultProbability(creditDemander, creditSupplier, creditDemanded);
+	}
 	
 	public byte[] getBytes();
 	
