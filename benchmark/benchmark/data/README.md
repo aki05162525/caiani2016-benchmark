@@ -37,6 +37,7 @@
 |-----------|------|------|
 | `unemployment` | 全体失業率 | 比率 |
 | `hhAvWage` | 家計平均賃金 | 金額 |
+| `hhAvgTenure` | 平均勤続年数（就業者のみ） | 期間数 |
 
 ### 3.2 正規労働者 (R: Regular)
 
@@ -47,9 +48,11 @@
 | `unemploymentR` | R失業率 | 比率 |
 | `unemploymentCountR` | R失業者数 | 人数 |
 | `unemploymentBoundsR` | R失業限界値（賃金調整閾値） | 比率 |
-| `vacanciesR` | R求人数 | 件数 |
+| `jobOpeningsR` | R求人総数（労働市場前） | 件数 |
+| `vacanciesR` | R未充足求人（労働市場後） | 件数 |
 | `laborForceGapR` | R労働力ギャップ | 人数 |
 | `avWageR` | R平均賃金 | 金額 |
+| `hhAvgTenureR` | R平均勤続年数（就業者のみ） | 期間数 |
 
 ### 3.3 非正規労働者 (N: Non-regular)
 
@@ -60,9 +63,20 @@
 | `unemploymentN` | N失業率 | 比率 |
 | `unemploymentCountN` | N失業者数 | 人数 |
 | `unemploymentBoundsN` | N失業限界値（賃金調整閾値） | 比率 |
-| `vacanciesN` | N求人数 | 件数 |
+| `jobOpeningsN` | N求人総数（労働市場前） | 件数 |
+| `vacanciesN` | N未充足求人（労働市場後） | 件数 |
 | `laborForceGapN` | N労働力ギャップ | 人数 |
 | `avWageN` | N平均賃金 | 金額 |
+| `hhAvgTenureN` | N平均勤続年数（就業者のみ） | 期間数 |
+
+### 3.4 求人指標の違い
+
+| 指標 | 計測タイミング | 意味 |
+|-----|--------------|------|
+| `jobOpeningsR/N` | 労働市場の前 | 企業が募集した求人の総数 |
+| `vacanciesR/N` | 労働市場の後 | 雇用後に残った未充足求人数 |
+
+**注**: 労働市場が完全にクリアする場合、`vacancies` は0になります。`jobOpenings` は企業の採用意欲を示す指標として有用です。
 
 ---
 

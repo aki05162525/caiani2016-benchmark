@@ -243,14 +243,12 @@ public class Households extends AbstractHousehold implements GoodDemander, Labor
 		else
 			employed=1;
 		this.addValue(StaticValues.LAG_EMPLOYED,employed);
-		if (this.laborType == StaticValues.LABOR_TYPE_R) {
-			if (this.employer == null) {
-				this.tenure = 0;
-			} else {
-				incrementTenure();
-			}
-		} else {
+		// Both R and N workers track tenure for data collection
+		// (tenure productivity effect is applied only to R workers in AbstractFirm)
+		if (this.employer == null) {
 			this.tenure = 0;
+		} else {
+			incrementTenure();
 		}
 		this.cleanSM();
 	}

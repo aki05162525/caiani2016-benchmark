@@ -14,11 +14,7 @@
  */
 package jmab.report;
 
-import jmab.agents.LaborSupplier;
-import jmab.population.MacroPopulation;
 import jmab.simulations.MacroSimulation;
-import net.sourceforge.jabm.Population;
-import net.sourceforge.jabm.agent.Agent;
 
 /**
  * Computes the unemployment rate for a specific labor type.
@@ -58,25 +54,11 @@ public class UnemploymentRateByTypeComputer implements MacroVariableComputer {
 
 	@Override
 	public double computeVariable(MacroSimulation sim) {
-		MacroPopulation macroPop = (MacroPopulation) sim.getPopulation();
-		int totPop = 0;
-		int employedPop = 0;
-		for (int i = 0; i < householdPopIds.length; i++) {
-			Population hhPop = macroPop.getPopulation(householdPopIds[i]);
-			for (Agent agent : hhPop.getAgents()) {
-				LaborSupplier hh = (LaborSupplier) agent;
-				if (hh.getLaborType() != laborType) {
-					continue;
-				}
-				totPop += 1;
-				if (hh.isEmployed()) {
-					employedPop += 1;
-				}
-			}
-		}
-		if (totPop == 0) {
+		LaborMarketStatsCache.LaborMarketStats stats = LaborMarketStatsCache.getStats(sim, householdPopIds,
+				laborType);
+		if (stats.getLaborForce() == 0) {
 			return 0.0;
 		}
-		return 1 - (double) employedPop / (double) totPop;
+		return 1 - (double) stats.getEmployed() / (double) stats.getLaborForce();
 	}
 }

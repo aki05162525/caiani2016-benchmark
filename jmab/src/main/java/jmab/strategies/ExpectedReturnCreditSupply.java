@@ -21,6 +21,7 @@ import jmab.agents.CreditDemander;
 import jmab.agents.MacroAgent;
 import jmab.population.MacroPopulation;
 import jmab.stockmatrix.Item;
+import jmab.strategies.DeterministicLogisticLeverageDefaultProbabilityComputer;
 import net.sourceforge.jabm.strategy.AbstractStrategy;
 
 /**
@@ -59,12 +60,26 @@ public class ExpectedReturnCreditSupply extends AbstractStrategy implements
 		double shareRepaid=(double) 1/ (double) duration;
 		double interest=creditSupplier.getInterestRate(loansId, creditDemander, required, duration);
 		double amount=0;
+		boolean reuseProbability = defaultComputer instanceof DeterministicLogisticLeverageDefaultProbabilityComputer;
+		double cachedProbability = 0;
+		double[][] borrowerBs = null;
+		if (creditDemander instanceof MacroAgent) {
+			// Compute borrower balance sheet once to avoid repeated scans in the grid search
+			borrowerBs = ((MacroAgent) creditDemander).getNumericBalanceSheet();
+		}
+		if (reuseProbability) {
+			// Default probability does not depend on demanded amount for this implementation,
+			// so compute once to avoid repeated balance sheet scans.
+			cachedProbability = defaultComputer.getDefaultProbability(creditDemander, creditSupplier, required,
+					borrowerBs);
+		}
 		for(int i=0; i<101; i++){
 			
 			amount=required*(1-(double)i/100);
 			//double interest=creditSupplier.getInterestRate(creditDemander, amount, duration);
 			//if you put the line above also the interest rate is re-computed (so that the strategy to set interest can depend also on the amount demanded)
-			double probability = defaultComputer.getDefaultProbability(creditDemander, creditSupplier, amount);
+			double probability = reuseProbability ? cachedProbability
+					: defaultComputer.getDefaultProbability(creditDemander, creditSupplier, amount, borrowerBs);
 			double expectedReturn=0;
 			//probability=0.01;
 			for (int t=0; t<duration; t++){

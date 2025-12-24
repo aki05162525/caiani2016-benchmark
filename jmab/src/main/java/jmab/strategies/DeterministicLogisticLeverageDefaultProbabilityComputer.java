@@ -47,6 +47,21 @@ public class DeterministicLogisticLeverageDefaultProbabilityComputer implements
 		return 1/(1+Math.exp(-slopeParameter*(leverage-centerParameter)));
 	}
 
+	@Override
+	public double getDefaultProbability(MacroAgent creditDemander, MacroAgent creditSupplier, double demanded,
+			double[][] borrowerBalanceSheet) {
+		double leverage = 0;
+		double[][] bs = borrowerBalanceSheet != null ? borrowerBalanceSheet : creditDemander.getNumericBalanceSheet();
+		double assets = 0;
+		double liabilities = 0;
+		for(int i =0 ; i<bs[0].length-1;i++){
+			assets+=bs[0][i];
+			liabilities+=bs[0][i];
+		}
+		leverage = liabilities/assets;
+		return 1/(1+Math.exp(-slopeParameter*(leverage-centerParameter)));
+	}
+
 	/**
 	 * @return the slopeParameter
 	 */

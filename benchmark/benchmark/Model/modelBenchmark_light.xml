@@ -76,6 +76,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="laborSupplyTic" />
 				<ref bean="laborDemandTic" />
 				<ref bean="governmentLaborTic" />
+				<ref bean="jobOpeningsRReportTic" />
+				<ref bean="jobOpeningsNReportTic" />
 				<ref bean="laborMarketTic" />
 				<ref bean="productionTic" />
 				<ref bean="rdOutcomeTic" />
@@ -199,6 +201,9 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="depAvInterestReportTic" />
 				<ref bean="avWageReportTic" />
 				<ref bean="avNetIncomeReportTic" />
+				<ref bean="avgTenureReportTic" />
+				<ref bean="avgTenureRReportTic" />
+				<ref bean="avgTenureNReportTic" />
 				<ref bean="cFirmsBankruptcyReportTic" />
 				<ref bean="kFirmsBankruptcyReportTic" />
 				<ref bean="banksBankruptcyReportTic" />
@@ -828,7 +833,28 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<property name="variableName" value="avWage"></property>
 	<property name="computer" ref="avWageComputer"></property>
 	</bean>
-	
+
+	<bean id="avgTenureReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVGTENUREREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVGTENUREREPORT_ID" /></property>
+	<property name="variableName" value="avgTenure"/>
+	<property name="computer" ref="avgTenureComputer"/>
+	</bean>
+
+	<bean id="avgTenureRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVGTENUREREPORT_R" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVGTENUREREPORT_R_ID" /></property>
+	<property name="variableName" value="avgTenureR"/>
+	<property name="computer" ref="avgTenureRComputer"/>
+	</bean>
+
+	<bean id="avgTenureNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_AVGTENUREREPORT_N" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.AVGTENUREREPORT_N_ID" /></property>
+	<property name="variableName" value="avgTenureN"/>
+	<property name="computer" ref="avgTenureNComputer"/>
+	</bean>
+
 	<bean id="kAggConsCredReportTic" class="jmab.events.MacroVariableTicEvent">
 	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_KAGGCONSCREDITREPORT" /></property>
 	<property name="variableId"><util:constant static-field="benchmark.StaticValues.KAGGCONSCREDITREPORT_ID" /></property>
@@ -953,6 +979,20 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<property name="variableId"><util:constant static-field="benchmark.StaticValues.VACANCIESNREPORT_ID" /></property>
 	<property name="variableName" value="Vacancies N"></property>
 	<property name="computer" ref="vacanciesNComputer"></property>
+	</bean>
+
+	<bean id="jobOpeningsRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_JOBOPENINGSRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.JOBOPENINGSRREPORT_ID" /></property>
+	<property name="variableName" value="Job Openings R"></property>
+	<property name="computer" ref="jobOpeningsRComputer"></property>
+	</bean>
+
+	<bean id="jobOpeningsNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_JOBOPENINGSNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.JOBOPENINGSNREPORT_ID" /></property>
+	<property name="variableName" value="Job Openings N"></property>
+	<property name="computer" ref="jobOpeningsNComputer"></property>
 	</bean>
 
 	<bean id="laborForceRReportTic" class="jmab.events.MacroVariableTicEvent">

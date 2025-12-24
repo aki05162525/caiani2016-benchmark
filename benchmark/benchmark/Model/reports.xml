@@ -1097,6 +1097,72 @@
 	<property name="name" value="Vacancies N"/>
 </bean>
 
+<!-- Job Openings (before labor market) -->
+<bean id="jobOpeningsRComputer" class="benchmark.report.VacanciesByTypeComputer">
+	<property name="populationIds">
+		<list>
+			<util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID"/>
+			<util:constant static-field="benchmark.StaticValues.CONSUMPTIONFIRMS_ID"/>
+			<util:constant static-field="benchmark.StaticValues.GOVERNMENT_ID"/>
+		</list>
+	</property>
+	<property name="laborType"><util:constant static-field="benchmark.StaticValues.LABOR_TYPE_R"/></property>
+</bean>
+
+<bean id="jobOpeningsNComputer" class="benchmark.report.VacanciesByTypeComputer">
+	<property name="populationIds">
+		<list>
+			<util:constant static-field="benchmark.StaticValues.CAPITALFIRMS_ID"/>
+			<util:constant static-field="benchmark.StaticValues.CONSUMPTIONFIRMS_ID"/>
+		</list>
+	</property>
+	<property name="laborType"><util:constant static-field="benchmark.StaticValues.LABOR_TYPE_N"/></property>
+</bean>
+
+<bean id="jobOpeningsRCSVReport" class="jmab.report.MacroSimEventReport">
+	<property name="eventPrototype">
+		<bean class="jmab.events.MacroSimEvent"/>
+	</property>
+	<property name="variableId">
+	        <util:constant static-field="benchmark.StaticValues.JOBOPENINGSRREPORT_ID"/>
+	</property>
+	<property name="reportVariables" ref="jobOpeningsRCSVReportVariables"/>
+</bean>
+
+<bean id="jobOpeningsRCSVReportVariables" class="jmab.report.MacroCSVReportVariables">
+	<property name="reportVariables" ref="jobOpeningsRReportVariables"/>
+	<property name="fileNamePrefix" ref="fileNamePrefix" />
+	<property name="fileNameSuffix" value="jobOpeningsR" />
+	<property name="fileNameExtension" value=".csv" />
+	<property name="passThrough" value="true" />
+</bean>
+
+<bean id="jobOpeningsRReportVariables" class="jmab.report.MacroVariableReport">
+	<property name="name" value="Job Openings R"/>
+</bean>
+
+<bean id="jobOpeningsNCSVReport" class="jmab.report.MacroSimEventReport">
+	<property name="eventPrototype">
+		<bean class="jmab.events.MacroSimEvent"/>
+	</property>
+	<property name="variableId">
+	        <util:constant static-field="benchmark.StaticValues.JOBOPENINGSNREPORT_ID"/>
+	</property>
+	<property name="reportVariables" ref="jobOpeningsNCSVReportVariables"/>
+</bean>
+
+<bean id="jobOpeningsNCSVReportVariables" class="jmab.report.MacroCSVReportVariables">
+	<property name="reportVariables" ref="jobOpeningsNReportVariables"/>
+	<property name="fileNamePrefix" ref="fileNamePrefix" />
+	<property name="fileNameSuffix" value="jobOpeningsN" />
+	<property name="fileNameExtension" value=".csv" />
+	<property name="passThrough" value="true" />
+</bean>
+
+<bean id="jobOpeningsNReportVariables" class="jmab.report.MacroVariableReport">
+	<property name="name" value="Job Openings N"/>
+</bean>
+
 <bean id="unemploymentTimeSeriesChart" 
 		class="net.sourceforge.jabm.view.TimeSeriesChart">
 	<property name="series" ref="unemploymentTimeSeries"/>
@@ -5509,6 +5575,91 @@
 	<property name="fileNamePrefix" ref="fileNamePrefix" />
 	<property name="fileName" value="FlowNet"/>
 	<property name="fileNameExtension" value=".csv" />
+</bean>
+
+<!-- Average Tenure Reports -->
+<!-- All workers -->
+<bean id="avgTenureComputer" class="benchmark.report.AverageTenureComputer">
+	<property name="householdId"><util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID" /></property>
+	<property name="laborTypeFilter" value="-1" />
+</bean>
+
+<bean id="avgTenureReportVariables" class="jmab.report.MacroVariableReport">
+	<property name="name" value="avgTenure"/>
+</bean>
+
+<bean id="avgTenureCSVReportVariables" class="jmab.report.MacroCSVReportVariables">
+	<property name="reportVariables" ref="avgTenureReportVariables"/>
+	<property name="fileNamePrefix" ref="fileNamePrefix" />
+	<property name="fileNameSuffix" value="hhAvgTenure" />
+	<property name="fileNameExtension" value=".csv" />
+	<property name="passThrough" value="true" />
+</bean>
+
+<bean id="avgTenureCSVReport" class="jmab.report.MacroSimEventReport">
+	<property name="eventPrototype">
+		<bean class="jmab.events.MacroSimEvent"/>
+	</property>
+	<property name="variableId">
+		<util:constant static-field="benchmark.StaticValues.AVGTENUREREPORT_ID"/>
+	</property>
+	<property name="reportVariables" ref="avgTenureCSVReportVariables"/>
+</bean>
+
+<!-- R workers only -->
+<bean id="avgTenureRComputer" class="benchmark.report.AverageTenureComputer">
+	<property name="householdId"><util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID" /></property>
+	<property name="laborTypeFilter"><util:constant static-field="benchmark.StaticValues.LABOR_TYPE_R" /></property>
+</bean>
+
+<bean id="avgTenureRReportVariables" class="jmab.report.MacroVariableReport">
+	<property name="name" value="avgTenureR"/>
+</bean>
+
+<bean id="avgTenureRCSVReportVariables" class="jmab.report.MacroCSVReportVariables">
+	<property name="reportVariables" ref="avgTenureRReportVariables"/>
+	<property name="fileNamePrefix" ref="fileNamePrefix" />
+	<property name="fileNameSuffix" value="hhAvgTenureR" />
+	<property name="fileNameExtension" value=".csv" />
+	<property name="passThrough" value="true" />
+</bean>
+
+<bean id="avgTenureRCSVReport" class="jmab.report.MacroSimEventReport">
+	<property name="eventPrototype">
+		<bean class="jmab.events.MacroSimEvent"/>
+	</property>
+	<property name="variableId">
+		<util:constant static-field="benchmark.StaticValues.AVGTENUREREPORT_R_ID"/>
+	</property>
+	<property name="reportVariables" ref="avgTenureRCSVReportVariables"/>
+</bean>
+
+<!-- N workers only -->
+<bean id="avgTenureNComputer" class="benchmark.report.AverageTenureComputer">
+	<property name="householdId"><util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID" /></property>
+	<property name="laborTypeFilter"><util:constant static-field="benchmark.StaticValues.LABOR_TYPE_N" /></property>
+</bean>
+
+<bean id="avgTenureNReportVariables" class="jmab.report.MacroVariableReport">
+	<property name="name" value="avgTenureN"/>
+</bean>
+
+<bean id="avgTenureNCSVReportVariables" class="jmab.report.MacroCSVReportVariables">
+	<property name="reportVariables" ref="avgTenureNReportVariables"/>
+	<property name="fileNamePrefix" ref="fileNamePrefix" />
+	<property name="fileNameSuffix" value="hhAvgTenureN" />
+	<property name="fileNameExtension" value=".csv" />
+	<property name="passThrough" value="true" />
+</bean>
+
+<bean id="avgTenureNCSVReport" class="jmab.report.MacroSimEventReport">
+	<property name="eventPrototype">
+		<bean class="jmab.events.MacroSimEvent"/>
+	</property>
+	<property name="variableId">
+		<util:constant static-field="benchmark.StaticValues.AVGTENUREREPORT_N_ID"/>
+	</property>
+	<property name="reportVariables" ref="avgTenureNCSVReportVariables"/>
 </bean>
 
 </beans>

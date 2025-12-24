@@ -14,11 +14,7 @@
  */
 package jmab.report;
 
-import jmab.agents.LaborSupplier;
-import jmab.population.MacroPopulation;
 import jmab.simulations.MacroSimulation;
-import net.sourceforge.jabm.Population;
-import net.sourceforge.jabm.agent.Agent;
 
 /**
  * Flags unemployment rate bound violations (including LF=0).
@@ -47,26 +43,12 @@ public class UnemploymentBoundsViolationByTypeComputer implements MacroVariableC
 
 	@Override
 	public double computeVariable(MacroSimulation sim) {
-		MacroPopulation macroPop = (MacroPopulation) sim.getPopulation();
-		int totPop = 0;
-		int employed = 0;
-		for (int i = 0; i < householdPopIds.length; i++) {
-			Population hhPop = macroPop.getPopulation(householdPopIds[i]);
-			for (Agent agent : hhPop.getAgents()) {
-				LaborSupplier hh = (LaborSupplier) agent;
-				if (hh.getLaborType() != laborType) {
-					continue;
-				}
-				totPop += 1;
-				if (hh.isEmployed()) {
-					employed += 1;
-				}
-			}
-		}
-		if (totPop == 0) {
+		LaborMarketStatsCache.LaborMarketStats stats = LaborMarketStatsCache.getStats(sim, householdPopIds,
+				laborType);
+		if (stats.getLaborForce() == 0) {
 			return 1.0;
 		}
-		double uRate = 1.0 - (double) employed / (double) totPop;
+		double uRate = 1.0 - (double) stats.getEmployed() / (double) stats.getLaborForce();
 		if (uRate < 0.0 || uRate > 1.0) {
 			return 1.0;
 		}

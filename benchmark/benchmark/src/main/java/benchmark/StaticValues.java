@@ -177,6 +177,11 @@ public interface StaticValues {
 	public static int TIC_LABORFORCEGAPNREPORT=154;
 	public static int TIC_VACANCIESRREPORT=155;
 	public static int TIC_VACANCIESNREPORT=156;
+	public static int TIC_AVGTENUREREPORT=157;
+	public static int TIC_AVGTENUREREPORT_R=158;
+	public static int TIC_AVGTENUREREPORT_N=159;
+	public static int TIC_JOBOPENINGSRREPORT=160;
+	public static int TIC_JOBOPENINGSNREPORT=161;
 	public static int TIC_POPULATIONHANDLER=1000;
 	public static int TIC_UPDATEEXPECTATIONS=1001;
 	public static int TIC_SERIALIZATION=1002;
@@ -399,7 +404,12 @@ public interface StaticValues {
 	public static int LABORFORCEGAPNREPORT_ID=117;
 	public static int VACANCIESRREPORT_ID=118;
 	public static int VACANCIESNREPORT_ID=119;
-	
+	public static int AVGTENUREREPORT_ID=120;
+	public static int AVGTENUREREPORT_R_ID=121;
+	public static int AVGTENUREREPORT_N_ID=122;
+	public static int JOBOPENINGSRREPORT_ID=123;
+	public static int JOBOPENINGSNREPORT_ID=124;
+
 
 
 

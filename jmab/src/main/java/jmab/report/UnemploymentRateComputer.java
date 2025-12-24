@@ -14,11 +14,7 @@
  */
 package jmab.report;
 
-import jmab.agents.LaborSupplier;
-import jmab.population.MacroPopulation;
 import jmab.simulations.MacroSimulation;
-import net.sourceforge.jabm.Population;
-import net.sourceforge.jabm.agent.Agent;
 
 /**
  * @author Alessandro Caiani and Antoine Godin
@@ -49,19 +45,11 @@ public class UnemploymentRateComputer implements MacroVariableComputer {
 	 */
 	@Override
 	public double computeVariable(MacroSimulation sim) {
-		MacroPopulation macroPop = (MacroPopulation) sim.getPopulation();
-		int totPop=0;
-		int employedPop=0;
-		for(int i=0;i<householdPopIds.length;i++){
-			Population hhPop = macroPop.getPopulation(householdPopIds[i]);
-			totPop += hhPop.getSize();
-			for(Agent agent:hhPop.getAgents()){
-				LaborSupplier hh = (LaborSupplier) agent;
-				if(hh.isEmployed()) employedPop+=1;
-			}
+		LaborMarketStatsCache.LaborMarketStats stats = LaborMarketStatsCache.getStats(sim, householdPopIds, null);
+		if (stats.getLaborForce() == 0) {
+			return 0.0;
 		}
-		double result = 1-(double)employedPop/(double)totPop; 
-		return result;
+		return 1 - (double) stats.getEmployed() / (double) stats.getLaborForce();
 	}
 
 	/**

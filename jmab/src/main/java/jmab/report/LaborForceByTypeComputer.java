@@ -14,11 +14,7 @@
  */
 package jmab.report;
 
-import jmab.agents.LaborSupplier;
-import jmab.population.MacroPopulation;
 import jmab.simulations.MacroSimulation;
-import net.sourceforge.jabm.Population;
-import net.sourceforge.jabm.agent.Agent;
 
 /**
  * Computes the labor force size for a specific labor type.
@@ -58,18 +54,8 @@ public class LaborForceByTypeComputer implements MacroVariableComputer {
 
 	@Override
 	public double computeVariable(MacroSimulation sim) {
-		MacroPopulation macroPop = (MacroPopulation) sim.getPopulation();
-		int totPop = 0;
-		for (int i = 0; i < householdPopIds.length; i++) {
-			Population hhPop = macroPop.getPopulation(householdPopIds[i]);
-			for (Agent agent : hhPop.getAgents()) {
-				LaborSupplier hh = (LaborSupplier) agent;
-				if (hh.getLaborType() != laborType) {
-					continue;
-				}
-				totPop += 1;
-			}
-		}
-		return totPop;
+		LaborMarketStatsCache.LaborMarketStats stats = LaborMarketStatsCache.getStats(sim, householdPopIds,
+				laborType);
+		return stats.getLaborForce();
 	}
 }
