@@ -76,6 +76,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="laborSupplyTic" />
 				<ref bean="laborDemandTic" />
 				<ref bean="governmentLaborTic" />
+				<ref bean="jobOpeningsRReportTic" />
+				<ref bean="jobOpeningsNReportTic" />
 				<ref bean="laborMarketTic" />
 				<ref bean="productionTic" />
 				<ref bean="rdOutcomeTic" />
@@ -977,6 +979,20 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<property name="variableId"><util:constant static-field="benchmark.StaticValues.VACANCIESNREPORT_ID" /></property>
 	<property name="variableName" value="Vacancies N"></property>
 	<property name="computer" ref="vacanciesNComputer"></property>
+	</bean>
+
+	<bean id="jobOpeningsRReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_JOBOPENINGSRREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.JOBOPENINGSRREPORT_ID" /></property>
+	<property name="variableName" value="Job Openings R"></property>
+	<property name="computer" ref="jobOpeningsRComputer"></property>
+	</bean>
+
+	<bean id="jobOpeningsNReportTic" class="jmab.events.MacroVariableTicEvent">
+	<property name="tic"><util:constant static-field="benchmark.StaticValues.TIC_JOBOPENINGSNREPORT" /></property>
+	<property name="variableId"><util:constant static-field="benchmark.StaticValues.JOBOPENINGSNREPORT_ID" /></property>
+	<property name="variableName" value="Job Openings N"></property>
+	<property name="computer" ref="jobOpeningsNComputer"></property>
 	</bean>
 
 	<bean id="laborForceRReportTic" class="jmab.events.MacroVariableTicEvent">

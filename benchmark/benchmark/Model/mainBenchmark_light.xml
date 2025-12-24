@@ -43,6 +43,8 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="laborForceGapNCSVReport" />
 				<ref bean="vacanciesRCSVReport" />
 				<ref bean="vacanciesNCSVReport" />
+				<ref bean="jobOpeningsRCSVReport" />
+				<ref bean="jobOpeningsNCSVReport" />
 				<ref bean="laborForceRCSVReport" />
 				<ref bean="laborForceNCSVReport" />
 				<ref bean="bankCreditEventReport" />

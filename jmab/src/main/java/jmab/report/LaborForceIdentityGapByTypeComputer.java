@@ -14,11 +14,7 @@
  */
 package jmab.report;
 
-import jmab.agents.LaborSupplier;
-import jmab.population.MacroPopulation;
 import jmab.simulations.MacroSimulation;
-import net.sourceforge.jabm.Population;
-import net.sourceforge.jabm.agent.Agent;
 
 /**
  * Computes LF - (E + U) for a specific labor type.
@@ -46,25 +42,8 @@ public class LaborForceIdentityGapByTypeComputer implements MacroVariableCompute
 
 	@Override
 	public double computeVariable(MacroSimulation sim) {
-		MacroPopulation macroPop = (MacroPopulation) sim.getPopulation();
-		int laborForce = 0;
-		int employed = 0;
-		int unemployed = 0;
-		for (int i = 0; i < householdPopIds.length; i++) {
-			Population hhPop = macroPop.getPopulation(householdPopIds[i]);
-			for (Agent agent : hhPop.getAgents()) {
-				LaborSupplier hh = (LaborSupplier) agent;
-				if (hh.getLaborType() != laborType) {
-					continue;
-				}
-				laborForce += 1;
-				if (hh.isEmployed()) {
-					employed += 1;
-				} else {
-					unemployed += 1;
-				}
-			}
-		}
-		return laborForce - (employed + unemployed);
+		LaborMarketStatsCache.LaborMarketStats stats = LaborMarketStatsCache.getStats(sim, householdPopIds,
+				laborType);
+		return stats.getLaborForce() - (stats.getEmployed() + stats.getUnemployed());
 	}
 }
