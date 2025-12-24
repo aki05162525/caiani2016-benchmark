@@ -44,20 +44,24 @@ public class DynamicRandomRobinBuyerMixer extends AbstractMarketMixer implements
 
 	private void invokeInteractions(AgentList buyers, AgentList sellers, SimulationController model) {
 		buyers.shuffle(prng);
-		for (Agent buyer : buyers.getAgents()) {
-			MacroAgent b = (MacroAgent)buyer;
-			MacroSimulation sim = (MacroSimulation)model.getSimulation();
-			if(b.isActive(sim.getActiveMarketId())){
-				ArrayList<Agent> allSellers = (ArrayList<Agent>) sellers.getAgents();
-				ArrayList<Agent> activeSellers = new ArrayList<Agent>();
-				for(int i=0;i<allSellers.size();i++){
-					MacroAgent seller = (MacroAgent)allSellers.get(i);
-					if(seller.isActive(sim.getActiveMarketId())){
-						activeSellers.add(seller);
-					}
-				}
-				if(activeSellers.size()>0){
-					AgentArrivalEvent event = 
+		MacroSimulation sim = (MacroSimulation)model.getSimulation();
+		int marketId = sim.getActiveMarketId();
+
+		// Pre-compute active sellers once (O(sellers) instead of O(buyers × sellers))
+		ArrayList<Agent> allSellers = (ArrayList<Agent>) sellers.getAgents();
+		ArrayList<Agent> activeSellers = new ArrayList<Agent>();
+		for(int i=0;i<allSellers.size();i++){
+			MacroAgent seller = (MacroAgent)allSellers.get(i);
+			if(seller.isActive(marketId)){
+				activeSellers.add(seller);
+			}
+		}
+
+		if(activeSellers.size()>0){
+			for (Agent buyer : buyers.getAgents()) {
+				MacroAgent b = (MacroAgent)buyer;
+				if(b.isActive(marketId)){
+					AgentArrivalEvent event =
 							new AgentArrivalEvent(model, buyer, activeSellers);
 					model.fireEvent(event);
 				}

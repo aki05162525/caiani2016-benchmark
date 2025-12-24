@@ -45,18 +45,29 @@ public abstract class AbstractTwoStepMarketMixer implements TwoStepMarketMixer {
 	@Override
 	public boolean closed(MarketPopulation population, MacroSimulation simulation) {
 		int marketId=simulation.getActiveMarketId();
+
+		// Optimized: O(buyers + sellers) instead of O(buyers × sellers)
+		// First check if any seller is active
+		boolean hasActiveSeller = false;
+		for(Agent agent:population.getSellers().getAgents()){
+			MacroAgent seller=(MacroAgent)agent;
+			if(seller.isActive(marketId)){
+				hasActiveSeller = true;
+				break;
+			}
+		}
+		if(!hasActiveSeller){
+			return true; // No active sellers, market is closed
+		}
+
+		// Then check if any buyer is active
 		for(Agent agent:population.getBuyers().getAgents()){
 			MacroAgent buyer=(MacroAgent)agent;
 			if(buyer.isActive(marketId)){
-				for(Agent agent1:population.getSellers().getAgents()){
-					MacroAgent seller=(MacroAgent)agent1;
-					if(seller.isActive(marketId)){
-						return false;
-					}
-				}
+				return false; // Found active buyer and we know there's an active seller
 			}
-		}		
-		return true;
+		}
+		return true; // No active buyers
 	}
 
 }
