@@ -46,20 +46,35 @@ public class BrochureSelectionRandomRobinBuyerMixer extends AbstractTwoStepMarke
 	private void invokeFirstInteractions(AgentList buyers, AgentList sellers, SimulationController model) {
 		buyers.shuffle(prng);
 		MacroSimulation sim = (MacroSimulation)model.getSimulation();
-		for (Agent buyer : buyers.getAgents()) {
-			sellers.shuffle(prng);
-			ArrayList<Agent> allSellers = (ArrayList<Agent>) sellers.getAgents();
-			ArrayList<Agent> selectedSellers = new ArrayList<Agent>();
-			int nbSelectedSellers=0;
-			for(int i=0;i<allSellers.size()&&nbSelectedSellers<nbSellers;i++){
-				MacroAgent seller = (MacroAgent)allSellers.get(i);
-				if(seller.isActive(sim.getActiveMarketId())){
-					selectedSellers.add(seller);
-					nbSelectedSellers++;
-				}
+		int marketId = sim.getActiveMarketId();
+
+		// Pre-compute active sellers once (O(S) instead of O(B × S))
+		ArrayList<Agent> allSellers = (ArrayList<Agent>) sellers.getAgents();
+		ArrayList<Agent> activeSellers = new ArrayList<Agent>();
+		for(int i=0; i<allSellers.size(); i++){
+			MacroAgent seller = (MacroAgent)allSellers.get(i);
+			if(seller.isActive(marketId)){
+				activeSellers.add(seller);
 			}
+		}
+
+		for (Agent buyer : buyers.getAgents()) {
+			// Fisher-Yates partial shuffle for random selection
+			ArrayList<Agent> selectedSellers = new ArrayList<Agent>();
+			int n = activeSellers.size();
+			int selectCount = Math.min(nbSellers, n);
+
+			for(int i=0; i<selectCount; i++){
+				int j = i + (int)(prng.raw() * (n - i));
+				// Swap
+				Agent temp = activeSellers.get(i);
+				activeSellers.set(i, activeSellers.get(j));
+				activeSellers.set(j, temp);
+				selectedSellers.add(activeSellers.get(i));
+			}
+
 			if(selectedSellers.size()>0){
-				AgentArrivalEvent event = 
+				AgentArrivalEvent event =
 						new AgentArrivalEvent(model,(Agent)buyer, selectedSellers);
 				model.fireEvent(event);
 			}
