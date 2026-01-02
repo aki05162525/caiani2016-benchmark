@@ -1,6 +1,6 @@
 # Modernized Benchmark Model (Caiani et al., 2016) - Gradle Edition
 
-[![Java](https://img.shields.io/badge/Java-8%2B-blue)]()
+[![Java](https://img.shields.io/badge/Java-8-blue)]()
 [![Gradle](https://img.shields.io/badge/Build-Gradle-02303A)]()
 
 このリポジトリは、Caiani et al. (2016) によるマクロ経済エージェントベースモデル（SFC-ABM）のベンチマークモデルを、現代的なビルド環境（Gradle）で再構築したものです。
@@ -25,7 +25,7 @@
 ### 前提条件
 
 - **IntelliJ IDEA** (Community Edition で OK)
-- **Java JDK 8 以上**
+- **Java JDK 8**（依存ライブラリの互換性のため、Java 8を推奨）
   - ※ **事前インストールは不要です。** IntelliJ IDEA の機能を使って、セットアップ中に自動ダウンロードできます。
 
 ### 実行方法
@@ -46,7 +46,7 @@
    - **もし JDK（Java）が設定されていない場合:**
      - 画面上部にバーが出たら `Load Gradle Project` をクリックします。
      - または、設定画面 (`Settings` → `Build, Execution, Deployment` → `Build Tools` → `Gradle`) を開きます。
-     - `Gradle JVM` の欄で、**`Download JDK...`** を選択し、バージョン `17` などを選んでダウンロードしてください。
+     - `Gradle JVM` の欄で、**`Download JDK...`** を選択し、バージョン `1.8` (Java 8) を選んでダウンロードしてください。
    - 同期完了まで待ちます（初回は数分かかります）。
 
 3. **シミュレーションを実行**
