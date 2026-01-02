@@ -80,12 +80,6 @@
    - `Ctrl+F` (Windows/Linux) または `Cmd+F` (Mac) で検索
    - 例: "profitTaxVal" で税率を検索
 
-3. **値を変更**
-   - `value` 属性の値を編集
-   ```xml
-   <property name="seed" value="2"/>  <!-- 1 → 2 に変更 -->
-   ```
-
 4. **保存して実行**
    - ファイルを保存 (`Ctrl+S` / `Cmd+S`)
    - Gradleタスク `runFull` または `runLight` を実行

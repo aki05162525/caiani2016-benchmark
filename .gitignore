@@ -53,9 +53,9 @@ ehthumbs.db
 Thumbs.db
 
 # Simulation output (Recursive)
-# どの階層にあるdataフォルダの中身も無視する
-**/data/*.csv
-**/data/*.txt
+# どの階層にあるdataフォルダの中身も無視する（サブディレクトリ含む）
+**/data/**/*.csv
+**/data/**/*.txt
 # ただし、フォルダ自体をGitに残すための.gitkeepは許可する
 !**/data/.gitkeep
 
