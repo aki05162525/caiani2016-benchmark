@@ -122,9 +122,10 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 			
 	</bean>
 
-	<bean id="fileNamePrefix" class="net.sourceforge.jabm.util.MutableStringWrapper"
+	<bean id="fileNamePrefix" class="benchmark.SeedAwareFileNamePrefix"
 		scope="singleton">
-		<constructor-arg value="data/" />
+		<property name="basePath" value="../../data/" />
+		<property name="prng" ref="prng" />
 	</bean>
 
 </beans>
