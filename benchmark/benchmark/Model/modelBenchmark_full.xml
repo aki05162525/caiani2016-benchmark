@@ -3115,12 +3115,14 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	</bean>
 	
 	<bean id="householdsConsumptionStrategy" scope="prototype" parent="strategy"
-		class="jmab.strategies.ConsumptionFixedPropensitiesOOIWWithPersistency">
+		class="benchmark.strategies.ConsumptionDualLaborTypeStrategy">
 		<property name="persistency" value="0"/>
-        <property name="propensityOOI" value="0.385808"></property>
-		<property name="propensityOOW" value="0.25"></property> 
-<!-- 		TEMP -->
-<!-- 		<property name="propensityOOW" value="0.05"/> -->
+		<!-- Regular labor type propensities -->
+		<property name="propensityOOI_R" value="0.385808"/>
+		<property name="propensityOOW_R" value="0.25"/>
+		<!-- Non-regular labor type propensities -->
+		<property name="propensityOOI_N" value="0.385808"/>
+		<property name="propensityOOW_N" value="0.25"/>
 		<property name="consPriceExpectationID"><util:constant static-field="benchmark.StaticValues.EXPECTATIONS_CONSPRICE" /> </property>
 		<property name="pastConsumptionId"><util:constant static-field="benchmark.StaticValues.LAG_CONSUMPTION" /> </property>
 	</bean>
