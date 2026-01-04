@@ -63,12 +63,31 @@
 #### 方法 2: コマンドラインから実行
 
 ```bash
-# Windowsの場合
-gradlew.bat runLight
-
 # Mac/Linuxの場合
-./gradlew runLight
+./gradlew :benchmark:runLight   # 10ラウンド（動作確認用）
+./gradlew :benchmark:runFull    # 1000ラウンド（本格分析用）
+
+# Windowsの場合
+gradlew.bat :benchmark:runLight
+gradlew.bat :benchmark:runFull
 ```
+
+#### 方法 3: モンテカルロシミュレーション（複数シード実行）
+
+異なる乱数シードで複数回シミュレーションを実行する場合：
+
+```bash
+# シード 1〜5 で実行（fullモード）
+./scripts/run_monte_carlo.sh 1 5
+
+# シード 1〜10 で実行（lightモード）
+./scripts/run_monte_carlo.sh 1 10 light
+
+# シード 3 だけを実行
+./scripts/run_monte_carlo.sh 3 3
+```
+
+出力は `data/seed_1/`, `data/seed_2/` ... のようにシード値ごとに分離されます。
 
 ---
 
@@ -94,6 +113,8 @@ caiani2016-benchmark/
 │       ├── src/    # エージェント実装（企業・銀行・家計など）
 │       ├── Model/  # XMLによるシミュレーション設定
 │       └── data/   # 出力CSVファイル（実行後に生成）
+├── scripts/        # ユーティリティスクリプト
+│   └── run_monte_carlo.sh  # モンテカルロシミュレーション用
 ├── libs/           # レガシー依存ライブラリ（7個のJAR）
 ├── build.gradle    # ビルド設定
 └── settings.gradle # プロジェクト構成定義

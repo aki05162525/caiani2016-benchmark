@@ -28,12 +28,12 @@
 	-->
 	<!-- Regular worker turnover rate (voluntary quits) -->
 	<bean id="turnoverLaborRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.02" /> <!-- 2% per period (low turnover) -->
+		<constructor-arg value="0.03" /> <!-- 3% per period - based on 11.9% annual rate / 4 quarters -->
 	</bean>
 
 	<!-- Non-regular worker turnover rate (voluntary quits) -->
 	<bean id="turnoverLaborNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.05" /> <!-- 5% per period (high turnover) -->
+		<constructor-arg value="0.06" /> <!-- 6% per period - based on 23.3% annual rate / 4 quarters -->
 	</bean>
 
 	<!-- Regular worker layoff rate (involuntary separation) -->
@@ -55,7 +55,7 @@
 	-->
 	<!-- CES distribution parameter δ (weight on Regular labor) -->
 	<bean id="cesDelta" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="0.55" /> <!-- R weight tuned to balance unemployment -->
+		<constructor-arg value="0.61" /> <!-- Derived from wage/productivity parameters -->
 	</bean>
 
 	<!-- CES substitution parameter ρ (ρ=0: Cobb-Douglas, ρ→1: perfect substitutes) -->
@@ -65,12 +65,12 @@
 
 	<!-- CES efficiency parameter for Regular labor (A_R) -->
 	<bean id="cesAR" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="2.21" /> <!-- Normalized with A_R/A_N=1.20 at baseline mix -->
+		<constructor-arg value="1.752" /> <!-- 1.2x scale while keeping A_R/A_N=1.46 -->
 	</bean>
 
 	<!-- CES efficiency parameter for Non-regular labor (A_N) -->
 	<bean id="cesAN" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="1.84" /> <!-- Normalized with A_R/A_N=1.20 at baseline mix -->
+		<constructor-arg value="1.2" /> <!-- 1.2x scale baseline -->
 	</bean>
 
 	<!-- Regular tenure productivity scale (a > 1 enables tenure gains) -->
