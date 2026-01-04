@@ -65,12 +65,12 @@
 
 	<!-- CES efficiency parameter for Regular labor (A_R) -->
 	<bean id="cesAR" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="1.46" /> <!-- Based on wage gap: 2165/1485=1.46 (MHLW 2024) -->
+		<constructor-arg value="1.752" /> <!-- 1.2x scale while keeping A_R/A_N=1.46 -->
 	</bean>
 
 	<!-- CES efficiency parameter for Non-regular labor (A_N) -->
 	<bean id="cesAN" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="1.0" /> <!-- Baseline (N-type as reference) -->
+		<constructor-arg value="1.2" /> <!-- 1.2x scale baseline -->
 	</bean>
 
 	<!-- Regular tenure productivity scale (a > 1 enables tenure gains) -->
