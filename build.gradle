@@ -6,6 +6,26 @@ subprojects {
     // Java 8 互換
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+            vendor = JvmVendorSpec.AMAZON
+        }
+    }
+    tasks.withType(JavaExec).configureEach {
+        javaLauncher = javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(8)
+            vendor = JvmVendorSpec.AMAZON
+        }
+    }
+
+    tasks.register('runMonteCarlo', Exec) {
+        workingDir = rootProject.projectDir
+        commandLine 'bash', 'scripts/run_monte_carlo.sh',
+            (project.findProperty('startSeed') ?: '2'),
+            (project.findProperty('endSeed') ?: '5'),
+            (project.findProperty('mode') ?: 'full')
+    }
 
     // 文字コード設定（文字化け防止）
     tasks.withType(JavaCompile) {
