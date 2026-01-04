@@ -28,12 +28,12 @@
 	-->
 	<!-- Regular worker turnover rate (voluntary quits) -->
 	<bean id="turnoverLaborRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.02" /> <!-- 2% per period (low turnover) -->
+		<constructor-arg value="0.03" /> <!-- 3% per period - based on 11.9% annual rate / 4 quarters -->
 	</bean>
 
 	<!-- Non-regular worker turnover rate (voluntary quits) -->
 	<bean id="turnoverLaborNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.05" /> <!-- 5% per period (high turnover) -->
+		<constructor-arg value="0.06" /> <!-- 6% per period - based on 23.3% annual rate / 4 quarters -->
 	</bean>
 
 	<!-- Regular worker layoff rate (involuntary separation) -->

@@ -38,8 +38,8 @@
 | **A2: 初期分布** |
 | A2 | `laborTypeRatioR` | 0.65 | 初期のR型労働者比率（65%） | 高 |
 | **B2.3: 離職・解雇** |
-| B2.3 | `turnoverLaborRVal` | 0.02 | R型自主離職率（2%/期） | 中 |
-| B2.3 | `turnoverLaborNVal` | 0.05 | N型自主離職率（5%/期） | 中 |
+| B2.3 | `turnoverLaborRVal` | 0.03 | R型自主離職率（3%/期） | 中 |
+| B2.3 | `turnoverLaborNVal` | 0.06 | N型自主離職率（6%/期） | 中 |
 | B2.3 | `layoffRateRVal` | 0.3 | R型解雇率（30%） | 高 |
 | B2.3 | `layoffRateNVal` | 0.8 | N型解雇率（80%） | 高 |
 | **C1/C2: CES生産関数** |
@@ -95,7 +95,7 @@
 
 ### 離職・解雇率 (Phase B2.3)
 
-#### `turnoverLaborRVal` / `turnoverLaborNVal` (デフォルト: 0.02 / 0.05)
+#### `turnoverLaborRVal` / `turnoverLaborNVal` (デフォルト: 0.03 / 0.06)
 
 **経済学的意味:**
 - 自主的な離職率（voluntary turnover rate）
@@ -106,10 +106,14 @@
 - 企業の採用コスト
 - マッチング効率
 
+**実証的根拠（厚生労働省 雇用動向調査 令和4年）:**
+- 一般労働者（正規相当）の離職率: 年間11.9% → 四半期あたり約3%
+- パートタイム労働者（非正規相当）の離職率: 年間23.3% → 四半期あたり約6%
+
 **設定ガイドライン:**
-- **現実的範囲**: R型 0.01-0.03、N型 0.03-0.10
-- **高流動性**: 両方とも高めに設定（R型 0.05、N型 0.15など）
-- **低流動性**: 両方とも低めに設定（R型 0.005、N型 0.02など）
+- **現実的範囲**: R型 0.02-0.04、N型 0.04-0.08
+- **高流動性**: 両方とも高めに設定（R型 0.05、N型 0.10など）
+- **低流動性**: 両方とも低めに設定（R型 0.01、N型 0.03など）
 
 **パラメータ間の関係:**
 - `turnoverLaborNVal >= turnoverLaborRVal` を維持することが推奨される
@@ -419,217 +423,5 @@ A_Rを上げると、実質的にδが上昇したのと同様の効果。
 
 ---
 
-## シナリオ別設定例
-
-### シナリオ1: 非正規雇用比率の上昇
-
-**目的:** 1990年代以降の日本の労働市場変化を再現
-
-**変更パラメータ:**
-```xml
-<!-- 初期比率を変更 -->
-<constructor-arg value="0.55" /> <!-- laborTypeRatioR: 正規55%に低下 -->
-
-<!-- 非正規の調整弁機能を強化 -->
-<constructor-arg value="0.9" />  <!-- layoffRateNVal: 90%に上昇 -->
-
-<!-- 非正規の離職率を上昇 -->
-<constructor-arg value="0.08" /> <!-- turnoverLaborNVal: 8%に上昇 -->
-```
-
-**期待される結果:**
-- 失業率の全体的な低下（調整弁として機能）
-- 賃金格差の拡大
-- 景気変動への労働市場の反応性向上
-
----
-
-### シナリオ2: 雇用保護の強化
-
-**目的:** 解雇規制の強化が労働市場に与える影響を分析
-
-**変更パラメータ:**
-```xml
-<!-- 正規の解雇をさらに困難に -->
-<constructor-arg value="0.15" /> <!-- layoffRateRVal: 15%に低下 -->
-
-<!-- 非正規も若干保護 -->
-<constructor-arg value="0.6" />  <!-- layoffRateNVal: 60%に低下 -->
-```
-
-**期待される結果:**
-- 失業率の変動幅縮小（解雇が困難）
-- 労働市場の硬直化
-- 企業の採用抑制の可能性
-
----
-
-### シナリオ3: 同一労働同一賃金政策
-
-**目的:** 労働タイプ間の格差是正政策の効果を検証
-
-**変更パラメータ:**
-```xml
-<!-- 離職率の格差を縮小 -->
-<constructor-arg value="0.02" /> <!-- turnoverLaborRVal -->
-<constructor-arg value="0.03" /> <!-- turnoverLaborNVal: 格差縮小 -->
-
-<!-- 解雇率の格差を縮小 -->
-<constructor-arg value="0.4" />  <!-- layoffRateRVal -->
-<constructor-arg value="0.5" />  <!-- layoffRateNVal: 格差縮小 -->
-
-<!-- CES効率を同等に（既にデフォルト）-->
-<constructor-arg value="1.0" />  <!-- cesAR -->
-<constructor-arg value="1.0" />  <!-- cesAN -->
-
-<!-- 賃金調整閾値を統一 -->
-<constructor-arg value="0.08" /> <!-- macroThresholdR -->
-<constructor-arg value="0.08" /> <!-- macroThresholdN -->
-```
-
-**期待される結果:**
-- 雇用形態間の格差縮小
-- 労働市場の二重構造の弱体化
-- 総失業率への影響（要検証）
-
----
-
-### シナリオ4: 技術進歩のR型偏向
-
-**目的:** スキル偏向的技術進歩（Skill-Biased Technical Change）の影響
-
-**変更パラメータ:**
-```xml
-<!-- R型の生産性を段階的に上昇（時系列で変更） -->
-<!-- 初期 -->
-<constructor-arg value="1.0" />  <!-- cesAR -->
-<constructor-arg value="1.0" />  <!-- cesAN -->
-
-<!-- 10年後 -->
-<constructor-arg value="1.3" />  <!-- cesAR: 30%上昇 -->
-<constructor-arg value="1.0" />  <!-- cesAN: 据え置き -->
-
-<!-- CESの重みも調整 -->
-<constructor-arg value="0.6" />  <!-- cesDelta: R型重視 -->
-```
-
-**期待される結果:**
-- R型賃金の相対的上昇
-- 賃金格差の拡大
-- 企業のR型労働需要増加
-
----
-
-### シナリオ5: 労働市場の柔軟化
-
-**目的:** 規制緩和による労働市場改革の効果
-
-**変更パラメータ:**
-```xml
-<!-- 解雇を全体的に容易に -->
-<constructor-arg value="0.5" />  <!-- layoffRateRVal: 50%に上昇 -->
-<constructor-arg value="0.8" />  <!-- layoffRateNVal: 据え置き -->
-
-<!-- 賃金調整を柔軟に -->
-<constructor-arg value="0.05" /> <!-- macroThresholdR: 低下 -->
-<constructor-arg value="0.03" /> <!-- macroThresholdN: 低下 -->
-
-<!-- 賃金反応を敏感に -->
-<constructor-arg value="1.5" />  <!-- macroAdaptiveParameterR -->
-<constructor-arg value="1.5" />  <!-- macroAdaptiveParameterN -->
-```
-
-**期待される結果:**
-- 賃金変動の拡大
-- 失業率の短期的変動増加
-- マッチング効率の向上（可能性）
-
----
-
-### シナリオ6: 極端な二重構造（比較分析用）
-
-**目的:** 二重構造を極端にして、メカニズムを明確化
-
-**変更パラメータ:**
-```xml
-<!-- 初期比率を極端に -->
-<constructor-arg value="0.4" />  <!-- laborTypeRatioR: 正規40% -->
-
-<!-- 解雇率の格差を最大化 -->
-<constructor-arg value="0.1" />  <!-- layoffRateRVal: ほぼ解雇なし -->
-<constructor-arg value="0.95" /> <!-- layoffRateNVal: ほぼ全員解雇 -->
-
-<!-- 離職率の格差も拡大 -->
-<constructor-arg value="0.01" /> <!-- turnoverLaborRVal -->
-<constructor-arg value="0.15" /> <!-- turnoverLaborNVal -->
-
-<!-- R型を高生産性に -->
-<constructor-arg value="1.5" />  <!-- cesAR -->
-<constructor-arg value="1.0" />  <!-- cesAN -->
-```
-
-**期待される結果:**
-- 明確な労働市場の分断
-- 賃金・雇用安定性の大きな格差
-- 景気変動への非対称的反応
-
----
-
-## 参考文献
-
-### 理論的背景
-
-1. **二重労働市場理論**
-   - Doeringer, P. B., & Piore, M. J. (1971). *Internal Labor Markets and Manpower Analysis*. Lexington Books.
-
-2. **CES生産関数**
-   - Arrow, K. J., Chenery, H. B., Minhas, B. S., & Solow, R. M. (1961). "Capital-Labor Substitution and Economic Efficiency." *Review of Economics and Statistics*, 43(3), 225-250.
-
-3. **日本の労働市場**
-   - Kambayashi, R., & Kato, T. (2017). "Long-term employment and job security over the past 25 years: A comparative study of Japan and the United States." *ILR Review*, 70(2), 359-394.
-
-### 実証研究
-
-4. **非正規雇用の役割**
-   - Asano, H., Ito, T., & Kawaguchi, D. (2013). "Why has the fraction of contingent workers increased? A case study of Japan." *Scottish Journal of Political Economy*, 60(4), 360-389.
-
-5. **雇用調整**
-   - Kuroda, S., & Yamamoto, I. (2013). "Impact of employment adjustment on wages: Evidence from Japanese firm-level panel data." *Journal of the Japanese and International Economies*, 30, 49-67.
-
-### モデル構築
-
-6. **元モデル（Caiani et al.）**
-   - Caiani, A., Godin, A., Caverzasi, E., Gallegati, M., Kinsella, S., & Stiglitz, J. E. (2016). "Agent based-stock flow consistent macroeconomics: Towards a benchmark model." *Journal of Economic Dynamics and Control*, 69, 375-408.
-
----
-
-## 補足: パラメータ変更時のチェックリスト
-
-パラメータを変更する前に、以下を確認してください：
-
-### ✅ 変更前チェック
-
-- [ ] 変更の目的（シナリオ、仮説）が明確か
-- [ ] 変更するパラメータの経済学的意味を理解しているか
-- [ ] 他のパラメータとの関係性を確認したか
-- [ ] デフォルト値を記録したか（元に戻せるように）
-
-### ✅ 変更後チェック
-
-- [ ] パラメータ値が推奨範囲内か
-- [ ] 論理的整合性（例: layoffRateN >= layoffRateR）が保たれているか
-- [ ] シミュレーションが正常に実行されるか
-- [ ] 結果が経済学的に解釈可能か
-- [ ] 極端な結果の場合、パラメータ設定を再検討
-
-### ✅ 分析時チェック
-
-- [ ] ベースラインケースとの比較を行ったか
-- [ ] 感度分析を実施したか（複数のパラメータ値で試す）
-- [ ] 結果の頑健性を確認したか
-- [ ] 結果を文書化したか
-
----
-
-**最終更新:** 2025年（二重労働市場パラメータ統合時）
+**最終更新:** 2026年1月（離職率パラメータを実証データに基づき更新）
 **関連ファイル:** `parameters.xml`, `modelBenchmark_full.xml`
