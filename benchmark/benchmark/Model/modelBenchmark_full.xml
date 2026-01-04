@@ -2165,7 +2165,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	</bean>
 	
 	<bean id="prng" class="net.sourceforge.jabm.prng.MersenneTwister">
-		<property name="seed" value="2"/>
+		<property name="seed" value="1"/>
 	</bean>
 	
 	<bean id="capitalRDOutcomeStrategy" scope="prototype" parent="strategy"
