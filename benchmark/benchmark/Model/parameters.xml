@@ -55,7 +55,7 @@
 	-->
 	<!-- CES distribution parameter δ (weight on Regular labor) -->
 	<bean id="cesDelta" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="0.55" /> <!-- R weight tuned to balance unemployment -->
+		<constructor-arg value="0.61" /> <!-- Derived from wage/productivity parameters -->
 	</bean>
 
 	<!-- CES substitution parameter ρ (ρ=0: Cobb-Douglas, ρ→1: perfect substitutes) -->
