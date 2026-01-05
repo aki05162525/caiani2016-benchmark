@@ -90,7 +90,7 @@ for seed in $(seq $START_SEED $END_SEED); do
     echo "Starting simulation..."
     START_TIME=$(date +%s)
 
-    if (cd "$PROJECT_ROOT" && ./gradlew :benchmark:$GRADLE_TASK --quiet); then
+    if (cd "$PROJECT_ROOT" && ./gradlew :benchmark:$GRADLE_TASK --no-daemon --quiet); then
         END_TIME=$(date +%s)
         DURATION=$((END_TIME - START_TIME))
         echo "Seed $seed completed successfully (${DURATION}s)"
