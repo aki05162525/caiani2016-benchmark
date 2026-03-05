@@ -2230,7 +2230,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<bean id="capitalDividendsStrategy" scope="prototype" parent="strategy"
 	class="benchmark.strategies.FixedShareOfProfitsToPopulationAsShareOfWealthDividends">
 	<property name="profitsLagId"><util:constant static-field="benchmark.StaticValues.LAG_PROFITAFTERTAX" /> </property>
-	<property name="profitShare" value="0.3" />
+	<property name="profitShare" value="0.9" />
 	<property name="receiversId"><util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID" /> </property>
 	<property name="depositId"><util:constant static-field="benchmark.StaticValues.SM_DEP" /> </property>	
 	<property name="reservesId"><util:constant static-field="benchmark.StaticValues.SM_RESERVES" /> </property>	
@@ -2549,7 +2549,7 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 	<bean id="consumptionDividendsStrategy" scope="prototype" parent="strategy"
 	class="benchmark.strategies.FixedShareOfProfitsToPopulationAsShareOfWealthDividends">
 	<property name="profitsLagId"><util:constant static-field="benchmark.StaticValues.LAG_PROFITAFTERTAX" /> </property>
-	<property name="profitShare" value="0.30" />
+	<property name="profitShare" value="0.90" />
 	<property name="receiversId"><util:constant static-field="benchmark.StaticValues.HOUSEHOLDS_ID" /> </property>
 	<property name="depositId"><util:constant static-field="benchmark.StaticValues.SM_DEP" /> </property>	
 	<property name="reservesId"><util:constant static-field="benchmark.StaticValues.SM_RESERVES" /> </property>	
