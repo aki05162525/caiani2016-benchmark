@@ -265,7 +265,8 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 				Bank loanBank = (Bank) banks.getAgentList().get(bankLoanIterator);
 				bankLoanIterator++;
 				if(bankLoanIterator>=bSize)bankLoanIterator=0;
-				Loan loan = new Loan(kLoan*(1/(Math.pow((1+gr),j)))*((lMat-j)/lMat), loanBank, k, this.iLoans, j+1, k.getLoanAmortizationType(), (int)lMat);
+				int randomLoanAgeK = 1 + (int)(Math.random() * lMat);
+                Loan loan = new Loan(kLoan*(1/(Math.pow((1+gr),j)))*((lMat-j)/lMat), loanBank, k, this.iLoans, randomLoanAgeK, k.getLoanAmortizationType(), (int)lMat);
 				loan.setInitialAmount(kLoan/Math.pow((1+gr),j));
 				k.addItemStockMatrix(loan, false, StaticValues.SM_LOAN);
 				loanBank.addItemStockMatrix(loan, true, StaticValues.SM_LOAN);
@@ -368,7 +369,8 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 				CapitalGood kGood = new CapitalGood(this.kPrice*cCapPerPeriod*(1-j/kAm)/Math.pow((1+gr),j), cCapPerPeriod, c, kFirm, 
 						this.kPrice/Math.pow((1+gr),j),kFirm.getCapitalProductivity(),kMat,(int)kAm,kFirm.getCapitalLaborRatio());
 				// Align initial GDP: avoid counting existing capital stock as new investment in period 1.
-				int initialAge = (kMat > 1 && j == 0) ? 1 : j;
+				// 機械の年齢も1〜20の間でランダムに割り振る！
+                int initialAge = 1 + (int)(Math.random() * kMat);
 				kGood.setAge(initialAge);
 				kGood.setUnitCost(kUnitCost);
 				capitalValue+=kGood.getValue();
@@ -417,8 +419,9 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 				Bank loanBank = (Bank) banks.getAgentList().get(bankLoanIterator);
 				bankLoanIterator++;
 				if(bankLoanIterator>=bSize)bankLoanIterator=0;
-				Loan loan = new Loan(cLoan*(1/(Math.pow((1+gr),j)))*((lMat-j)/lMat), loanBank, c, this.iLoans, j+1, c.getLoanAmortizationType(), (int)lMat);
-				loan.setInitialAmount(cLoan/Math.pow((1+gr),j));
+				// 1〜20の間でランダムな年齢を生成して、ローンの満期をバラバラにする！
+                int randomLoanAge = 1 + (int)(Math.random() * lMat);
+                Loan loan = new Loan(cLoan*(1/(Math.pow((1+gr),j)))*((lMat-j)/lMat), loanBank, c, this.iLoans, randomLoanAge, c.getLoanAmortizationType(), (int)lMat);
 				c.addItemStockMatrix(loan, false, StaticValues.SM_LOAN);
 				loanBank.addItemStockMatrix(loan, true, StaticValues.SM_LOAN);
 				//Set last period lender as previous lender in the firm's borrowing strategy
@@ -521,7 +524,8 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 			//Bonds Holdings
 			for(int j = 1 ; j<=bondMat; j++){
 				Bond bond = new Bond(nbBondsPerPeriod*bondPrice, nbBondsPerPeriod, b, govt, govt.getBondMaturity(), this.iBonds, bondPrice);
-				bond.setAge(j);
+				int randomBondAge = 1 + (int)(Math.random() * bondMat);
+                bond.setAge(randomBondAge);
 				b.addItemStockMatrix(bond, true, StaticValues.SM_BONDS);
 				govt.addItemStockMatrix(bond, false, StaticValues.SM_BONDS);
 			}
@@ -580,7 +584,8 @@ public class SFCSSMacroAgentInitialiser extends AbstractMacroAgentInitialiser im
 		int nbBondsPerPeriod1 = (int) this.cbBonds/(bondMat*bondPrice);
 			for(int j = 1 ; j<=bondMat; j++){
 				Bond bond = new Bond(nbBondsPerPeriod1*bondPrice, nbBondsPerPeriod1, cb, govt, govt.getBondMaturity(), this.iBonds, bondPrice);
-				bond.setAge(j);
+				int randomBondAgeCB = 1 + (int)(Math.random() * bondMat);
+                bond.setAge(randomBondAgeCB);
 				cb.addItemStockMatrix(bond, true, StaticValues.SM_BONDS);
 				govt.addItemStockMatrix(bond, false, StaticValues.SM_BONDS);
 			}
