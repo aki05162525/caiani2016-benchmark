@@ -38,12 +38,12 @@
 
 	<!-- Regular worker layoff rate (involuntary separation) -->
 	<bean id="layoffRateRVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.2" /> <!-- 20% - harder to fire -->
+		<constructor-arg value="0.3" /> <!-- 30% - harder to fire -->
 	</bean>
 
 	<!-- Non-regular worker layoff rate (involuntary separation) -->
 	<bean id="layoffRateNVal" scope="simulation" class="net.sourceforge.jabm.util.MutableDoubleWrapper">
-		<constructor-arg value="0.4" /> <!-- 40% - adjustment buffer -->
+		<constructor-arg value="0.8" /> <!-- 80% - adjustment buffer -->
 	</bean>
 
 	<!--

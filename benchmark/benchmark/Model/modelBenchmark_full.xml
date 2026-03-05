@@ -218,8 +218,6 @@ Caiani, A., Godin, A., Caverzasi, E., Ricetti, L., Russo, A., Gallegati, M., Kin
 				<ref bean="cFirmsBailoutCostReportTic" />
 				<ref bean="kFirmsBailoutCostReportTic" />
 				<ref bean="TFMReportTic" />
-				<ref bean="BSNetworkReportTic" /> 
-				<ref bean="FlowNetworkReportTic" />
 				<ref bean="populationHandlerTic" />
 				<ref bean="updateExpectationsTic" />
 			</list>
