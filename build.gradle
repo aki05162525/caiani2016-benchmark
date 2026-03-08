@@ -22,8 +22,8 @@ subprojects {
     tasks.register('runMonteCarlo', Exec) {
         workingDir = rootProject.projectDir
         commandLine 'bash', 'scripts/run_monte_carlo.sh',
-            (project.findProperty('startSeed') ?: '2'),
-            (project.findProperty('endSeed') ?: '5'),
+            (project.findProperty('startSeed') ?: '1'),
+            (project.findProperty('endSeed') ?: '25'),
             (project.findProperty('mode') ?: 'full')
     }
 
