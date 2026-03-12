@@ -134,22 +134,22 @@
 
 	<!-- Macro adaptive parameter for Regular wage adjustment -->
 	<bean id="macroAdaptiveParameterR" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="0.1" /> <!-- Sensitivity to macro unemployment -->
+		<constructor-arg value="1.0" /> <!-- Sensitivity to macro unemployment -->
 	</bean>
 
 	<!-- Macro adaptive parameter for Non-regular wage adjustment -->
 	<bean id="macroAdaptiveParameterN" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="0.1" /> <!-- Sensitivity to macro unemployment -->
+		<constructor-arg value="1.0" /> <!-- Sensitivity to macro unemployment -->
 	</bean>
 
 	<!-- Micro adaptive parameter for Regular wage adjustment -->
 	<bean id="microAdaptiveParameterR" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="0.1" /> <!-- Sensitivity to micro (firm-level) conditions -->
+		<constructor-arg value="1.0" /> <!-- Sensitivity to micro (firm-level) conditions -->
 	</bean>
 
 	<!-- Micro adaptive parameter for Non-regular wage adjustment -->
 	<bean id="microAdaptiveParameterN" scope="simulation" class="java.lang.Double">
-		<constructor-arg value="0.1" /> <!-- Sensitivity to micro (firm-level) conditions -->
+		<constructor-arg value="1.0" /> <!-- Sensitivity to micro (firm-level) conditions -->
 	</bean>
 
 </beans>
